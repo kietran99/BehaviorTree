@@ -32,16 +32,7 @@ namespace RR.AI.BehaviorTree
                                     .Where(type => typeof(BTBaseTask).IsAssignableFrom(type) && type != typeof(BTBaseTask));
 
                 taskTypes.AddRange(types);
-
-                // foreach (var type in types)
-                // {
-                //     Debug.Log($"{type} : {taskReferences.ExistsInstance(type)}");
-                // }
             }
-
-            // var instance = ScriptableObject.CreateInstance<BTTaskReferenceContainer>();
-            // UnityEditor.AssetDatabase.CreateAsset(instance, $"Assets/Resources/BT_Tasks/BT_Task_Refs.asset");
-            // UnityEditor.AssetDatabase.SaveAssets();
         }
 
         public System.Collections.Generic.List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
@@ -68,7 +59,7 @@ namespace RR.AI.BehaviorTree
                 tree.Add(
                     new SearchTreeEntry(new GUIContent(type.Name, _indentation))
                     {
-                        userData = typeof(BTLeaf<>).MakeGenericType(type),
+                        userData = type,
                         level = 2
                     });
             }
@@ -79,8 +70,12 @@ namespace RR.AI.BehaviorTree
         public bool OnSelectEntry(SearchTreeEntry searchTreeEntry, SearchWindowContext context)
         {     
             var nodeSpawnPos = ContextToLocalMousePos(context.screenMousePosition);
-            var methodInfo = typeof(BTNodeFactory).GetMethod(nameof(BTNodeFactory.CreateNodeGeneric));
             var userDataType = searchTreeEntry.userData as System.Type;
+            var nodeCreationMethodName = typeof(BTBaseTask).IsAssignableFrom(userDataType) 
+                ? nameof(BTNodeFactory.CreateTaskGeneric) 
+                : nameof(BTNodeFactory.CreateNodeGeneric);
+            Debug.Log(nodeCreationMethodName.ToString());
+            var methodInfo = typeof(BTNodeFactory).GetMethod(nodeCreationMethodName);
             var genericMethodInfo = methodInfo.MakeGenericMethod(userDataType);
             var node = genericMethodInfo.Invoke(null, new object[] { nodeSpawnPos, string.Empty });
             OnEntrySelected?.Invoke(node as Node);

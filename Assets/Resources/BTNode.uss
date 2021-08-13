@@ -5,7 +5,3 @@
 BTNodeLeaf #title {
     background-color: rgb(68, 84, 172);
 }
-
-BTNodeComposite #title {
-    /*background-color: rgb(54, 150, 104);*/   
-}

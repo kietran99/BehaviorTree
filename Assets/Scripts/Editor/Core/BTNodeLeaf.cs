@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTNodeLeaf<T> : BTNode<BTLeaf<T>> where T : BTBaseTask
+    public class BTNodeLeaf<T> : BTNode<BTLeaf<T>>, IBTSavable where T : BTBaseTask
     {
         public BTNodeLeaf(Vector2 pos, string guid = "") : base(pos, guid)
         {}

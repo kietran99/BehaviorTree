@@ -4,10 +4,14 @@ namespace RR.AI.BehaviorTree
 {
     public static class BTNodeFactory
     {
-        public static Node CreateNodeGeneric<T>(UnityEngine.Vector2 pos, string guid="") 
-            where T : IBTNodeAction, new()
+        public static Node CreateNodeGeneric<T>(UnityEngine.Vector2 pos, string guid="") where T : IBTNodeAction, new()
         {
             return new BTNode<T>(pos, guid);
+        }
+
+        public static Node CreateTaskGeneric<T>(UnityEngine.Vector2 pos, string guid="") where T : BTBaseTask
+        {
+            return new BTNodeLeaf<T>(pos, guid);
         }
 
         public static Node CreateNode(BTNodeType nodeType, UnityEngine.Vector2 pos, string guid="") 

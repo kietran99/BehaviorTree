@@ -74,7 +74,6 @@ namespace RR.AI.BehaviorTree
             var nodeCreationMethodName = typeof(BTBaseTask).IsAssignableFrom(userDataType) 
                 ? nameof(BTNodeFactory.CreateTaskGeneric) 
                 : nameof(BTNodeFactory.CreateNodeGeneric);
-            Debug.Log(nodeCreationMethodName.ToString());
             var methodInfo = typeof(BTNodeFactory).GetMethod(nodeCreationMethodName);
             var genericMethodInfo = methodInfo.MakeGenericMethod(userDataType);
             var node = genericMethodInfo.Invoke(null, new object[] { nodeSpawnPos, string.Empty });

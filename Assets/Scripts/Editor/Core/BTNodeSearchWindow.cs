@@ -43,12 +43,12 @@ namespace RR.AI.BehaviorTree
                 new SearchTreeGroupEntry(new GUIContent("Composite"), 1),
                 new SearchTreeEntry(new GUIContent("Sequencer", _indentation))
                 {
-                    userData = typeof(BTSequencer),
+                    userData = typeof(BTGraphSequencer),
                     level = 2
                 },
                 new SearchTreeEntry(new GUIContent("Selector", _indentation))
                 {
-                    userData = typeof(BTSelector),
+                    userData = typeof(BTGraphSelector),
                     level = 2
                 },
                 new SearchTreeGroupEntry(new GUIContent("Task"), 1)
@@ -72,9 +72,9 @@ namespace RR.AI.BehaviorTree
             var nodeSpawnPos = ContextToLocalMousePos(context.screenMousePosition);
             var userDataType = searchTreeEntry.userData as System.Type;
             var nodeCreationMethodName = typeof(BTBaseTask).IsAssignableFrom(userDataType) 
-                ? nameof(BTNodeFactory.CreateTaskGeneric) 
-                : nameof(BTNodeFactory.CreateNodeGeneric);
-            var methodInfo = typeof(BTNodeFactory).GetMethod(nodeCreationMethodName);
+                ? nameof(BTGraphNodeFactory.CreateTaskGeneric) 
+                : nameof(BTGraphNodeFactory.CreateNodeGeneric);
+            var methodInfo = typeof(BTGraphNodeFactory).GetMethod(nodeCreationMethodName);
             var genericMethodInfo = methodInfo.MakeGenericMethod(userDataType);
             var node = genericMethodInfo.Invoke(null, new object[] { nodeSpawnPos, string.Empty });
             OnEntrySelected?.Invoke(node as Node);

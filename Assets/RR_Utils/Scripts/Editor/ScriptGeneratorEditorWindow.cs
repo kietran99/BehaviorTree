@@ -85,7 +85,11 @@ namespace RR.Utils
                     return;
                 }
                 
-                SaveScript($"{path}/{_scriptName}.cs", _scriptName, _usingNamespaces, _derivesFrom, _customNamespace);
+                SaveScript($"{path}/{_scriptName}.cs", 
+                    _scriptName, 
+                    _usingNamespaces, 
+                    _isChildClass ? _derivesFrom : string.Empty, 
+                    _inCustomNamespace ? _customNamespace : string.Empty);
             }
         }
 

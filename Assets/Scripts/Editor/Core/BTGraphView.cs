@@ -46,7 +46,7 @@ namespace RR.AI.BehaviorTree
         {
             if (designContainer.nodeDataList == null || designContainer.nodeDataList.Count == 0)
             {
-                var root = BTNodeFactory.CreateNode(BTNodeType.Root, defaultRootSpawnPos);
+                var root = BTGraphNodeFactory.CreateNode(BTNodeType.Root, defaultRootSpawnPos);
                 AddElement(root);
                 return;
             }
@@ -56,7 +56,7 @@ namespace RR.AI.BehaviorTree
 
             designContainer.nodeDataList.ForEach(nodeData => 
             {
-                var node = BTNodeFactory.CreateNode(nodeData.NodeType, nodeData.Position, nodeData.Guid);
+                var node = BTGraphNodeFactory.CreateNode(nodeData.NodeType, nodeData.Position, nodeData.Guid);
                 
                 nodeDict.Add(nodeData.Guid, node);
                 
@@ -70,7 +70,7 @@ namespace RR.AI.BehaviorTree
 
             designContainer.taskDataList.ForEach(taskData => 
             {
-                var node = BTNodeFactory.CreateNode(taskData.Task, taskData.Position, taskData.Guid);
+                var node = BTGraphNodeFactory.CreateNode(taskData.Task, taskData.Position, taskData.Guid);
 
                 nodeDict.Add(taskData.Guid, node);
                 

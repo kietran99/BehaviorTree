@@ -1,18 +1,20 @@
-using RR.AI.BehaviorTree;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class BTTaskTest : BTBaseTask
+namespace RR.AI.BehaviorTree
 {
-    public override string Name => "Test";
-
-    public override void Init(GameObject actor, Blackboard bLackboard)
+    public class BTTaskTest : BTBaseTask
     {
-        
-    }
+        public override string Name => "Test";
 
-    public override void Tick(GameObject actor, Blackboard bLackboard)
-    {
-        
+        public override void Init(GameObject actor, Blackboard bLackboard)
+        {
+            Debug.Log("Init: Test");
+        }
+
+        public override BTNodeState Tick(GameObject actor, Blackboard bLackboard)
+        {
+            Debug.Log("Tick: Test");
+            return BTNodeState.FAILURE;
+        }
     }
 }

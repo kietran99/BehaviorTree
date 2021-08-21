@@ -5,7 +5,7 @@ namespace RR.AI.BehaviorTree
     public class BTTaskReferenceContainer : ScriptableObject
     {
         [SerializeField]
-        private System.Collections.Generic.List<BTBaseTask> _taskReferences = null;
+        private System.Collections.Generic.List<BTBaseTask> _taskReferences = new System.Collections.Generic.List<BTBaseTask>();
 
         [SerializeField]
         private BTBaseTask _nullTask = null;
@@ -16,7 +16,6 @@ namespace RR.AI.BehaviorTree
 
             for (int i = 0; i < _taskReferences.Count; i++)
             {
-
                 if (_taskReferences[i].GetType() == typeof(T))
                 {
                     return (_taskReferences[i], false);

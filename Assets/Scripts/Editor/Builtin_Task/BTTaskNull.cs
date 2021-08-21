@@ -12,9 +12,9 @@ namespace RR.AI.BehaviorTree
             
         }
 
-        public override void Tick(GameObject actor, Blackboard blackboard)
+        public override BTNodeState Tick(GameObject actor, Blackboard blackboard)
         {
-            
+            return BTNodeState.SUCCESS;
         }
     }
 }

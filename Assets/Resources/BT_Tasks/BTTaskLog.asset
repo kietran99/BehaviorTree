@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6be54ab0e15258b498335ab42e648517, type: 3}
   m_Name: BTTaskLog
   m_EditorClassIdentifier: 
+  _propMap:
+    Entries: []

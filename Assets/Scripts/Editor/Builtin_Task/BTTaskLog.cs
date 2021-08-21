@@ -1,24 +1,29 @@
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTTaskLog : BTBaseTask
+    public class BTTaskLog : BTBaseTask<BTTaskLogData>
     {
         public override string Name => "Log";
 
-        public BTNodeType NodeType => BTNodeType.Leaf;
-
-        public (BTPortCapacity In, BTPortCapacity Out) Capacity => (BTPortCapacity.Single, BTPortCapacity.None);
-
         public override void Init(GameObject actor, Blackboard bLackboard)
         {
-            
+            Debug.Log("Init: Log");
         }
 
-        public override void Tick(GameObject actor, Blackboard bLackboard)
+        public override BTNodeState Tick(GameObject actor, Blackboard bLackboard)
         {
-            
+            Debug.Log("Tick: Log");
+            return BTNodeState.SUCCESS;
         }
+    }
+
+    [System.Serializable]
+    public class BTTaskLogData
+    {
+        public string Message;
+        public int myInt;
+        public bool myBool;
+        // public TestValue Container;
     }
 }

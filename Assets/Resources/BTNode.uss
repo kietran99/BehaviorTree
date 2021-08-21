@@ -1,7 +1,0 @@
-.bold-text {
-    -unity-font-style: bold;
-}
-
-BTNodeLeaf #title {
-    background-color: rgb(68, 84, 172);
-}

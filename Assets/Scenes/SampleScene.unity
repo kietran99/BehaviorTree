@@ -134,12 +134,12 @@ GameObject:
   - component: {fileID: 308664501}
   - component: {fileID: 308664500}
   m_Layer: 0
-  m_Name: Test BT
+  m_Name: BT Actor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &308664500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,7 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3de7cb05d24b3134eb5a1079c171499f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  designContainer: {fileID: 11400000, guid: 1aa6009df9f26444399cc5849783d65c, type: 2}
+  _actor: {fileID: 308664499}
+  _designContainer: {fileID: 11400000, guid: 1aa6009df9f26444399cc5849783d65c, type: 2}
 --- !u!4 &308664501
 Transform:
   m_ObjectHideFlags: 0
@@ -249,4 +250,112 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1419901907
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1419901909}
+  - component: {fileID: 1419901908}
+  m_Layer: 0
+  m_Name: Logic Actor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1419901908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1419901907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3de7cb05d24b3134eb5a1079c171499f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _actor: {fileID: 1419901907}
+  _designContainer: {fileID: 11400000, guid: 3a9ebd7f219f97e4a976547d9e5a054a, type: 2}
+--- !u!4 &1419901909
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1419901907}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1916848801
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1916848803}
+  - component: {fileID: 1916848802}
+  m_Layer: 0
+  m_Name: Test Serializable Dict
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1916848802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916848801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de65f1aa076c458478389436906ec9b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  intArrDict:
+    Entries:
+    - Key: 
+      Value: 37020000825b00000000000022020000040000000000000059010000
+    - Key: asd
+      Value: 200200001700000000000000
+    - Key: sfhg
+      Value: 200200000100000000000000
+  testValueDict:
+    Entries:
+    - Key: Hello
+      Value:
+        myInt: 123
+        myBool: 0
+        camera: {fileID: 519420031}
+    - Key: World
+      Value:
+        myInt: 0
+        myBool: 1
+        camera: {fileID: 0}
+--- !u!4 &1916848803
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916848801}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

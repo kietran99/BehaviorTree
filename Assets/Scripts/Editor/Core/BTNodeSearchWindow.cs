@@ -7,7 +7,7 @@ namespace RR.AI.BehaviorTree
 {
     public class BTNodeSearchWindow : ScriptableObject, ISearchWindowProvider
     {
-        public const string TASK_REF_CONTAINER_PATH = "BT_Tasks/BTRefsTask";
+        
 
         private System.Collections.Generic.List<Type> taskTypes = new System.Collections.Generic.List<Type>();
         private Action<Node> OnEntrySelected;
@@ -24,7 +24,7 @@ namespace RR.AI.BehaviorTree
             _indentation.Apply();
 
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var taskReferences = Resources.Load<BTTaskReferenceContainer>(TASK_REF_CONTAINER_PATH);
+            var taskReferences = Resources.Load<BTTaskReferenceContainer>(BTTaskReferenceContainer.TASK_REF_CONTAINER_PATH);
 
             foreach (var assembly in assemblies)
             {

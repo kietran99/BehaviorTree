@@ -9,7 +9,7 @@ public class TestValue
     public Camera camera;
 }
 
-public class TestScript : MonoBehaviour
+public class TestScript : MonoBehaviour, IMyInterface
 {
     // public SerializableDictionary<string, int> intDict;
     public SerializableDictionary<string, int[]> intArrDict;

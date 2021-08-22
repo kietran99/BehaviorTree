@@ -21,7 +21,7 @@ namespace RR.AI.BehaviorTree
 
         private BTBaseTask GetOrCreateTask()
         {
-            var taskReferences = Resources.Load<BTTaskReferenceContainer>(BTNodeSearchWindow.TASK_REF_CONTAINER_PATH);
+            var taskReferences = Resources.Load<BTTaskReferenceContainer>(BTTaskReferenceContainer.TASK_REF_CONTAINER_PATH);
             var (task, isNull) = taskReferences.GetTask<T>();
 
             if (!isNull)

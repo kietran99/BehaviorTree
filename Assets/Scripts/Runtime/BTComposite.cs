@@ -2,11 +2,14 @@ using UnityEngine;
 
 namespace RR.AI.BehaviorTree
 {
-    public abstract class BTComposite : IBTNode
+    public abstract class BTComposite : BTBaseNode
     {
-		protected IBTNode[] _children;
+		protected BTBaseNode[] _children;
 
-        public bool Init(IBTNode[] children, GameObject actor, Blackboard blackboard)
+        protected BTComposite(string guid) : base(guid)
+        {}
+
+        public override bool Init(BTBaseNode[] children, GameObject actor, Blackboard blackboard)
         {
 			if (children.Length == 0)
 			{
@@ -17,7 +20,5 @@ namespace RR.AI.BehaviorTree
 
             return true;
         }
-
-        public abstract BTNodeState Tick(GameObject actor, Blackboard blackboard);
     }
 }

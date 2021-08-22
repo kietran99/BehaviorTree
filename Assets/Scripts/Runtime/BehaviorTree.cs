@@ -13,7 +13,7 @@ namespace RR.AI.BehaviorTree
 
         public BTDesignContainer DesignContainer => _designContainer;
 
-        private IBTNode _root;
+        private BTBaseNode _root;
 
         private void Start()
         {
@@ -35,17 +35,17 @@ namespace RR.AI.BehaviorTree
             InitTree(nodeDataList);
         }
 
-        private (IBTNode root, BTNodeData[] nodeDataList) Extract(BTDesignContainer designContainer)
+        private (BTBaseNode root, BTNodeData[] nodeDataList) Extract(BTDesignContainer designContainer)
         {
-            IBTNode root = null;
-            var nodeDict = new Dictionary<string, (IBTNode node, int yPos)>(designContainer.nodeDataList.Count);
+            BTBaseNode root = null;
+            var nodeDict = new Dictionary<string, (BTBaseNode node, int yPos)>(designContainer.nodeDataList.Count);
             var linkDataList = new List<BTLinkData>(designContainer.nodeDataList.Count);
-            var linkDict = new Dictionary<IBTNode, List<(IBTNode node, int yPos)>>(designContainer.nodeDataList.Count);
-            var emptyList = new List<(IBTNode node, int yPos)>();
+            var linkDict = new Dictionary<BTBaseNode, List<(BTBaseNode node, int yPos)>>(designContainer.nodeDataList.Count);
+            var emptyList = new List<(BTBaseNode node, int yPos)>();
             
             designContainer.nodeDataList.ForEach(nodeData => 
             {
-                var node = BTNodeFactory.Create(nodeData.NodeType);
+                var node = BTNodeFactory.Create(nodeData.NodeType, nodeData.Guid);
 
                 if (nodeData.NodeType == BTNodeType.Root)
                 {
@@ -53,7 +53,7 @@ namespace RR.AI.BehaviorTree
                 }
                 
                 nodeDict.Add(nodeData.Guid, (node, Mathf.FloorToInt(nodeData.Position.y)));
-                linkDict.Add(node, new List<(IBTNode node, int yPos)>());
+                linkDict.Add(node, new List<(BTBaseNode node, int yPos)>());
                 
                 if (!string.IsNullOrEmpty(nodeData.ParentGuid)) 
                 {
@@ -63,7 +63,7 @@ namespace RR.AI.BehaviorTree
 
             designContainer.taskDataList.ForEach(taskData => 
             {
-                var node = BTNodeFactory.CreateLeaf(taskData.Task);
+                var node = BTNodeFactory.CreateLeaf(taskData.Task, taskData.Guid);
 
                 nodeDict.Add(taskData.Guid, (node, Mathf.FloorToInt(taskData.Position.y)));
                 linkDict.Add(node, emptyList);
@@ -87,12 +87,12 @@ namespace RR.AI.BehaviorTree
             return (root, Map(linkDict));
         }
 
-        private class NodePriorityComparer : IComparer<(IBTNode node, int yPos)>
+        private class NodePriorityComparer : IComparer<(BTBaseNode node, int yPos)>
         {
-            public int Compare((IBTNode node, int yPos) x, (IBTNode node, int yPos) y) => x.yPos.CompareTo(y.yPos);
+            public int Compare((BTBaseNode node, int yPos) x, (BTBaseNode node, int yPos) y) => x.yPos.CompareTo(y.yPos);
         }
 
-        private BTNodeData[] Map(Dictionary<IBTNode, List<(IBTNode node, int yPos)>> linkDict)
+        private BTNodeData[] Map(Dictionary<BTBaseNode, List<(BTBaseNode node, int yPos)>> linkDict)
         {
             var nodeDataList = new BTNodeData[linkDict.Count];
             int idx = 0;
@@ -105,9 +105,9 @@ namespace RR.AI.BehaviorTree
             return nodeDataList;
         }
 
-        private IBTNode[] Map(List<(IBTNode node, int yPos)> childrenData)
+        private BTBaseNode[] Map(List<(BTBaseNode node, int yPos)> childrenData)
         {
-            var childNodes = new IBTNode[childrenData.Count];
+            var childNodes = new BTBaseNode[childrenData.Count];
 
             for (int i = 0; i < childrenData.Count; i++)
             {

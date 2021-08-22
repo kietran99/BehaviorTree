@@ -6,14 +6,14 @@ namespace RR.AI.BehaviorTree
     {
         public override string Name => "Log";
 
-        public override void Init(GameObject actor, Blackboard bLackboard)
+        public override void Init(GameObject actor, Blackboard bLackboard, string nodeGuid)
         {
-            Debug.Log("Init: Log");
+            
         }
 
-        public override BTNodeState Tick(GameObject actor, Blackboard bLackboard)
+        public override BTNodeState Tick(GameObject actor, Blackboard bLackboard, string nodeGuid)
         {
-            Debug.Log("Tick: Log");
+            Debug.Log(Prop(nodeGuid).Message);
             return BTNodeState.SUCCESS;
         }
     }
@@ -22,8 +22,6 @@ namespace RR.AI.BehaviorTree
     public class BTTaskLogData
     {
         public string Message;
-        public int myInt;
-        public bool myBool;
         // public TestValue Container;
     }
 }

@@ -1,8 +1,8 @@
 namespace RR.AI.BehaviorTree
 {
-    public class BTSequencer : BTComposite
+    public class BTSelector : BTComposite
     {
-        public BTSequencer(string guid) : base(guid)
+        public BTSelector(string guid) : base(guid)
         {}
 
         public override BTNodeState Tick(UnityEngine.GameObject actor, Blackboard blackboard)
@@ -11,13 +11,13 @@ namespace RR.AI.BehaviorTree
             {
                 var res = _children[i].Tick(actor, blackboard);
                 
-                if (res != BTNodeState.SUCCESS)
+                if (res != BTNodeState.FAILURE)
                 {
                     return res;
                 }
             }
 
-            return BTNodeState.SUCCESS;
+            return BTNodeState.FAILURE;
         }
     }
 }

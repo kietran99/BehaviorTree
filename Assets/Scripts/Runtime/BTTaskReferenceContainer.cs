@@ -30,6 +30,8 @@ namespace RR.AI.BehaviorTree
             _taskReferences.Add(task);
         }
 
+        public const string TASK_REF_CONTAINER_PATH = "BT_Tasks/BTRefsTask";
+
         public BTBaseTask NullTask => _nullTask;
     }
 }

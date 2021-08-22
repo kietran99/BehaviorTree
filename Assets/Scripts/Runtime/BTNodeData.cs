@@ -2,10 +2,10 @@ namespace RR.AI.BehaviorTree
 {
 	public readonly struct BTNodeData
 	{
-		public readonly IBTNode Node;
-		public readonly IBTNode[] Children;
+		public readonly BTBaseNode Node;
+		public readonly BTBaseNode[] Children;
 
-        public BTNodeData(IBTNode node, IBTNode[] children)
+        public BTNodeData(BTBaseNode node, BTBaseNode[] children)
         {
             Node = node;
             Children = children;

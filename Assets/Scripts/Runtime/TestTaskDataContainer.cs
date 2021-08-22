@@ -12,6 +12,7 @@ public class TestData
     public IMyInterface myInterface;
 }
 
+[CreateAssetMenu(menuName = "Test")]
 public class TestTaskDataContainer : ScriptableObject
 {
     public TestData data;

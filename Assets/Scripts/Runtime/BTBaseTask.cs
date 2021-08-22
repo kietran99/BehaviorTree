@@ -7,6 +7,9 @@ namespace RR.AI.BehaviorTree
     {
         [SerializeField]
         private BTTaskPropertyMap<TProp> _propMap;
+
+        protected TProp Prop(string key) => LoadPropData(key) as TProp;
+
         public override Type PropertyType => typeof(TProp);
         
         public override bool SavePropData(string key, object data)
@@ -29,8 +32,8 @@ namespace RR.AI.BehaviorTree
     {
         public abstract string Name { get; }
         public virtual System.Type PropertyType => typeof(BTTaskDataNone);
-        public abstract void Init(GameObject actor, Blackboard blackboard);
-        public abstract BTNodeState Tick(GameObject actor, Blackboard blackboard);
+        public abstract void Init(GameObject actor, Blackboard blackboard, string nodeGuid);
+        public abstract BTNodeState Tick(GameObject actor, Blackboard blackboard, string nodeGuid);
         public virtual bool SavePropData(string key, object data) => true;
         public virtual object LoadPropData(string key) 
         {

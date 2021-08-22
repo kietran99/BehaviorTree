@@ -6,14 +6,13 @@ namespace RR.AI.BehaviorTree
     {
         public override string Name => "Test";
 
-        public override void Init(GameObject actor, Blackboard bLackboard)
+        public override void Init(GameObject actor, Blackboard bLackboard, string nodeGuid)
         {
-            Debug.Log("Init: Test");
+        
         }
 
-        public override BTNodeState Tick(GameObject actor, Blackboard bLackboard)
+        public override BTNodeState Tick(GameObject actor, Blackboard bLackboard, string nodeGuid)
         {
-            Debug.Log("Tick: Test");
             return BTNodeState.FAILURE;
         }
     }

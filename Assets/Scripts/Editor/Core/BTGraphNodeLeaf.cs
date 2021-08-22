@@ -97,12 +97,9 @@ namespace RR.AI.BehaviorTree
                 return (StylizePropField(field), prop => fieldInfo.SetValue(prop, field.value));
             }
 
-            if (typeof(Component).IsAssignableFrom(type) 
-                || typeof(ScriptableObject).IsAssignableFrom(type) 
-                || type.IsInterface)
+            if (typeof(ScriptableObject).IsAssignableFrom(type) || type.IsInterface)
             {
                 var field = new ObjectField() { objectType = type };
-                field.value = (Object) fieldInfo.GetValue(propFieldData);
                 return (StylizePropField(field), prop => fieldInfo.SetValue(prop, field.value));
             }
 

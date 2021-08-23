@@ -1,0 +1,11 @@
+.bold-text {
+    -unity-font-style: bold;
+}
+
+BTGraphNode #title {
+    background-color: #375e98;
+}
+
+BTGraphNodeLeaf #title {
+    background-color: #968a30;
+}

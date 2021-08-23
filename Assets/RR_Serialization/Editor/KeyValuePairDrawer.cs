@@ -44,7 +44,7 @@ namespace RR.Serialization.Editor
 
             var originalLabelWidth = EditorGUIUtility.labelWidth;
             EditorGUIUtility.labelWidth = 15f;
-            EditorGUI.PropertyField(keyRect, key, new GUIContent(Resources.Load<Texture>("Icons/icon_key")));
+            EditorGUI.PropertyField(keyRect, key, new GUIContent(Resources.Load<Texture>("Icons/key")));
             EditorGUIUtility.labelWidth = originalLabelWidth;
             
             DrawChildrenProps(value, valueRect, propHeight, padding);

@@ -32,6 +32,11 @@ namespace RR.Serialization
                 return false;
             }
 
+            if (Entries == null)
+            {
+                Entries = new System.Collections.Generic.List<SerializableKeyValuePair<TKey, TValue>>();
+            }
+
             Entries.Add(new SerializableKeyValuePair<TKey, TValue>() { Key = key, Value = value });
             _map.Add(key, value);
             return true;

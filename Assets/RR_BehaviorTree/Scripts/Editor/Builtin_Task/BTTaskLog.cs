@@ -1,17 +1,19 @@
+using UnityEngine;
+
 namespace RR.AI.BehaviorTree
 {
     public class BTTaskLog : BTBaseTask<BTTaskLogData>
     {
         public override string Name => "Log";
 
-        public override void Init(UnityEngine.GameObject actor, Blackboard bLackboard, string nodeGuid)
+        public override void Init(GameObject actor, Blackboard blackboard, BTTaskLogData prop)
         {
             
         }
 
-        public override BTNodeState Tick(UnityEngine.GameObject actor, Blackboard bLackboard, string nodeGuid)
+        public override BTNodeState Tick(GameObject actor, Blackboard blackboard, BTTaskLogData prop)
         {
-            UnityEngine.Debug.Log(Prop(nodeGuid).Message);
+            UnityEngine.Debug.Log(prop.Message);
             return BTNodeState.SUCCESS;
         }
     }

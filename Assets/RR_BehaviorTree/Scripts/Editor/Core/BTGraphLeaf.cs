@@ -39,7 +39,6 @@ namespace RR.AI.BehaviorTree
             task = ScriptableObject.CreateInstance<T>();
             var relativePath = GetRelativePath(path, "Assets");
             UnityEditor.AssetDatabase.CreateAsset(task, relativePath);
-            // UnityEditor.AssetDatabase.SaveAssets();
             taskReferences.AddTask(task as BTBaseTask);
             Debug.Log($"{typeof(T).Name} was created!");
             return task;

@@ -12,9 +12,26 @@ namespace RR.AI.BehaviorTree
 
         public override Type PropertyType => typeof(TProp);
         
+        public override void Init(GameObject actor, Blackboard blackboard, string nodeGuid)
+        {
+            Init(actor, blackboard, LoadPropData(nodeGuid) as TProp);
+        }
+
+        public override BTNodeState Tick(GameObject actor, Blackboard blackboard, string nodeGuid)
+        {
+            return Tick(actor, blackboard, LoadPropData(nodeGuid) as TProp);
+        }
+
+        public abstract void Init(GameObject actor, Blackboard blackboard, TProp prop);
+        public abstract BTNodeState Tick(GameObject actor, Blackboard blackboard, TProp prop);
+
+        #region SAVE & LOAD
         public override bool SavePropData(string key, object data)
         {
-            return _propMap.AddOrUpdate(key, data as TProp);
+            var res = _propMap.AddOrUpdate(key, data as TProp);
+            UnityEditor.EditorUtility.SetDirty(this);
+            UnityEditor.AssetDatabase.SaveAssetIfDirty(this);
+            return res;
         }
 
         public override object LoadPropData(string key)
@@ -26,6 +43,7 @@ namespace RR.AI.BehaviorTree
 
             return data;
         }
+        #endregion
     }
 
     public abstract class BTBaseTask : ScriptableObject

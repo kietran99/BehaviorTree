@@ -28,6 +28,8 @@ namespace RR.AI.BehaviorTree
         public void AddTask(BTBaseTask task)
         {
             _taskReferences.Add(task);
+            UnityEditor.EditorUtility.SetDirty(this);
+            UnityEditor.AssetDatabase.SaveAssetIfDirty(this);
         }
 
         public const string TASK_REF_CONTAINER_PATH = "BT_Tasks/BTRefsTask";

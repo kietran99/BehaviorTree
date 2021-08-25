@@ -14,6 +14,8 @@ namespace RR.AI.BehaviorTree
             nodeDataList.Clear();
             taskDataList.Clear();
             nodes.ForEach(node => (node as IBTSavable).Save(this));
+            UnityEditor.EditorUtility.SetDirty(this);
+            UnityEditor.AssetDatabase.SaveAssetIfDirty(this);
         }
     }
 }

@@ -84,6 +84,7 @@ namespace RR.AI.BehaviorTree
                 if (_inspectedBT != null) 
                 {
                     _inspectedBT.DesignContainer.Save(_graphView.nodes);
+                    _graphView.OnGraphSaved();
                 }
             }) { text = "Save Assets" };
 

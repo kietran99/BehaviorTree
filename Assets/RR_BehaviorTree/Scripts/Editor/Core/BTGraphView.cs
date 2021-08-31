@@ -7,12 +7,36 @@ namespace RR.AI.BehaviorTree
     {
         private UnityEngine.Vector2 defaultRootSpawnPos = new UnityEngine.Vector2(100f, 300f);
 
+        public System.Action OnNodeDeleted { get; set; }
+
         public BTGraphView() : base()
         {}
 
         public BTGraphView(BTDesignContainer designContainer) : base()
         {
             UpdateView(designContainer);
+            graphViewChanged += OnGraphViewChanged;
+        }
+
+
+        private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange)
+        {
+            var elementsToRemove = graphViewChange.elementsToRemove;
+            
+            if (elementsToRemove == null)
+            {
+                return graphViewChange;
+            }
+
+            foreach (var element in elementsToRemove)
+            {
+                if (element is IBTSavable)
+                {
+                    OnNodeDeleted += (element as IBTSavable).DeleteCallback;
+                }
+            }
+
+            return graphViewChange;
         }
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
@@ -44,6 +68,8 @@ namespace RR.AI.BehaviorTree
 
         public void UpdateView(BTDesignContainer designContainer)
         {
+            OnNodeDeleted = delegate {};
+
             if (designContainer.nodeDataList == null || designContainer.nodeDataList.Count == 0)
             {
                 var root = BTGraphNodeFactory.CreateNode(BTNodeType.Root, defaultRootSpawnPos);
@@ -58,6 +84,11 @@ namespace RR.AI.BehaviorTree
             {
                 var node = BTGraphNodeFactory.CreateNode(nodeData.NodeType, nodeData.Position, nodeData.Guid);
                 
+                // var badge = IconBadge.CreateComment("0");
+                // badge.badgeText = "0";
+                // badge.distance = 0;
+                // node.titleContainer.Add(badge);
+
                 nodeDict.Add(nodeData.Guid, node);
                 
                 if (!string.IsNullOrEmpty(nodeData.ParentGuid)) 
@@ -88,6 +119,12 @@ namespace RR.AI.BehaviorTree
                 var edge = (child.inputContainer[0] as Port).ConnectTo(parent.outputContainer[0] as Port);
                 AddElement(edge);
             });
+        }
+
+        public void OnGraphSaved()
+        {
+            OnNodeDeleted?.Invoke();
+            OnNodeDeleted = delegate {};
         }
     }
 }

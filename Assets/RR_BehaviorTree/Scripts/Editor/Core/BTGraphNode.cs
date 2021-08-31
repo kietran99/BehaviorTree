@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.Experimental.GraphView;
 using System.Linq;
-using UnityEditor.UIElements;
 
 namespace RR.AI.BehaviorTree
 {
@@ -13,7 +12,7 @@ namespace RR.AI.BehaviorTree
         protected T _nodeAction;
 
         protected string _guid;
-        public string Guid => _guid;
+        public string Guid => _guid; 
 
         public BTGraphNode(Vector2 pos, string guid="")
         {
@@ -160,5 +159,7 @@ namespace RR.AI.BehaviorTree
             var parentNode = inputPort.connections.First(edge => edge.output != inputPort).output.node;
             return (parentNode as IBTSavable).Guid;
         }
+
+        public virtual System.Action DeleteCallback => () => {};
     }
 }

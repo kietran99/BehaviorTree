@@ -7,7 +7,7 @@ namespace RR.AI.BehaviorTree
     public class BTDesignContainer : ScriptableObject
     {
         public List<BTSerializableNodeData> nodeDataList = new List<BTSerializableNodeData>();
-        public List<BTTaskData> taskDataList = new List<BTTaskData>();
+        public List<BTSerializableTaskData> taskDataList = new List<BTSerializableTaskData>();
 
         public void Save(UnityEngine.UIElements.UQueryState<UnityEditor.Experimental.GraphView.Node> nodes)
         {

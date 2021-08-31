@@ -75,7 +75,26 @@ namespace RR.Serialization
             return true;
         }
 
-        public bool Remove(TKey key) => _map.Remove(key);
+        public bool Remove(TKey key)
+        {
+            if (!_map.ContainsKey(key))
+            {
+                return false;
+            }
+
+            foreach (var entry in Entries)
+            {
+                if (entry.Key.Equals(key))
+                {
+                    Entries.Remove(entry);
+                    OnAfterDeserialize();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+            
 
         public bool TryGetValue(TKey key, out TValue value)
         {

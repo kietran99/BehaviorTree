@@ -43,6 +43,14 @@ namespace RR.AI.BehaviorTree
 
             return data;
         }
+
+        public override bool RemoveProp(string key)
+        {
+            var res = _propMap.Remove(key);
+            UnityEditor.EditorUtility.SetDirty(this);
+            UnityEditor.AssetDatabase.SaveAssetIfDirty(this);
+            return res;
+        }
         #endregion
     }
 
@@ -61,6 +69,7 @@ namespace RR.AI.BehaviorTree
         public virtual object LoadPropData(string key) 
         {
             return new BTTaskDataNone();
-        }
+        } 
+        public virtual bool RemoveProp(string key) => true;
     }
 }

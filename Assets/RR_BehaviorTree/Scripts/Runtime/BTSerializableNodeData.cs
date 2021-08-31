@@ -49,7 +49,7 @@ namespace RR.AI.BehaviorTree
     }
 
     [Serializable]
-    public class BTTaskData
+    public class BTSerializableTaskData
     {
         [SerializeField]
         private BTNodeGraphData _graphData = null;
@@ -57,7 +57,7 @@ namespace RR.AI.BehaviorTree
         [SerializeField]
         private BTBaseTask _task = null;
 
-        public BTTaskData(Vector2 position, string guid, string parentGuid, BTBaseTask task)
+        public BTSerializableTaskData(Vector2 position, string guid, string parentGuid, BTBaseTask task)
         {
             _graphData = new BTNodeGraphData(position, guid, parentGuid);
             _task = task;

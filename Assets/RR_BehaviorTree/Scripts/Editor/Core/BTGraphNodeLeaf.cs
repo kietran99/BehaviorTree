@@ -4,7 +4,7 @@ using UnityEditor.UIElements;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTGraphNodeLeaf<T> : BTGraphNode<BTGraphLeaf<T>>, IBTSavable where T : BTBaseTask
+    public class BTGraphNodeLeaf<T> : BTGraphNode<BTGraphLeaf<T>> where T : BTBaseTask
     {
         private System.Func<object> TaskPropConstructFn;
 
@@ -141,10 +141,12 @@ namespace RR.AI.BehaviorTree
                     : System.Activator.CreateInstance(_nodeAction.Task.PropertyType));            
 
             designContainer.taskDataList.Add(
-                new BTTaskData(GetPosition().position, 
+                new BTSerializableTaskData(GetPosition().position, 
                 _guid, 
                 GetParentGuid(inputContainer), 
                 _nodeAction.Task));
         }
+
+        public override System.Action DeleteCallback => () => _nodeAction.Task.RemoveProp(_guid);
     }
 }

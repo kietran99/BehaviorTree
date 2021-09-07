@@ -35,6 +35,7 @@ namespace RR.AI.BehaviorTree
             {
                 var childContainer = new VisualElement();
                 childContainer.style.height = 20;
+                childContainer.style.width = 125;
                 childContainer.style.flexDirection = FlexDirection.Row;
                 childContainer.style.marginTop = 5;
                 childContainer.style.marginBottom = 5;
@@ -42,7 +43,7 @@ namespace RR.AI.BehaviorTree
                 childContainer.style.marginLeft = 5;
 
                 var label = new Label(RR.Utils.StringUtility.InsertWhiteSpaces(fieldInfo.Name));
-                label.style.width = 70;
+                label.style.width = 60;
                 label.style.unityTextAlign = TextAnchor.MiddleLeft;
                 label.style.fontSize = 12;
                 label.style.whiteSpace = WhiteSpace.Normal;
@@ -50,6 +51,7 @@ namespace RR.AI.BehaviorTree
 
                 var (field, bindPropFieldFn) = DrawPropField(fieldInfo, propFieldData);
                 childContainer.Add(field);
+                field.style.maxWidth = 65;
                 
                 bindPropDataFn += bindPropFieldFn;
 

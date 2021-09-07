@@ -1,5 +1,7 @@
 using UnityEditor.Experimental.GraphView;
 using System.Collections.Generic;
+using UnityEngine.UIElements;
+using System;
 
 namespace RR.AI.BehaviorTree
 {
@@ -10,14 +12,15 @@ namespace RR.AI.BehaviorTree
         public System.Action OnNodeDeleted { get; set; }
 
         public BTGraphView() : base()
-        {}
+        {
+            graphViewChanged += OnGraphViewChanged;
+        }
 
         public BTGraphView(BTDesignContainer designContainer) : base()
         {
             UpdateView(designContainer);
-            graphViewChanged += OnGraphViewChanged;
+            graphViewChanged += OnGraphViewChanged;       
         }
-
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange)
         {

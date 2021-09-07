@@ -60,19 +60,8 @@ namespace RR.AI.BehaviorTree
         private Blackboard CreateBlackboard(BTGraphView graphView, string title, Rect rect)
         {
             var blackboard = new Blackboard(graphView) { title = title, scrollable = true };
-            blackboard.SetPosition(rect);
-            blackboard.addItemRequested = bb => AddBlackboardItem(bb);
+            blackboard.SetPosition(rect);      
             return blackboard;
-        }
-
-        private void AddBlackboardItem(UnityEditor.Experimental.GraphView.Blackboard blackboard)
-        {
-            var container = new VisualElement();
-            var bbField = new BlackboardField() { text = "New Key", typeText = "Some Type" };
-            container.Add(bbField);
-            var propertyView = new ObjectField() { objectType = typeof(Object) };
-            container.Add(new BlackboardRow(bbField, propertyView));
-            blackboard.Add(container);
         }
 
         private Toolbar CreateToolbar()
@@ -126,6 +115,7 @@ namespace RR.AI.BehaviorTree
 
             _toolbar.visible = true;
             _blackboard.visible = true;
+            _blackboard.OnGOSelectionChanged();
             _graphView.OnGOSelectionChanged(_inspectedBT.DesignContainer);
         }
 

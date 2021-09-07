@@ -15,6 +15,8 @@ namespace RR.AI.BehaviorTree
         private static Vector2 _defaultNodeSize = new Vector2(300f, 400f);
         private static Color DEFAULT_PORT_COLOR = new Color(80f /255f, 80f /255f, 80f /255f);
 
+        // public static OnEdgeDrag
+
         protected T _nodeAction;
 
         protected string _guid;
@@ -48,7 +50,20 @@ namespace RR.AI.BehaviorTree
             // label.style.fontSize = 15;
             // titleButtonContainer.Add(label);
             // Debug.Log(_nodeAction.Name);
+
+            // if (_nodeAction.NodeType != BTNodeType.Leaf)
+            // {
+            //     (outputContainer[0] as Port).RegisterCallback<UnityEngine.UIElements.MouseUpEvent>(OnMouseUp);
+            // }
         }
+
+        // private void OnMouseUp(MouseUpEvent evt)
+        // {
+            // Debug.Log((outputContainer[0] as Port).connected);
+            // Debug.Log((outputContainer[0] as Port).ContainsPoint(evt.localMousePosition));
+            // Debug.Log(evt.mousePosition);
+            // Debug.Log(evt.originalMousePosition);
+        // }
 
         private void RootTickCallback(string guid)
         {

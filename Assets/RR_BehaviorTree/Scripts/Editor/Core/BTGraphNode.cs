@@ -199,8 +199,8 @@ namespace RR.AI.BehaviorTree
 
         public void OnRemove()
         {
-            // Debug.Log("Remove");
             BTBaseNode.OnTick -= NodeTickCallback;
+            BTBaseNode.OnRootTick -= RootTickCallback;
         }
     }
 }

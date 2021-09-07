@@ -21,6 +21,8 @@ namespace RR.AI.BehaviorTree
 	public class BTTaskWithinRangeData
 	{
 		public float Range;
+        
+        [RR.Serialization.TagField]
         public string TargetTag;
 	}
 }

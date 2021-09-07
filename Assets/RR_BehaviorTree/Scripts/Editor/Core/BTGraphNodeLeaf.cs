@@ -73,7 +73,9 @@ namespace RR.AI.BehaviorTree
 
             if (type == typeof(string))
             {
-                if (fieldInfo.Name.Contains("Tag"))
+                var attribs = fieldInfo.GetCustomAttributes(typeof(RR.Serialization.TagFieldAttribute), true);
+                
+                if (attribs.Length > 0)
                 {
                     var tagField = new TagField(string.Empty, "Untagged");
                     tagField.value = (string) fieldInfo.GetValue(propFieldData);

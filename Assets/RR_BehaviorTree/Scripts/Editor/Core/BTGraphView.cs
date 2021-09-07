@@ -66,6 +66,12 @@ namespace RR.AI.BehaviorTree
             UpdateView(designContainer);
         }
 
+        protected override void ClearNodesAndEdges()
+        {
+            nodes.ForEach(node => (node as IBTGraphNode).OnRemove());
+            base.ClearNodesAndEdges();
+        }
+
         public void UpdateView(BTDesignContainer designContainer)
         {
             OnNodeDeleted = delegate {};

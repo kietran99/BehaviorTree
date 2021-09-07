@@ -11,19 +11,10 @@ public class TestValue
 
 public class TestScript : MonoBehaviour, IMyInterface
 {
+
+    [TagField]
+    public string someTag;
     // public SerializableDictionary<string, int> intDict;
     public SerializableDictionary<string, int[]> intArrDict;
     public SerializableDictionary<string, TestValue> testValueDict;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

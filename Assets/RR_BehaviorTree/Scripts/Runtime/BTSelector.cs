@@ -5,19 +5,28 @@ namespace RR.AI.BehaviorTree
         public BTSelector(string guid) : base(guid)
         {}
 
-        public override BTNodeState Tick(UnityEngine.GameObject actor, Blackboard blackboard)
-        {
-            for (int i = 0; i < _children.Length; i++)
-            {
-                var res = _children[i].Tick(actor, blackboard);
-                
-                if (res != BTNodeState.FAILURE)
-                {
-                    return res;
-                }
-            }
+        protected override BTNodeState FinalReturnState => BTNodeState.FAILURE;
 
-            return BTNodeState.FAILURE;
-        }
+        // public override BTNodeState Update(UnityEngine.GameObject actor, Blackboard blackboard)
+        // {
+        //     OnTick?.Invoke(_guid);
+
+        //     for (int i = 0; i < _children.Length; i++)
+        //     {
+        //         var res = _children[i].Update(actor, blackboard);
+
+        //         if (res != BTNodeState.FAILURE)
+        //         {
+        //             // if (res == BTNodeState.RUNNING)
+        //             // {
+        //             //     BTBaseNode
+        //             // }
+
+        //             return res;
+        //         }
+        //     }
+
+        //     return BTNodeState.FAILURE;
+        // }
     }
 }

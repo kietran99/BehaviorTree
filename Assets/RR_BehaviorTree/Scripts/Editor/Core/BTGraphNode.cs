@@ -5,9 +5,15 @@ using System.Linq;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTGraphNode<T> : Node, IBTSavable where T : IBTGraphNodeInfo, new()
+    public interface IBTGraphNode
+    {
+        void OnRemove();
+    }
+
+    public class BTGraphNode<T> : Node, IBTGraphNode, IBTSavable where T : IBTGraphNodeInfo, new()
     {
         private static Vector2 _defaultNodeSize = new Vector2(300f, 400f);
+        private static Color DEFAULT_PORT_COLOR = new Color(80f /255f, 80f /255f, 80f /255f);
 
         protected T _nodeAction;
 
@@ -36,9 +42,38 @@ namespace RR.AI.BehaviorTree
                 capabilities &= ~Capabilities.Deletable;
             }
 
+            BTBaseNode.OnRootTick += RootTickCallback;
+            BTBaseNode.OnTick += NodeTickCallback;
             // var label = new Label("0");
             // label.style.fontSize = 15;
             // titleButtonContainer.Add(label);
+            // Debug.Log(_nodeAction.Name);
+        }
+
+        private void RootTickCallback(string guid)
+        {
+            if (inputContainer.childCount == 0)
+            {
+                return;
+            }
+
+            (inputContainer[0] as Port).portColor = DEFAULT_PORT_COLOR;
+        }
+
+        private void NodeTickCallback(string guid)
+        {
+            if (_guid != guid)
+            {
+                return;
+            }
+            // Debug.Log(guid);
+            if (inputContainer.childCount == 0)
+            {
+                return;
+            }
+
+            var port = (inputContainer[0] as Port);
+            port.portColor = new Color(158f / 255f, 202f/ 255f, 255f / 255f);
         }
 
         private void StylizeTitleContainer(VisualElement container)
@@ -161,5 +196,11 @@ namespace RR.AI.BehaviorTree
         }
 
         public virtual System.Action DeleteCallback => () => {};
+
+        public void OnRemove()
+        {
+            // Debug.Log("Remove");
+            BTBaseNode.OnTick -= NodeTickCallback;
+        }
     }
 }

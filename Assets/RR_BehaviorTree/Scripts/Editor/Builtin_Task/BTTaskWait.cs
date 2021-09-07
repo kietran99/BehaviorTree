@@ -17,7 +17,7 @@ namespace RR.AI.BehaviorTree
 
             if (prop.Elapsed < prop.Duration)
             {
-                return BTNodeState.FAILURE;
+                return BTNodeState.RUNNING;
             }
 
             prop.Elapsed = 0f;

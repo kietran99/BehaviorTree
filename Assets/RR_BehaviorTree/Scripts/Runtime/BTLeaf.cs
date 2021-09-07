@@ -6,6 +6,8 @@ namespace RR.AI.BehaviorTree
     {
         private BTBaseTask _task;
 
+        public override bool IsLeaf => true;
+
         public BTLeaf(BTBaseTask task, string guid) : base(guid)
         {
             _task = task;
@@ -23,9 +25,20 @@ namespace RR.AI.BehaviorTree
             return true;
         }
 
-        public override BTNodeState Tick(GameObject actor, Blackboard blackboard)
+        public override BTNodeState InternalUpdate(GameObject actor, Blackboard blackboard, out BTBaseNode runningNode)
         {
-            return _task.Tick(actor, blackboard, _guid);
+            OnTick?.Invoke(_guid);
+            var res = _task.Tick(actor, blackboard, _guid);
+            runningNode = res == BTNodeState.RUNNING ? this : null;
+            return res;
+        }
+
+        public override BTNodeState Update(GameObject actor, Blackboard blackboard)
+        {
+            OnTick?.Invoke(_guid);
+            var res = _task.Tick(actor, blackboard, _guid);
+
+            return res;
         }
     }
 }

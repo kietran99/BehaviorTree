@@ -19,7 +19,7 @@ public abstract class AbstractGraphView : GraphView
         Insert(0, grid);
     }
 
-    protected void ClearNodesAndEdges()
+    protected virtual void ClearNodesAndEdges()
     {
         nodes.ForEach(node => RemoveElement(node));
         edges.ForEach(edge => RemoveElement(edge));

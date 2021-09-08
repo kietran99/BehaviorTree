@@ -12,8 +12,10 @@ namespace RR.AI.BehaviorTree
 
     public class BTGraphNode<T> : Node, IBTGraphNode, IBTSavable where T : IBTGraphNodeInfo, new()
     {
-        private static Vector2 _defaultNodeSize = new Vector2(300f, 400f);
-        private static Color DEFAULT_PORT_COLOR = new Color(80f /255f, 80f /255f, 80f /255f);
+        private static Vector2 _defaultNodeSize = new Vector2(600f, 400f);
+        private static Color DEFAULT_EDGE_COLOR = new Color(146f / 255f, 146f/ 255f, 146f / 255f);
+        private static Color DEBUG_ACTIVE_EDGE_COLOR = new Color(222f / 255f, 240f/ 255f, 61f / 255f);
+        private static Color DEBUG_INACTIVE_EDGE_COLOR = new Color(158f / 255f, 202f/ 255f, 255f / 255f, .2f);
 
         // public static OnEdgeDrag
 
@@ -72,7 +74,18 @@ namespace RR.AI.BehaviorTree
                 return;
             }
 
-            (inputContainer[0] as Port).portColor = DEFAULT_PORT_COLOR;
+            var color = DEBUG_INACTIVE_EDGE_COLOR;
+            var port = (inputContainer[0] as Port);
+            port.portColor = DEFAULT_EDGE_COLOR;
+
+            foreach (var edge in port.connections)
+            {
+                edge.edgeControl.edgeWidth = 3;
+                edge.edgeControl.inputColor = color;
+                edge.edgeControl.outputColor = color;
+                edge.edgeControl.fromCapColor = edge.edgeControl.inputColor;
+                edge.edgeControl.toCapColor = edge.edgeControl.outputColor;
+            }
         }
 
         private void NodeTickCallback(string guid)
@@ -88,7 +101,17 @@ namespace RR.AI.BehaviorTree
             }
 
             var port = (inputContainer[0] as Port);
-            port.portColor = new Color(158f / 255f, 202f/ 255f, 255f / 255f);
+            var color = DEBUG_ACTIVE_EDGE_COLOR;
+            port.portColor = color;
+            
+            foreach (var edge in port.connections)
+            {
+                edge.edgeControl.edgeWidth = 5;
+                edge.edgeControl.inputColor = color;
+                edge.edgeControl.outputColor = color;
+                edge.edgeControl.fromCapColor = edge.edgeControl.inputColor;
+                edge.edgeControl.toCapColor = edge.edgeControl.outputColor;
+            }
         }
 
         private void StylizeTitleContainer(VisualElement container)

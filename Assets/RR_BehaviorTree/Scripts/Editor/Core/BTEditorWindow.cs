@@ -19,7 +19,7 @@ namespace RR.AI.BehaviorTree
         {
             var window = GetWindow<BTEditorWindow>("Behavior Tree");
             // window.position = new Rect(500, 500, 500, 500);
-            // window.minSize = new Vector2(800, 800);
+            // window.minSize = new Vector2(1100, 800);
         }
 
         private void CreateGUI()

@@ -8,7 +8,7 @@ namespace RR.Serialization.Editor
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {   
-            var padding = 4f;
+            const float PADDING = 4f;
             var propHeight = base.GetPropertyHeight(property, label);
             var value = property.FindPropertyRelative("Value");
 
@@ -19,7 +19,7 @@ namespace RR.Serialization.Editor
             }
 
             var nChildren = PropertyDrawerUtility.GetChildrenSize(property, "Value");
-            return (propHeight + padding) * nChildren;
+            return (propHeight + PADDING) * nChildren;
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -31,15 +31,15 @@ namespace RR.Serialization.Editor
             var value = property.FindPropertyRelative("Value");
 
             var keyWidth = position.width * .4f;
-            var valueOffset = 15f;
-            var padding = 2f;
+            const float VALUE_OFFSET = 15f;
+            const float PADDING = 2f;
             var propHeight = EditorGUIUtility.singleLineHeight;
             var childrenSize = PropertyDrawerUtility.GetChildrenSize(property, "Value");
-            var keyRect = new Rect(position.x, position.y + padding, keyWidth, propHeight);
+            var keyRect = new Rect(position.x, position.y + PADDING, keyWidth, propHeight);
             var valueRect = new Rect(
-                position.x + keyWidth + valueOffset, 
-                position.y + padding, 
-                position.width - keyWidth - valueOffset, 
+                position.x + keyWidth + VALUE_OFFSET, 
+                position.y + PADDING, 
+                position.width - keyWidth - VALUE_OFFSET, 
                 position.height);
 
             var originalLabelWidth = EditorGUIUtility.labelWidth;
@@ -47,7 +47,7 @@ namespace RR.Serialization.Editor
             EditorGUI.PropertyField(keyRect, key, new GUIContent(Resources.Load<Texture>("Icons/key")));
             EditorGUIUtility.labelWidth = originalLabelWidth;
             
-            DrawChildrenProps(value, valueRect, propHeight, padding);
+            DrawChildrenProps(value, valueRect, propHeight, PADDING);
 
             EditorGUI.EndProperty();
         }

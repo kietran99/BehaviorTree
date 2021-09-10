@@ -21,6 +21,12 @@ namespace RR.Serialization.Editor
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             var entries = property.FindPropertyRelative("Entries");
+
+            if (!entries.isExpanded)
+            {
+                return base.GetPropertyHeight(property, label);
+            }
+
             var propHeight = base.GetPropertyHeight(property, label);
 
             if (entries.arraySize == 0)

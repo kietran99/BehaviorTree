@@ -24,7 +24,7 @@ namespace RR.AI.BehaviorTree
         protected string _guid;
         public string Guid => _guid; 
 
-        public BTGraphNode(Vector2 pos, string guid="")
+        public BTGraphNode(Vector2 pos, GraphBlackboard blackboard, string guid="")
         {
             styleSheets.Add(Resources.Load<UnityEngine.UIElements.StyleSheet>("Stylesheets/BTGraphNode"));
             AddToClassList("bold-text");
@@ -67,7 +67,7 @@ namespace RR.AI.BehaviorTree
             // Debug.Log(evt.originalMousePosition);
         // }
 
-        private void RootTickCallback(string guid)
+        private void RootTickCallback(string _)
         {
             if (inputContainer.childCount == 0)
             {

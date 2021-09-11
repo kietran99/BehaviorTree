@@ -8,17 +8,17 @@ namespace RR.AI.BehaviorTree
     {
         private System.Func<object> TaskPropConstructFn;
 
-        public BTGraphNodeLeaf(Vector2 pos, string guid = "") : base(pos, guid)
+        public BTGraphNodeLeaf(Vector2 pos, GraphBlackboard blackboard, string guid = "") : base(pos, blackboard, guid)
         {
             mainContainer.style.backgroundColor = new StyleColor(new Color(50f / 255f, 50f / 255f, 50f / 255f));
-            DrawTaskProperties(_nodeAction.Task.PropertyType);
+            DrawTaskProperties(_nodeAction.Task.PropertyType, blackboard);
         }
 
-        private void DrawTaskProperties(System.Type propType)
+        private void DrawTaskProperties(System.Type propType, GraphBlackboard blackboard)
         {
-            var attribs = propType.GetCustomAttributes(typeof(System.SerializableAttribute), true);
+            var serializableAttribs = propType.GetCustomAttributes(typeof(System.SerializableAttribute), true);
             
-            if (attribs.Length == 0)
+            if (serializableAttribs.Length == 0)
             {
                 Debug.LogError($"{propType} must be Serializable");
                 return;
@@ -33,25 +33,13 @@ namespace RR.AI.BehaviorTree
 
             foreach (var fieldInfo in fieldInfoList)
             {
-                var childContainer = new VisualElement();
-                childContainer.style.height = 20;
-                childContainer.style.width = 125;
-                childContainer.style.flexDirection = FlexDirection.Row;
-                childContainer.style.marginTop = 5;
-                childContainer.style.marginBottom = 5;
-                childContainer.style.marginRight = 5;
-                childContainer.style.marginLeft = 5;
+                var childContainer = CreatePropContainer(20f, 175f);
 
-                var label = new Label(RR.Utils.StringUtility.InsertWhiteSpaces(fieldInfo.Name));
-                label.style.width = 60;
-                label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                label.style.fontSize = 12;
-                label.style.whiteSpace = WhiteSpace.Normal;
-                childContainer.Add(label); 
+                childContainer.Add(CreatePropLabel(fieldInfo.Name, 70f)); 
 
-                var (field, bindPropFieldFn) = DrawPropField(fieldInfo, propFieldData);
+                var (field, bindPropFieldFn) = DrawPropField(fieldInfo, propFieldData, blackboard);
                 childContainer.Add(field);
-                field.style.maxWidth = 65;
+                field.style.maxWidth = 110f;
                 
                 bindPropDataFn += bindPropFieldFn;
 
@@ -68,53 +56,87 @@ namespace RR.AI.BehaviorTree
             mainContainer.Add(container);
         }
 
-        private (VisualElement field, System.Action<object> bindPropFieldFn) DrawPropField
-            (System.Reflection.FieldInfo fieldInfo, object propFieldData)
+        private VisualElement CreatePropContainer(float height, float width)
+        {
+            var container = new VisualElement();
+            container.style.height = height;
+            container.style.width = width;
+            container.style.flexDirection = FlexDirection.Row;
+            container.style.marginTop = 5;
+            container.style.marginBottom = 5;
+            container.style.marginRight = 5;
+            container.style.marginLeft = 5;
+
+            return container;
+        }
+
+        private VisualElement CreatePropLabel(string text, float width)
+        {
+            var label = new Label(RR.Utils.StringUtility.InsertWhiteSpaces(text));
+            label.style.width = width;
+            label.style.unityTextAlign = TextAnchor.MiddleLeft;
+            label.style.fontSize = 12;
+            label.style.whiteSpace = WhiteSpace.Normal;
+            return label;
+        }
+
+        private (VisualElement field, System.Action<object> bindPropFieldFn) DrawPropField(
+            System.Reflection.FieldInfo fieldInfo, 
+            object propFieldData, 
+            GraphBlackboard blackboard)
         {
             var type = fieldInfo.FieldType;
 
             if (type == typeof(string))
             {
-                var attribs = fieldInfo.GetCustomAttributes(typeof(RR.Serialization.TagFieldAttribute), true);
-                
-                if (attribs.Length > 0)
+                var BBValueAttribs = fieldInfo.GetCustomAttributes(typeof(RR.AI.BlackboardValueAttribute), true);
+                if (BBValueAttribs.Length > 0)
                 {
-                    var tagField = new TagField(string.Empty, "Untagged");
-                    tagField.value = (string) fieldInfo.GetValue(propFieldData);
-                    return (StylizePropField(tagField), prop => fieldInfo.SetValue(prop, tagField.value));
+                    var valType = (BBValueAttribs[0] as BlackboardValueAttribute).ValueType;
+                    var BBKeys = blackboard.GetKeys(valType);
+
+                    if (BBKeys.Count == 0)
+                    {
+                        return (new Label($"No value of type {valType} in Blackboard"), _ => {});
+                    }
+
+                    var field = new PopupField<string>(BBKeys, BBKeys[0]);
+                    return (StylizePropField(field), prop => fieldInfo.SetValue(prop, field.value));
                 }
 
-                var field = new TextField(string.Empty, 200, true, false, '*');
-                field.value = (string) fieldInfo.GetValue(propFieldData);
-                return (StylizePropField(field), prop => fieldInfo.SetValue(prop, field.value));
+                var tagFieldAttribs = fieldInfo.GetCustomAttributes(typeof(RR.Serialization.TagFieldAttribute), true);
+                
+                if (tagFieldAttribs.Length > 0)
+                {
+                    return CreatePropField(new TagField(string.Empty, "Untagged"), fieldInfo, propFieldData);
+                }
+
+                return CreatePropField(new TextField(string.Empty, 200, true, false, '*'), fieldInfo, propFieldData);
             }
 
             if (type == typeof(int))
             {
-                var field = new IntegerField();
-                field.value = (int) fieldInfo.GetValue(propFieldData);
-                return (StylizePropField(field), prop => fieldInfo.SetValue(prop, field.value));
+                return CreatePropField(new IntegerField(), fieldInfo, propFieldData);
             }
 
             if (type == typeof(float))
             {
-                var field = new FloatField();
-                field.value = (float) fieldInfo.GetValue(propFieldData);
-                return (StylizePropField(field), prop => fieldInfo.SetValue(prop, field.value));
+                return CreatePropField(new FloatField(), fieldInfo, propFieldData);
             }
 
             if (type == typeof(bool))
             {
-                var field = new Toggle();
-                field.value = (bool) fieldInfo.GetValue(propFieldData);
-                return (StylizePropField(field), prop => fieldInfo.SetValue(prop, field.value));
+                return CreatePropField(new Toggle(), fieldInfo, propFieldData);
+            }
+
+            if (type == typeof(Vector2))
+            {
+                return CreatePropField(new Vector2Field(), fieldInfo, propFieldData);
             }
 
             if (type == typeof(Vector3))
             {
-                var field = new Vector3Field();
-                field.value = (Vector3) fieldInfo.GetValue(propFieldData);
-                return (StylizePropField(field), prop => fieldInfo.SetValue(prop, field.value));
+                return CreatePropField(new Vector3Field(), fieldInfo, propFieldData);
             }
 
             if (typeof(ScriptableObject).IsAssignableFrom(type) || type.IsInterface)
@@ -123,7 +145,17 @@ namespace RR.AI.BehaviorTree
                 return (StylizePropField(field), prop => fieldInfo.SetValue(prop, field.value));
             }
 
-            return (new Label($"Unsupported type {type}"), _ => {});
+            return (new Label($"Unsupported type\n {type}"), _ => {});
+        }
+
+        private (VisualElement field, System.Action<object> bindPropFieldFn) CreatePropField<TProp>(
+            BaseField<TProp> baseField, 
+            System.Reflection.FieldInfo fieldInfo, 
+            object propFieldData)
+        {
+            var field = baseField;
+            field.value = (TProp) fieldInfo.GetValue(propFieldData);
+            return (StylizePropField(field), prop => fieldInfo.SetValue(prop, field.value));
         }
 
         private VisualElement StylizePropField(VisualElement field)

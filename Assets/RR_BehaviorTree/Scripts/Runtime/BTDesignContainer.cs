@@ -9,6 +9,8 @@ namespace RR.AI.BehaviorTree
         public List<BTSerializableNodeData> nodeDataList = new List<BTSerializableNodeData>();
         public List<BTSerializableTaskData> taskDataList = new List<BTSerializableTaskData>();
 
+        public Blackboard Blackboard { get; }
+
         public void Save(UnityEngine.UIElements.UQueryState<UnityEditor.Experimental.GraphView.Node> nodes)
         {
             nodeDataList.Clear();

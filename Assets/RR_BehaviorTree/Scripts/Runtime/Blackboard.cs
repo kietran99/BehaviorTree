@@ -1,116 +1,68 @@
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace RR.AI
 {
-	public class Blackboard : UnityEditor.Experimental.GraphView.Blackboard, IToolbarMenuElement
+	public class Blackboard
 	{
-        private System.Collections.Generic.Dictionary<string, IBlackboardItem> _itemDict; 
+        private System.Collections.Generic.Dictionary<string, IBBEntry> _keyToItemMap;
 
-        public DropdownMenu menu { get; }
-
-        public Blackboard(UnityEditor.Experimental.GraphView.GraphView graphView = null) : base(graphView)
+        public Blackboard()
 		{
-			_itemDict = new System.Collections.Generic.Dictionary<string, IBlackboardItem>();
-			menu = CreateEntryMenu();
-			addItemRequested = bb => OnAddItemRequested(bb);
+			_keyToItemMap = new System.Collections.Generic.Dictionary<string, IBBEntry>();
 		}
 
-		private DropdownMenu CreateEntryMenu()
+		public bool TryGetValue<T>(string key, out T value)
 		{
-			var menu = new DropdownMenu();
-
-			menu.AppendAction("Int", _ => 
+			if (_keyToItemMap.TryGetValue(key, out var val))
 			{
-				Add(CreateBBField("Integer", new IntegerField()));
-			});
+				var convertedVal = val as BlackboardItem<T>;
 
-			menu.AppendAction("Bool", _ => 
-			{
-				Add(CreateBBField("Boolean", new Toggle()));
-			});
+				if (convertedVal == null)
+				{
+					Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {val.ValueType}");
+				}
 
-			menu.AppendAction("Float", _ => 
-			{
-				Add(CreateBBField("Float", new FloatField()));
-			});
+				value = convertedVal.Value;
+				return true;
+			}
 
-			menu.AppendAction("String", _ => 
-			{
-				Add(CreateBBField("String", new TextField()));
-			});
-
-			menu.AppendAction("Vector2", _ => 
-			{
-				Add(CreateBBField("Vector2", new Vector2Field()));
-			});
-
-			menu.AppendAction("Vector3", _ => 
-			{
-				Add(CreateBBField("Vector3", new Vector3Field()));
-			});
-
-			menu.AppendAction("Transform", _ => 
-			{
-				Add(CreateBBField("Transform", new ObjectField() { objectType = typeof(Transform) }));
-			});
-
-			menu.AppendAction("Object", _ => 
-			{
-				Add(CreateBBField("Object", new ObjectField() { objectType = typeof(Object) }));
-			});
-
-			return menu;
-		}
-
-		private void OnAddItemRequested(UnityEditor.Experimental.GraphView.Blackboard blackboard) => this.ShowMenu();
-
-		private VisualElement CreateBBField(string typeText, VisualElement propertyView)
-		{
-			var container = new VisualElement();
-			var bbField = new BlackboardField() { text = "Key", typeText = typeText };
-			container.Add(bbField);
-			container.Add(new BlackboardRow(bbField, propertyView));
-			return container;
-		}
-
-		public void OnGOSelectionChanged()
-		{
-			Clear();
+			Debug.LogWarning($"{key} does not exist. Default {typeof(T)} value is returned instead.");
+			value = default;
+			return false;
 		}
 
 		public bool Add<T>(string key, T value)
 		{
-			if (_itemDict.TryGetValue(key, out var _))
+			if (_keyToItemMap.TryGetValue(key, out var _))
 			{
 				return false;
 			}
 
-			_itemDict.Add(key, new BlackboardItem<T>(value));
+			var newEntry = BBEntryFactory.New<T>(value);
+			_keyToItemMap.Add(key, newEntry);
+
 			return true;
 		}
 
 		public bool Update<T>(string key, T value)
 		{
-			if (!_itemDict.TryGetValue(key, out var _))
+			if (!_keyToItemMap.TryGetValue(key, out var _))
 			{
 				return false;
 			}
 
-			_itemDict[key] = value as IBlackboardItem;
+			_keyToItemMap[key] = value as IBBEntry;
 			return true;
 		}
 
 		public bool Remove(string key)
 		{
-			if (!_itemDict.TryGetValue(key, out var _))
+			if (!_keyToItemMap.TryGetValue(key, out var _))
 			{
 				return false;
 			}
 
-			_itemDict.Remove(key);
+			_keyToItemMap.Remove(key);
 			return true;
 		}
 	}

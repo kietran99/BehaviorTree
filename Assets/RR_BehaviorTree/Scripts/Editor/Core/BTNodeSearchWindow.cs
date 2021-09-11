@@ -7,16 +7,14 @@ namespace RR.AI.BehaviorTree
 {
     public class BTNodeSearchWindow : ScriptableObject, ISearchWindowProvider
     {
-        private System.Collections.Generic.List<Type> taskTypes = new System.Collections.Generic.List<Type>();
-        private Action<Node> OnEntrySelected;
-        private Func<Vector2, Vector2> ContextToLocalMousePos;
+        private System.Collections.Generic.List<Type> _taskTypes = new System.Collections.Generic.List<Type>();
+        private Action<Type, Vector2> OnEntrySelected;
         private BTTaskReferenceContainer _taskRefContainer;
         private Texture2D _indentation;
 
-        public void Init(Action<Node> entrySelectCallback, Func<Vector2, Vector2> contextToLocalMousePos)
+        public void Init(Action<Type, Vector2> entrySelectedCallback)
         {
-            OnEntrySelected = entrySelectCallback;
-            ContextToLocalMousePos = contextToLocalMousePos;
+            OnEntrySelected = entrySelectedCallback;
 
             _indentation = new Texture2D(1, 1);
             _indentation.SetPixel(0, 0, new Color(0, 0, 0, 0));
@@ -34,7 +32,7 @@ namespace RR.AI.BehaviorTree
                                                     && !type.IsGenericType
                                                     && type != typeof(BTTaskNull));
 
-                taskTypes.AddRange(types);
+                _taskTypes.AddRange(types);
             }
         }
 
@@ -57,7 +55,7 @@ namespace RR.AI.BehaviorTree
                 new SearchTreeGroupEntry(new GUIContent("Task"), 1)
             };
 
-            foreach(var type in taskTypes)
+            foreach(var type in _taskTypes)
             {      
                 tree.Add(
                     new SearchTreeEntry(new GUIContent(GetTaskName(type), _indentation))
@@ -75,21 +73,12 @@ namespace RR.AI.BehaviorTree
             var typeName = type.Name;
             var btTaskNamePrefix = "BTTask";
             var extractedTypeName = typeName.StartsWith(btTaskNamePrefix) ? typeName.Substring(btTaskNamePrefix.Length) : typeName;
-
             return RR.Utils.StringUtility.InsertWhiteSpaces(extractedTypeName);
         }
 
         public bool OnSelectEntry(SearchTreeEntry searchTreeEntry, SearchWindowContext context)
         {     
-            var nodeSpawnPos = ContextToLocalMousePos(context.screenMousePosition);
-            var userDataType = searchTreeEntry.userData as System.Type;
-            var nodeCreationMethodName = typeof(BTBaseTask).IsAssignableFrom(userDataType) 
-                ? nameof(BTGraphNodeFactory.CreateTaskGeneric) 
-                : nameof(BTGraphNodeFactory.CreateNodeGeneric);
-            var methodInfo = typeof(BTGraphNodeFactory).GetMethod(nodeCreationMethodName);
-            var genericMethodInfo = methodInfo.MakeGenericMethod(userDataType);
-            var node = genericMethodInfo.Invoke(null, new object[] { nodeSpawnPos, string.Empty });
-            OnEntrySelected?.Invoke(node as Node);
+            OnEntrySelected?.Invoke(searchTreeEntry.userData as System.Type, context.screenMousePosition);
             return true;
         }
     }

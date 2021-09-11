@@ -11,7 +11,6 @@ public class TestValue
 
 public class TestScript : MonoBehaviour, IMyInterface
 {
-
     [TagField]
     public string someTag;
     // public SerializableDictionary<string, int> intDict;

@@ -25,17 +25,17 @@ MonoBehaviour:
     _nodeType: 1
   taskDataList:
   - _graphData:
-      _guid: e1a18b94-4c53-45cf-9dc4-578de79f9103
-      _parentGuid: 51385d0f-f8c8-4bad-8f69-ecc00ec771f0
-      _position: {x: 763, y: 131}
-    _task: {fileID: 11400000, guid: be210180dc8fd4d459cd40650b11940a, type: 2}
-  - _graphData:
       _guid: 943b30a3-5323-49c5-9fe1-759f7644d78e
       _parentGuid: 51385d0f-f8c8-4bad-8f69-ecc00ec771f0
-      _position: {x: 765, y: 460}
+      _position: {x: 757, y: 460}
     _task: {fileID: 11400000, guid: bd4ef22bd57a4a646b266eadda77f010, type: 2}
+  - _graphData:
+      _guid: e1a18b94-4c53-45cf-9dc4-578de79f9103
+      _parentGuid: 51385d0f-f8c8-4bad-8f69-ecc00ec771f0
+      _position: {x: 760, y: 131}
+    _task: {fileID: 11400000, guid: be210180dc8fd4d459cd40650b11940a, type: 2}
   - _graphData:
       _guid: a891cca5-54c8-4113-ad15-23ed918c7af5
       _parentGuid: 51385d0f-f8c8-4bad-8f69-ecc00ec771f0
-      _position: {x: 762, y: 297}
+      _position: {x: 759, y: 297}
     _task: {fileID: 11400000, guid: be210180dc8fd4d459cd40650b11940a, type: 2}

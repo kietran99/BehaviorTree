@@ -11,7 +11,7 @@ namespace RR.AI.BehaviorTree
         private BTGraphView _graphView;
         private BehaviorTree _inspectedBT;
         private BTNodeSearchWindow _searchWindow;
-        private Blackboard _blackboard;
+        // private GraphBlackboard _blackboard;
         private Toolbar _toolbar;
 
         [MenuItem("Graph/Behavior Tree")]
@@ -28,15 +28,13 @@ namespace RR.AI.BehaviorTree
 
             _searchWindow = CreateNodeSearchWindow(_graphView);
 
-            _blackboard = CreateBlackboard(_graphView, "Shared Variables", new Rect(10, 30, 250, 250));
-            _blackboard.visible = _inspectedBT != null;
-
+            // _blackboard = _graphView.GetBlackboard() as GraphBlackboard;
+            // _blackboard.visible = _inspectedBT != null;
+            _graphView.GetBlackboard().visible = _inspectedBT != null;
             _toolbar = CreateToolbar();
             _toolbar.visible = _inspectedBT != null;
 
             Selection.selectionChanged += OnGOSelectionChanged;
-            
-            _graphView.Add(_blackboard);
 
             rootVisualElement.Add(_graphView);
             rootVisualElement.Add(_toolbar);
@@ -55,13 +53,6 @@ namespace RR.AI.BehaviorTree
             var graphView = res ? new BTGraphView(BT.DesignContainer) : new BTGraphView();
             graphView.StretchToParentSize();
             return (graphView, res ? BT : null);
-        }
-
-        private Blackboard CreateBlackboard(BTGraphView graphView, string title, Rect rect)
-        {
-            var blackboard = new Blackboard(graphView) { title = title, scrollable = true };
-            blackboard.SetPosition(rect);      
-            return blackboard;
         }
 
         private Toolbar CreateToolbar()
@@ -92,7 +83,13 @@ namespace RR.AI.BehaviorTree
                 return graphView.WorldToLocal(worldPos);
             };
 
-            window.Init(node => graphView.AddElement(node), contextToLocalMousePos);
+            window.Init((nodeType, pos) => 
+            {
+                var localMousePos = contextToLocalMousePos(pos);
+                var node = BTGraphNodeFactory.CreateGraphNode(nodeType, _graphView.GetBlackboard() as GraphBlackboard, localMousePos);
+                graphView.AddElement(node);
+            });
+
             return window;
         }
 
@@ -109,13 +106,10 @@ namespace RR.AI.BehaviorTree
             {
                 _graphView.OnGOSelectionChanged(null);
                 _toolbar.visible = false;
-                _blackboard.visible = false;
                 return;
             }
 
             _toolbar.visible = true;
-            _blackboard.visible = true;
-            _blackboard.OnGOSelectionChanged();
             _graphView.OnGOSelectionChanged(_inspectedBT.DesignContainer);
         }
 

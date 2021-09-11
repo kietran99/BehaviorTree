@@ -128,7 +128,7 @@ namespace RR.AI.BehaviorTree
 
         private void Update()
         {
-            _root.Update(_actor, null);
+            _root.Update(_actor, _designContainer.Blackboard);
         }
     }
 }

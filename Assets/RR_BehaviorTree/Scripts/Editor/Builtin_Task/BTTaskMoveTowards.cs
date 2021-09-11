@@ -8,7 +8,7 @@ namespace RR.AI.BehaviorTree
 
         public override void Init(GameObject actor, Blackboard blackboard, BTTaskMoveTowardsData prop)
         {
-            
+
         }
 
         public override BTNodeState Tick(GameObject actor, Blackboard blackboard, BTTaskMoveTowardsData prop)
@@ -20,8 +20,12 @@ namespace RR.AI.BehaviorTree
 	[System.Serializable]
 	public class BTTaskMoveTowardsData
 	{
-		// public UnityEngine.Transform target;
+		// public Transform target;
 		public float Speed;
-		public UnityEngine.Vector3 TargetPosition;
+		public Vector3 TargetPosition;
+		
+		// public BBValue<int> BlackboardInt;
+		[BlackboardValue(typeof(int))]
+		public string BlackboardInt;
 	}
 }

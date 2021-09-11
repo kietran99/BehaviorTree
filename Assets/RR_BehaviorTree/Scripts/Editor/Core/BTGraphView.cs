@@ -1,25 +1,37 @@
 using UnityEditor.Experimental.GraphView;
 using System.Collections.Generic;
-using UnityEngine.UIElements;
-using System;
 
 namespace RR.AI.BehaviorTree
 {
     public class BTGraphView : AbstractGraphView
     {
         private UnityEngine.Vector2 defaultRootSpawnPos = new UnityEngine.Vector2(100f, 300f);
+        private readonly UnityEngine.Rect BB_RECT = new UnityEngine.Rect(10, 30, 250, 500);
+
+        private GraphBlackboard _blackboard;
 
         public System.Action OnNodeDeleted { get; set; }
 
         public BTGraphView() : base()
         {
+            _blackboard = CreateBlackboard(this, "Shared Variables", BB_RECT);
+            Add(_blackboard);
             graphViewChanged += OnGraphViewChanged;
         }
 
         public BTGraphView(BTDesignContainer designContainer) : base()
         {
             UpdateView(designContainer);
+            _blackboard = CreateBlackboard(this, "Shared Variables", BB_RECT);
+            Add(_blackboard);
             graphViewChanged += OnGraphViewChanged;       
+        }
+
+        private GraphBlackboard CreateBlackboard(BTGraphView graphView, string title, UnityEngine.Rect rect)
+        {
+            var blackboard = new GraphBlackboard(graphView) { title = title, scrollable = true };
+            blackboard.SetPosition(rect);      
+            return blackboard;
         }
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange)
@@ -62,10 +74,13 @@ namespace RR.AI.BehaviorTree
             if (designContainer == null)
             {
                 ClearNodesAndEdges();
+                _blackboard.visible = false;
                 return;
             }
 
             ClearNodesAndEdges();
+            _blackboard.visible = true;
+            _blackboard.OnGOSelectionChanged();
             UpdateView(designContainer);
         }
 
@@ -81,7 +96,7 @@ namespace RR.AI.BehaviorTree
 
             if (designContainer.nodeDataList == null || designContainer.nodeDataList.Count == 0)
             {
-                var root = BTGraphNodeFactory.CreateNode(BTNodeType.Root, defaultRootSpawnPos);
+                var root = BTGraphNodeFactory.CreateGraphNode(BTNodeType.Root, defaultRootSpawnPos, _blackboard);
                 AddElement(root);
                 return;
             }
@@ -91,7 +106,7 @@ namespace RR.AI.BehaviorTree
 
             designContainer.nodeDataList.ForEach(nodeData => 
             {
-                var node = BTGraphNodeFactory.CreateNode(nodeData.NodeType, nodeData.Position, nodeData.Guid);
+                var node = BTGraphNodeFactory.CreateGraphNode(nodeData.NodeType, nodeData.Position, _blackboard, nodeData.Guid);
                 
                 // var badge = IconBadge.CreateComment("0");
                 // badge.badgeText = "0";
@@ -110,7 +125,7 @@ namespace RR.AI.BehaviorTree
 
             designContainer.taskDataList.ForEach(taskData => 
             {
-                var node = BTGraphNodeFactory.CreateNode(taskData.Task, taskData.Position, taskData.Guid);
+                var node = BTGraphNodeFactory.CreateGraphNodeLeaf(taskData.Task, taskData.Position, _blackboard, taskData.Guid);
 
                 nodeDict.Add(taskData.Guid, node);
                 
@@ -129,6 +144,8 @@ namespace RR.AI.BehaviorTree
                 AddElement(edge);
             });
         }
+
+        public override UnityEditor.Experimental.GraphView.Blackboard GetBlackboard() => _blackboard;
 
         public void OnGraphSaved()
         {

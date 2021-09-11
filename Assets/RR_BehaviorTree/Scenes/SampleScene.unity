@@ -3006,6 +3006,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   someTag: MainCamera
+  myClass:
+    myString: 
+    myBBValue:
+      Key: 
   intArrDict:
     Entries:
     - Key: 

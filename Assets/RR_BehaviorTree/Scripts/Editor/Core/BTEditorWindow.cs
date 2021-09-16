@@ -11,8 +11,10 @@ namespace RR.AI.BehaviorTree
         private BTGraphView _graphView;
         private BehaviorTree _inspectedBT;
         private BTNodeSearchWindow _searchWindow;
-        // private GraphBlackboard _blackboard;
         private Toolbar _toolbar;
+
+        public static System.Action OnSaveAssetsClick { get; set; }
+
 
         [MenuItem("Graph/Behavior Tree")]
         public static void Init()
@@ -28,8 +30,6 @@ namespace RR.AI.BehaviorTree
 
             _searchWindow = CreateNodeSearchWindow(_graphView);
 
-            // _blackboard = _graphView.GetBlackboard() as GraphBlackboard;
-            // _blackboard.visible = _inspectedBT != null;
             _graphView.GetBlackboard().visible = _inspectedBT != null;
             _toolbar = CreateToolbar();
             _toolbar.visible = _inspectedBT != null;
@@ -64,7 +64,7 @@ namespace RR.AI.BehaviorTree
                 if (_inspectedBT != null) 
                 {
                     _inspectedBT.DesignContainer.Save(_graphView.nodes);
-                    _graphView.OnGraphSaved();
+                    _graphView.Save();
                 }
             }) { text = "Save Assets" };
 
@@ -128,6 +128,7 @@ namespace RR.AI.BehaviorTree
         private void OnDisable()
         {
             Selection.selectionChanged -= OnGOSelectionChanged;
+            OnSaveAssetsClick = null;
             // _graphView.RemoveElement(_blackboard);
             rootVisualElement.Remove(_graphView);
             rootVisualElement.Remove(_toolbar);

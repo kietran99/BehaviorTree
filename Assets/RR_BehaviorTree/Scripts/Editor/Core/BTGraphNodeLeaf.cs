@@ -97,7 +97,9 @@ namespace RR.AI.BehaviorTree
 
                     if (BBKeys.Count == 0)
                     {
-                        return (new Label($"No value of type {valType} in Blackboard"), _ => {});
+                        var label = new Label($"No value of type {valType}");
+                        label.style.whiteSpace = WhiteSpace.Normal;
+                        return (label, _ => {});
                     }
 
                     var field = new PopupField<string>(BBKeys, BBKeys[0]);

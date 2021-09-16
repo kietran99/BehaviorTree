@@ -1,69 +1,91 @@
 using UnityEditor.Experimental.GraphView;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 
 namespace RR.AI
 {
-	public class GraphBlackboard : UnityEditor.Experimental.GraphView.Blackboard, IToolbarMenuElement
+	public class GraphBlackboard : UnityEditor.Experimental.GraphView.Blackboard
 	{
 		private Blackboard _runtimeBB;
+		private ScriptableObject _BBcontainer;
 		private Dictionary<System.Type, List<string>> _typeToKeysMap;
 
-		public Blackboard RuntimeBlackboard => _runtimeBB;
+		private Queue<System.Func<GraphBlackboard, ScriptableObject, bool>> _cmdQueue;
 
-		public DropdownMenu menu { get; }
+		// public Blackboard RuntimeBlackboard => _runtimeBB;
 
-        public GraphBlackboard(UnityEditor.Experimental.GraphView.GraphView graphView = null) : base(graphView)
+        public GraphBlackboard(
+			Blackboard runtimeBlackboard = null,
+			ScriptableObject BBContainer = null,
+			UnityEditor.Experimental.GraphView.GraphView graphView = null) : base(graphView)
 		{
-			_runtimeBB = new Blackboard();
+			if (BBContainer == null)
+			{
+				return;
+			}
+
+			_runtimeBB = runtimeBlackboard;
+			_BBcontainer = BBContainer;
 			_typeToKeysMap = new Dictionary<System.Type, List<string>>();
+			_cmdQueue = new Queue<System.Func<GraphBlackboard, ScriptableObject, bool>>();
+
 			style.backgroundColor = new StyleColor(new Color(50f / 255f, 50f / 255f, 50f / 255f));
 
-			menu = CreateEntryMenu(new (string path, string typeName, VisualElement propView)[]
+			addItemRequested = OnAddItemRequested;
+			DisplayFields(runtimeBlackboard);
+		}
+
+		private void OnAddItemRequested(UnityEditor.Experimental.GraphView.Blackboard blackboard)
+		{
+			Add(new AddBBEntryBox(
+				contentRect.width, 
+				(key, valView, BBvalueInfo) => 
+				{
+					var BBField = CreateBBField(BBvalueInfo.TypeText, valView, key);
+					Add(BBField);
+					_cmdQueue.Enqueue((blackboard, BBcontainer) => BBvalueInfo.AddToBlackboard(blackboard, key, valView, BBcontainer));
+				}));
+		}
+
+		private void DisplayFields(Blackboard runtimeBB)
+		{
+			if (runtimeBB == null)
 			{
-				("Int", "Int", new IntegerField()),
-				("Bool", "Bool", new Toggle()),
-				("Float", "Float", new FloatField()),
-				("String", "String", new TextField()),
-				("Vector2", "Vector2", new Vector2Field()),
-				("Vector3", "Vector3", new Vector3Field()),
-				("Components/Transform", "Transform", new ObjectField() { objectType = typeof(Transform) }),
-				("Object", "Object", new ObjectField() { objectType = typeof(Object) })
+				return;
+			}
+
+			var fields = runtimeBB.Map((key, val) => 
+			{
+				var BBVal = val as IBBValue;
+				return CreateBBField(BBVal.ValueTypeString, BBVal.CreatePropField(), key);
 			});
 			
-			addItemRequested = bb => OnAddItemRequested(bb);
-			AddEntry("Num Players", 4);
-			AddEntry("Attacks Left", 21);
-			// AddEntry("My Bool", true);
-		}
-
-		private DropdownMenu CreateEntryMenu((string path, string typeName, VisualElement propView)[] actionDataList)
-		{
-			var menu = new DropdownMenu();
-
-			foreach (var data in actionDataList)
+			foreach(var field in fields)
 			{
-				menu.AppendAction(data.path, _ => Add(CreateBBField(data.typeName, data.propView)));
+				Add(field);
 			}
-			return menu;
 		}
-
-		private void OnAddItemRequested(UnityEditor.Experimental.GraphView.Blackboard blackboard) => this.ShowMenu();
 
 		private VisualElement CreateBBField(string typeText, VisualElement propView, string key = "")
 		{
 			var container = new VisualElement();
+			propView.style.height = 16f;
+			propView.style.width = contentRect.width - 16f;
 			var bbField = new BlackboardField() { text = string.IsNullOrEmpty(key) ? "Key" : key, typeText = typeText };
-			container.Add(bbField);
 			container.Add(new BlackboardRow(bbField, propView));
 			return container;
 		}
 
-		public void OnGOSelectionChanged()
+		public void OnGOSelectionChanged(Blackboard runtimeBlackboard = null, ScriptableObject BBContainer = null)
 		{
 			Clear();
+
+			if (runtimeBlackboard != null && BBContainer != null)
+			{
+				DisplayFields(runtimeBlackboard);
+				_BBcontainer = BBContainer;
+			}
 		}
 
 		public List<string> GetKeys(System.Type type)
@@ -76,15 +98,30 @@ namespace RR.AI
 			return new List<string>();
 		}
 
-		public bool AddEntry<T>(string key, T value)
+		public bool AddEntry<T>(string key, T value, ScriptableObject BBContainer, out IBBValue BBVal)
 		{
-			// if (_runtimeBB.TryGetValue(key, out T _))
-			// {
-			// 	return false;
-			// }
+			if (BBContainer == null)
+			{
+				Debug.LogError("Blackboard container Scriptable Object is Null");
+				BBVal = null;
+				return false;
+			}
 
-			var newEntry = BBEntryFactory.New<T>(value);
-			// _runtimeBB.Add(key, newEntry);
+			if (_runtimeBB.TryGetValue(key, out T _))
+			{
+				BBVal = null;
+				return false;
+			}
+
+			var newEntry = BBValueFactory.New<T>(BBContainer, value);
+
+			if (newEntry == null)
+			{
+				BBVal = null;
+				return false;
+			}
+
+			_runtimeBB.Add(key, newEntry);
 
 			var valType = typeof(T);
 
@@ -95,7 +132,8 @@ namespace RR.AI
 
 			_typeToKeysMap[valType].Add(key);
 
-			Add(CreateBBField(newEntry.ValueTypeString, newEntry.CreatePropField(), key));
+			var newEntryAsIBBValue = newEntry as IBBValue;
+			BBVal = newEntry as IBBValue;
 
 			return true;
 		}
@@ -111,6 +149,33 @@ namespace RR.AI
 		// 	return true;
 		// }
 
-		// public bool Remove(string key)
+		public bool RemoveEntry(string key, ScriptableObject BBContainer)
+		{
+			if (BBContainer == null)
+			{
+				Debug.LogError("Blackboard container Scriptable Object is Null");
+				return false;
+			}
+
+			if (!_runtimeBB.TryGetValue(key, out var valSO))
+			{
+				return false;
+			}
+
+			_runtimeBB.Remove(key);
+			UnityEditor.AssetDatabase.RemoveObjectFromAsset(valSO);
+			UnityEditor.AssetDatabase.SaveAssets();
+
+			return true;
+		}
+
+		public void Save()
+		{
+			while (_cmdQueue.Count > 0)
+			{
+				var cmd = _cmdQueue.Dequeue();
+				cmd(this, _BBcontainer);
+			}
+		}
 	}
 }

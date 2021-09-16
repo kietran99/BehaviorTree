@@ -2961,7 +2961,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _actor: {fileID: 1419901907}
-  _designContainer: {fileID: 11400000, guid: 3a9ebd7f219f97e4a976547d9e5a054a, type: 2}
+  _designContainer: {fileID: 11400000, guid: c807c9195c25e564686fb788adfeb76f, type: 2}
 --- !u!4 &1419901909
 Transform:
   m_ObjectHideFlags: 0
@@ -3006,30 +3006,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   someTag: MainCamera
-  myClass:
-    myString: 
-    myBBValue:
-      Key: 
   intArrDict:
-    Entries:
-    - Key: 
-      Value: 37020000825b00000000000022020000040000000000000059010000
-    - Key: asd
-      Value: 200200001700000000000000
-    - Key: sfhg
-      Value: 200200000100000000000000
+    _entries: []
   testValueDict:
-    Entries:
-    - Key: Hello
-      Value:
-        myInt: 123
-        myBool: 0
-        camera: {fileID: 519420031}
-    - Key: World
-      Value:
-        myInt: 0
-        myBool: 1
-        camera: {fileID: 0}
+    _entries: []
 --- !u!4 &1916848803
 Transform:
   m_ObjectHideFlags: 0

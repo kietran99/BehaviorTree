@@ -40,7 +40,7 @@ namespace RR.AI.BehaviorTree
             var relativePath = GetRelativePath(path, "Assets");
             UnityEditor.AssetDatabase.CreateAsset(task, relativePath);
             taskReferences.AddTask(task as BTBaseTask);
-            Debug.Log($"{typeof(T).Name} was created!");
+            Debug.Log($"{typeof(T).Name} was created at {relativePath}!");
             return task;
         } 
 

@@ -5,7 +5,10 @@ namespace RR.Serialization
     {
         private System.Collections.Generic.Dictionary<TKey, TValue> _map = new System.Collections.Generic.Dictionary<TKey, TValue>();
 
-        public System.Collections.Generic.List<SerializableKeyValuePair<TKey, TValue>> Entries;
+        [UnityEngine.SerializeField]
+        private System.Collections.Generic.List<SerializableKeyValuePair<TKey, TValue>> _entries;
+
+        public System.Collections.Generic.List<SerializableKeyValuePair<TKey, TValue>> Entries => _entries;
 
         public void OnBeforeSerialize() {}
 
@@ -13,15 +16,15 @@ namespace RR.Serialization
         {
             _map.Clear();
             
-            for (int i = 0; i < Entries.Count; i++)
+            for (int i = 0; i < _entries.Count; i++)
             {
-                if (_map.ContainsKey(Entries[i].Key))
+                if (_map.ContainsKey(_entries[i].Key))
                 {
                     UnityEngine.Debug.LogWarning($"Duplicate key at index {i}, skipped");
                     continue;
                 }
 
-                _map.Add(Entries[i].Key, Entries[i].Value);
+                _map.Add(_entries[i].Key, _entries[i].Value);
             }
         }
     
@@ -32,12 +35,12 @@ namespace RR.Serialization
                 return false;
             }
 
-            if (Entries == null)
+            if (_entries == null)
             {
-                Entries = new System.Collections.Generic.List<SerializableKeyValuePair<TKey, TValue>>();
+                _entries = new System.Collections.Generic.List<SerializableKeyValuePair<TKey, TValue>>();
             }
 
-            Entries.Add(new SerializableKeyValuePair<TKey, TValue>() { Key = key, Value = value });
+            _entries.Add(new SerializableKeyValuePair<TKey, TValue>() { Key = key, Value = value });
             _map.Add(key, value);
             return true;
         }
@@ -49,11 +52,11 @@ namespace RR.Serialization
                 return false;
             }
 
-            for (int i = 0; i < Entries.Count; i++)
+            for (int i = 0; i < _entries.Count; i++)
             {
-                if (Entries[i].Key.Equals(key))
+                if (_entries[i].Key.Equals(key))
                 {
-                    Entries[i].Value = value;
+                    _entries[i].Value = value;
                     break;
                 }
             }
@@ -82,11 +85,11 @@ namespace RR.Serialization
                 return false;
             }
 
-            foreach (var entry in Entries)
+            foreach (var entry in _entries)
             {
                 if (entry.Key.Equals(key))
                 {
-                    Entries.Remove(entry);
+                    _entries.Remove(entry);
                     OnAfterDeserialize();
                     return true;
                 }
@@ -100,6 +103,14 @@ namespace RR.Serialization
         {
             return _map.TryGetValue(key, out value);
         }
+	
+		public System.Collections.Generic.IEnumerable<T> Map<T>(System.Func<TKey, TValue, T> fn)
+		{
+			foreach (var entry in _entries)
+			{
+				yield return fn(entry.Key, entry.Value);
+			}
+		}
     }
 
     [System.Serializable]

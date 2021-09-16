@@ -10,7 +10,7 @@ namespace RR.Serialization.Editor
         {
             EditorGUI.BeginProperty(position, label, property);
 
-            var entries = property.FindPropertyRelative("Entries");
+            var entries = property.FindPropertyRelative("_entries");
             // Debug.Log($"Dict Height: {position.height}");
 
             EditorGUI.PropertyField(position, entries, label, true);
@@ -20,7 +20,7 @@ namespace RR.Serialization.Editor
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            var entries = property.FindPropertyRelative("Entries");
+            var entries = property.FindPropertyRelative("_entries");
 
             if (!entries.isExpanded)
             {

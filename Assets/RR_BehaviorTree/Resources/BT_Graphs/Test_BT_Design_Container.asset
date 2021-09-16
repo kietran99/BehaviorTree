@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-670942416449435030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bb80cb348c7184e8e7644e88f0d8c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _value: 14
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10,7 +23,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d44bbdd669703304c9791ec62666e3b9, type: 3}
-  m_Name: Logic_BT_Design_Container
+  m_Name: Test_BT_Design_Container
   m_EditorClassIdentifier: 
   nodeDataList:
   - _graphData:
@@ -39,3 +52,38 @@ MonoBehaviour:
       _parentGuid: 51385d0f-f8c8-4bad-8f69-ecc00ec771f0
       _position: {x: 759, y: 297}
     _task: {fileID: 11400000, guid: be210180dc8fd4d459cd40650b11940a, type: 2}
+  _blackboard:
+    _map:
+      _entries:
+      - Key: Num Players
+        Value: {fileID: 6047937073080711145}
+      - Key: Attacks Left
+        Value: {fileID: -670942416449435030}
+      - Key: Is Friendly
+        Value: {fileID: 2686368803983308848}
+--- !u!114 &2686368803983308848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52c3f5b5f27309244a11377ce369b7e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _value: 1
+--- !u!114 &6047937073080711145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bb80cb348c7184e8e7644e88f0d8c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _value: 4

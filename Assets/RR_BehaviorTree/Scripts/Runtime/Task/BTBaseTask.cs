@@ -8,8 +8,6 @@ namespace RR.AI.BehaviorTree
         [SerializeField]
         private BTTaskPropertyMap<TProp> _propMap;
 
-        protected TProp Prop(string key) => LoadPropData(key) as TProp;
-
         public override Type PropertyType => typeof(TProp);
         
         public override void Init(GameObject actor, Blackboard blackboard, string nodeGuid)

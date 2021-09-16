@@ -23,8 +23,6 @@ namespace RR.AI.BehaviorTree
 		// public Transform target;
 		public float Speed;
 		public Vector3 TargetPosition;
-		
-		// public BBValue<int> BlackboardInt;
 		[BlackboardValue(typeof(int))]
 		public string BlackboardInt;
 	}

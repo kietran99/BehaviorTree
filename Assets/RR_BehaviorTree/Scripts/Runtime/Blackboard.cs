@@ -2,68 +2,98 @@ using UnityEngine;
 
 namespace RR.AI
 {
+	[System.Serializable]
 	public class Blackboard
 	{
-        private System.Collections.Generic.Dictionary<string, IBBEntry> _keyToItemMap;
-
-        public Blackboard()
-		{
-			_keyToItemMap = new System.Collections.Generic.Dictionary<string, IBBEntry>();
-		}
+		[SerializeField]
+		private RR.Serialization.SerializableDictionary<string, ScriptableObject> _map;
 
 		public bool TryGetValue<T>(string key, out T value)
 		{
-			if (_keyToItemMap.TryGetValue(key, out var val))
+			if (_map.TryGetValue(key, out var SO))
 			{
-				var convertedVal = val as BlackboardItem<T>;
-
-				if (convertedVal == null)
+				if (SO is BBValue<T> valSO)
 				{
-					Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {val.ValueType}");
+					value = valSO.Value;
+					return true;
 				}
 
-				value = convertedVal.Value;
-				return true;
+				Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {SO.GetType()}");
+				value = default;
+				return false;
 			}
 
-			Debug.LogWarning($"{key} does not exist. Default {typeof(T)} value is returned instead.");
 			value = default;
 			return false;
 		}
 
-		public bool Add<T>(string key, T value)
+		public bool TryGetValue(string key, out ScriptableObject valueSO)
 		{
-			if (_keyToItemMap.TryGetValue(key, out var _))
+			if (!_map.TryGetValue(key, out var SO))
 			{
+				valueSO = null;
 				return false;
 			}
 
-			var newEntry = BBEntryFactory.New<T>(value);
-			_keyToItemMap.Add(key, newEntry);
+			valueSO = SO;
+			return true;
+		}
+
+		public bool Add<T>(string key, T value)
+		{
+			if (_map.TryGetValue(key, out var _))
+			{
+				Debug.LogWarning($"Key {key} not found");
+				return false;
+			}
+
+			// var BBVal = BBValueFactory.New<T>(BBContainer, value);
+			// _map.Add(key, BBVal);
+
+			return true;
+		}
+
+		public bool Add(string key, ScriptableObject BBValue)
+		{
+			if (_map.TryGetValue(key, out var _))
+			{
+				Debug.LogWarning($"Key {key} not found");
+				return false;
+			}
+
+			_map.Add(key, BBValue);
 
 			return true;
 		}
 
 		public bool Update<T>(string key, T value)
 		{
-			if (!_keyToItemMap.TryGetValue(key, out var _))
-			{
-				return false;
-			}
+			// if (!_map.TryGetValue(key, out var SO))
+			// {
+			// 	Debug.LogWarning($"Key {key} not found");
+			// 	return false;
+			// }
 
-			_keyToItemMap[key] = value as IBBEntry;
+			// if (!(SO is BBKeyValueDatabase<T> db))
+			// {
+			// 	Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {SO.GetType()}");
+			// 	return false;
+			// }
+
+			// db.UpdateEntry(key, value);
 			return true;
 		}
 
-		public bool Remove(string key)
-		{
-			if (!_keyToItemMap.TryGetValue(key, out var _))
-			{
-				return false;
-			}
+		public bool Remove(string key) => _map.Remove(key);
 
-			_keyToItemMap.Remove(key);
-			return true;
-		}
+		// public System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<string>> CreateTypeToKeysMap()
+		// {
+		// 	System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<string>> res = 
+		// 		new System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<string>>;
+
+		// 	_map
+		// }
+
+		public System.Collections.Generic.IEnumerable<T> Map<T>(System.Func<string, ScriptableObject, T> fn) => _map.Map(fn);
 	}
 }

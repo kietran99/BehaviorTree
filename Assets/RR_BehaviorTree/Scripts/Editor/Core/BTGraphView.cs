@@ -14,7 +14,7 @@ namespace RR.AI.BehaviorTree
 
         public BTGraphView() : base()
         {
-            _blackboard = CreateBlackboard(this, "Shared Variables", BB_RECT);
+            _blackboard = CreateBlackboard(this, null, null, "Shared Variables", BB_RECT);
             Add(_blackboard);
             graphViewChanged += OnGraphViewChanged;
         }
@@ -22,14 +22,19 @@ namespace RR.AI.BehaviorTree
         public BTGraphView(BTDesignContainer designContainer) : base()
         {
             UpdateView(designContainer);
-            _blackboard = CreateBlackboard(this, "Shared Variables", BB_RECT);
+            _blackboard = CreateBlackboard(this, designContainer.Blackboard, designContainer, "Shared Variables", BB_RECT);
             Add(_blackboard);
             graphViewChanged += OnGraphViewChanged;       
         }
 
-        private GraphBlackboard CreateBlackboard(BTGraphView graphView, string title, UnityEngine.Rect rect)
+        private GraphBlackboard CreateBlackboard(
+            BTGraphView graphView, 
+            Blackboard runtimeBlackboard, 
+            UnityEngine.ScriptableObject BBContainer,
+            string title, 
+            UnityEngine.Rect rect)
         {
-            var blackboard = new GraphBlackboard(graphView) { title = title, scrollable = true };
+            var blackboard = new GraphBlackboard(runtimeBlackboard, BBContainer, graphView) { title = title, scrollable = true };
             blackboard.SetPosition(rect);      
             return blackboard;
         }
@@ -80,7 +85,7 @@ namespace RR.AI.BehaviorTree
 
             ClearNodesAndEdges();
             _blackboard.visible = true;
-            _blackboard.OnGOSelectionChanged();
+            _blackboard.OnGOSelectionChanged(designContainer.Blackboard, designContainer);
             UpdateView(designContainer);
         }
 
@@ -147,10 +152,11 @@ namespace RR.AI.BehaviorTree
 
         public override UnityEditor.Experimental.GraphView.Blackboard GetBlackboard() => _blackboard;
 
-        public void OnGraphSaved()
+        public void Save()
         {
             OnNodeDeleted?.Invoke();
             OnNodeDeleted = delegate {};
+            _blackboard.Save();
         }
     }
 }

@@ -13,8 +13,6 @@ namespace RR.AI
 
 		private Queue<System.Func<GraphBlackboard, ScriptableObject, bool>> _cmdQueue;
 
-		// public Blackboard RuntimeBlackboard => _runtimeBB;
-
         public GraphBlackboard(
 			Blackboard runtimeBlackboard = null,
 			ScriptableObject BBContainer = null,
@@ -27,13 +25,13 @@ namespace RR.AI
 
 			_runtimeBB = runtimeBlackboard;
 			_BBcontainer = BBContainer;
-			_typeToKeysMap = new Dictionary<System.Type, List<string>>();
+			_typeToKeysMap = runtimeBlackboard.TypeToKeysMap;
 			_cmdQueue = new Queue<System.Func<GraphBlackboard, ScriptableObject, bool>>();
-
-			style.backgroundColor = new StyleColor(new Color(50f / 255f, 50f / 255f, 50f / 255f));
 
 			addItemRequested = OnAddItemRequested;
 			DisplayFields(runtimeBlackboard);
+
+			style.backgroundColor = new StyleColor(new Color(50f / 255f, 50f / 255f, 50f / 255f));
 		}
 
 		private void OnAddItemRequested(UnityEditor.Experimental.GraphView.Blackboard blackboard)
@@ -169,7 +167,7 @@ namespace RR.AI
 			return true;
 		}
 
-		public void Save()
+		public void WriteToDisk()
 		{
 			while (_cmdQueue.Count > 0)
 			{

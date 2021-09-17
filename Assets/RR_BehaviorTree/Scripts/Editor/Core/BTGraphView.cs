@@ -47,7 +47,7 @@ namespace RR.AI.BehaviorTree
             {
                 return graphViewChange;
             }
-
+            
             foreach (var element in elementsToRemove)
             {
                 if (element is IBTSavable)
@@ -156,7 +156,7 @@ namespace RR.AI.BehaviorTree
         {
             OnNodeDeleted?.Invoke();
             OnNodeDeleted = delegate {};
-            _blackboard.Save();
+            _blackboard.WriteToDisk();
         }
     }
 }

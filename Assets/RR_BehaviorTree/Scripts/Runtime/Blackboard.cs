@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RR.AI
@@ -86,13 +87,35 @@ namespace RR.AI
 
 		public bool Remove(string key) => _map.Remove(key);
 
-		// public System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<string>> CreateTypeToKeysMap()
-		// {
-		// 	System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<string>> res = 
-		// 		new System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<string>>;
+		public Dictionary<System.Type, List<string>> TypeToKeysMap
+		{
+			get
+			{
+				Dictionary<System.Type, List<string>> res = new Dictionary<System.Type, List<string>>();
+				var entries = _map.Entries;
 
-		// 	_map
-		// }
+				foreach (var entry in entries)
+				{
+					var value = entry.Value as IBBValue;
+
+					if (value == null)
+					{
+						continue;
+					}
+
+					var type = value.ValueType;
+
+					if (!res.TryGetValue(type, out var _))
+					{
+						res.Add(type, new List<string>());
+					}
+
+					res[type].Add(entry.Key);
+				}
+				
+				return res;
+			}
+		}
 
 		public System.Collections.Generic.IEnumerable<T> Map<T>(System.Func<string, ScriptableObject, T> fn) => _map.Map(fn);
 	}

@@ -11,12 +11,13 @@ namespace RR.AI
 		private ScriptableObject _BBcontainer;
 		private Dictionary<System.Type, List<string>> _typeToKeysMap;
 
-		private Queue<System.Func<GraphBlackboard, ScriptableObject, bool>> _cmdQueue;
+		private Dictionary<GraphElement, VisualElement> _BBFieldToRowMap;
+		private Queue<System.Func<ScriptableObject, bool>> _cmdQueue;
 
         public GraphBlackboard(
 			Blackboard runtimeBlackboard = null,
 			ScriptableObject BBContainer = null,
-			UnityEditor.Experimental.GraphView.GraphView graphView = null) : base(graphView)
+			AbstractGraphView graphView = null) : base(graphView)
 		{
 			if (BBContainer == null)
 			{
@@ -26,10 +27,13 @@ namespace RR.AI
 			_runtimeBB = runtimeBlackboard;
 			_BBcontainer = BBContainer;
 			_typeToKeysMap = runtimeBlackboard.TypeToKeysMap;
-			_cmdQueue = new Queue<System.Func<GraphBlackboard, ScriptableObject, bool>>();
+			_cmdQueue = new Queue<System.Func<ScriptableObject, bool>>();
 
 			addItemRequested = OnAddItemRequested;
+			
+			_BBFieldToRowMap = new Dictionary<GraphElement, VisualElement>();
 			DisplayFields(runtimeBlackboard);
+			graphView.OnElementDeleted += OnElementDeleted;
 
 			style.backgroundColor = new StyleColor(new Color(50f / 255f, 50f / 255f, 50f / 255f));
 		}
@@ -42,7 +46,7 @@ namespace RR.AI
 				{
 					var BBField = CreateBBField(BBvalueInfo.TypeText, valView, key);
 					Add(BBField);
-					_cmdQueue.Enqueue((blackboard, BBcontainer) => BBvalueInfo.AddToBlackboard(blackboard, key, valView, BBcontainer));
+					_cmdQueue.Enqueue(BBcontainer => BBvalueInfo.AddToBlackboard(this, key, valView, BBcontainer));
 				}));
 		}
 
@@ -70,9 +74,22 @@ namespace RR.AI
 			var container = new VisualElement();
 			propView.style.height = 16f;
 			propView.style.width = contentRect.width - 16f;
-			var bbField = new BlackboardField() { text = string.IsNullOrEmpty(key) ? "Key" : key, typeText = typeText };
-			container.Add(new BlackboardRow(bbField, propView));
+			var BBField = new BlackboardField() { text = string.IsNullOrEmpty(key) ? "Key" : key, typeText = typeText };
+			var entry = new BlackboardRow(BBField, propView);
+			container.Add(entry);
+			_BBFieldToRowMap.Add(BBField, container);
 			return container;
+		}
+
+		private void OnElementDeleted(GraphElement element)
+		{
+			if (!_BBFieldToRowMap.TryGetValue(element, out var entry))
+			{
+				return;
+			}
+
+			Remove(entry);
+			_cmdQueue.Enqueue(BBcontainer => RemoveEntryOnDisk((element as BlackboardField).text, BBcontainer));
 		}
 
 		public void OnGOSelectionChanged(Blackboard runtimeBlackboard = null, ScriptableObject BBContainer = null)
@@ -96,7 +113,7 @@ namespace RR.AI
 			return new List<string>();
 		}
 
-		public bool AddEntry<T>(string key, T value, ScriptableObject BBContainer, out IBBValue BBVal)
+		public bool AddEntryOnDisk<T>(string key, T value, ScriptableObject BBContainer, out IBBValue BBVal)
 		{
 			if (BBContainer == null)
 			{
@@ -147,7 +164,7 @@ namespace RR.AI
 		// 	return true;
 		// }
 
-		public bool RemoveEntry(string key, ScriptableObject BBContainer)
+		private bool RemoveEntryOnDisk(string key, ScriptableObject BBContainer)
 		{
 			if (BBContainer == null)
 			{
@@ -167,12 +184,12 @@ namespace RR.AI
 			return true;
 		}
 
-		public void WriteToDisk()
+		public void SaveToDisk()
 		{
 			while (_cmdQueue.Count > 0)
 			{
 				var cmd = _cmdQueue.Dequeue();
-				cmd(this, _BBcontainer);
+				cmd(_BBcontainer);
 			}
 		}
 	}

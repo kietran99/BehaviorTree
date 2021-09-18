@@ -1,18 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-670942416449435030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50bb80cb348c7184e8e7644e88f0d8c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _value: 14
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57,23 +44,6 @@ MonoBehaviour:
       _entries:
       - Key: Num Players
         Value: {fileID: 6047937073080711145}
-      - Key: Attacks Left
-        Value: {fileID: -670942416449435030}
-      - Key: Is Friendly
-        Value: {fileID: 2686368803983308848}
---- !u!114 &2686368803983308848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52c3f5b5f27309244a11377ce369b7e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _value: 1
 --- !u!114 &6047937073080711145
 MonoBehaviour:
   m_ObjectHideFlags: 0

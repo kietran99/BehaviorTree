@@ -50,6 +50,8 @@ namespace RR.AI.BehaviorTree
             
             foreach (var element in elementsToRemove)
             {
+                OnElementDeleted?.Invoke(element);
+
                 if (element is IBTSavable)
                 {
                     OnNodeDeleted += (element as IBTSavable).DeleteCallback;
@@ -156,7 +158,7 @@ namespace RR.AI.BehaviorTree
         {
             OnNodeDeleted?.Invoke();
             OnNodeDeleted = delegate {};
-            _blackboard.WriteToDisk();
+            _blackboard.SaveToDisk();
         }
     }
 }

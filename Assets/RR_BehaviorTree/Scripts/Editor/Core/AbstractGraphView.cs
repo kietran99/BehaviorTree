@@ -2,7 +2,9 @@ using UnityEngine.UIElements;
 using UnityEditor.Experimental.GraphView;
 
 public abstract class AbstractGraphView : GraphView
-{
+{ 
+    public System.Action<GraphElement> OnElementDeleted { get; set; }
+
     protected AbstractGraphView()
     {
         var styleSheet = UnityEngine.Resources.Load<StyleSheet>("Stylesheets/DefaultEditorWindowGrid");

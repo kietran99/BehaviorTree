@@ -158,7 +158,6 @@ namespace RR.AI.BehaviorTree
         {
             OnNodeDeleted?.Invoke();
             OnNodeDeleted = delegate {};
-            _blackboard.SaveToDisk();
         }
     }
 }

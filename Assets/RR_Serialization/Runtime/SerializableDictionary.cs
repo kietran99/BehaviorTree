@@ -73,6 +73,8 @@ namespace RR.Serialization
                 return false;
             }
 
+            var val = _map[oldKey];
+
             for (int i = 0; i < _entries.Count; i++)
             {
                 if (_entries[i].Key.Equals(oldKey))
@@ -81,6 +83,9 @@ namespace RR.Serialization
                     break;
                 }
             }
+
+            _map.Add(newKey, val);
+            _map.Remove(oldKey);
 
             return true;
         }

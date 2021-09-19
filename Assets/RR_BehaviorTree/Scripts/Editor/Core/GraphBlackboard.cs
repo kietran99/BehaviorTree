@@ -7,18 +7,11 @@ namespace RR.AI
 {
 	public class GraphBlackboard : UnityEditor.Experimental.GraphView.Blackboard
 	{
-		private class BBEntry<T>
-		{
-			private string _key;
-			private INotifyValueChanged<T> _valueView;
-		}
-
 		private Blackboard _runtimeBB;
 		private ScriptableObject _BBcontainer;
 		private Dictionary<System.Type, List<string>> _typeToKeysMap;
 
 		private Dictionary<GraphElement, VisualElement> _BBFieldToRowMap;
-		private Queue<System.Func<ScriptableObject, bool>> _cmdQueue;
 
         public GraphBlackboard(
 			Blackboard runtimeBlackboard = null,
@@ -33,7 +26,6 @@ namespace RR.AI
 			_runtimeBB = runtimeBlackboard;
 			_BBcontainer = BBContainer;
 			_typeToKeysMap = runtimeBlackboard.TypeToKeysMap;
-			_cmdQueue = new Queue<System.Func<ScriptableObject, bool>>();
 
 			addItemRequested = OnAddItemRequested;
 			editTextRequested += OnEditKey;
@@ -53,16 +45,16 @@ namespace RR.AI
 				{
 					var BBField = CreateBBField(BBvalueInfo.TypeText, valView, key);
 					Add(BBField);
-					_cmdQueue.Enqueue(BBcontainer => BBvalueInfo.AddToBlackboard(this, key, valView, BBcontainer));
+					BBvalueInfo.AddToBlackboard(this, key, valView, _BBcontainer);
 				}));
 		}
 
-		private void OnEditKey(UnityEditor.Experimental.GraphView.Blackboard _, VisualElement BBField, string newText)
+		private void OnEditKey(UnityEditor.Experimental.GraphView.Blackboard _, VisualElement BBField, string newKey)
 		{
 			var convertedField = BBField as BlackboardField;
 			var oldKey = convertedField.text;
-			convertedField.text = newText;
-			_cmdQueue.Enqueue(BBContainer => UpdateKeyOnDisk(oldKey, newText));
+			convertedField.text = newKey;
+			UpdateKeyOnDisk(oldKey, newKey);
 		}
 
 		private void DisplayFields(Blackboard runtimeBB)
@@ -111,7 +103,7 @@ namespace RR.AI
 			}
 
 			Remove(entry);
-			_cmdQueue.Enqueue(BBcontainer => RemoveEntryOnDisk((element as BlackboardField).text, BBcontainer));
+			RemoveEntryOnDisk((element as BlackboardField).text, _BBcontainer);
 		}
 
 		public void OnGOSelectionChanged(Blackboard runtimeBlackboard = null, ScriptableObject BBContainer = null)
@@ -174,29 +166,26 @@ namespace RR.AI
 			return true;
 		}
 
-		private bool AddEntryOnDisk(string key, ScriptableObject valueContainer, ScriptableObject BBContainer)
+		public bool UpdateKeyOnDisk(string oldKey, string newKey) 
 		{
-			var containerAsIBBValue = valueContainer as IBBValue;
-
-			if (containerAsIBBValue == null)
+			if (!_runtimeBB.TryGetValue(oldKey, out var valueSO))
 			{
-				Debug.LogError("Invalid cast from ScriptableObject to IBBValue");
 				return false;
 			}
 
-			var valType = containerAsIBBValue.ValueType;
-
-			if (!_typeToKeysMap.TryGetValue(valType, out var _))
+			var keys = _typeToKeysMap[(valueSO as IBBValue).ValueType];
+			
+			for (int i = 0; i < keys.Count; i++)
 			{
-				_typeToKeysMap.Add(valType, new List<string>());
+				if (keys[i] == oldKey)
+				{
+					keys[i] = newKey;
+					break;
+				}
 			}
 
-			_runtimeBB.Add(key, valueContainer);
-			_typeToKeysMap[valType].Add(key);
-			return true;
+			return _runtimeBB.Update(oldKey, newKey);
 		}
-
-		public bool UpdateKeyOnDisk(string oldKey, string newKey) => _runtimeBB.Update(oldKey, newKey);
 
 		// public bool Update<T>(string key, T value)
 		// {
@@ -213,12 +202,13 @@ namespace RR.AI
 		{
 			if (BBContainer == null)
 			{
-				Debug.LogError("Blackboard container Scriptable Object is Null");
+				Debug.LogError("Blackboard container ScriptableObject is Null");
 				return false;
 			}
 
 			if (!_runtimeBB.TryGetValue(key, out var valSO))
 			{
+				Debug.Log($"Invalid key {key}");
 				return false;
 			}
 
@@ -227,15 +217,6 @@ namespace RR.AI
 			UnityEditor.AssetDatabase.SaveAssets();
 
 			return true;
-		}
-
-		public void SaveToDisk()
-		{
-			while (_cmdQueue.Count > 0)
-			{
-				var cmd = _cmdQueue.Dequeue();
-				cmd(_BBcontainer);
-			}
 		}
 	}
 }

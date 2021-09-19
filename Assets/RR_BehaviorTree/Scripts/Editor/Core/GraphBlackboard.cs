@@ -7,6 +7,12 @@ namespace RR.AI
 {
 	public class GraphBlackboard : UnityEditor.Experimental.GraphView.Blackboard
 	{
+		private class BBEntry<T>
+		{
+			private string _key;
+			private INotifyValueChanged<T> _valueView;
+		}
+
 		private Blackboard _runtimeBB;
 		private ScriptableObject _BBcontainer;
 		private Dictionary<System.Type, List<string>> _typeToKeysMap;
@@ -30,6 +36,7 @@ namespace RR.AI
 			_cmdQueue = new Queue<System.Func<ScriptableObject, bool>>();
 
 			addItemRequested = OnAddItemRequested;
+			editTextRequested += OnEditKey;
 			
 			_BBFieldToRowMap = new Dictionary<GraphElement, VisualElement>();
 			DisplayFields(runtimeBlackboard);
@@ -50,6 +57,14 @@ namespace RR.AI
 				}));
 		}
 
+		private void OnEditKey(UnityEditor.Experimental.GraphView.Blackboard _, VisualElement BBField, string newText)
+		{
+			var convertedField = BBField as BlackboardField;
+			var oldKey = convertedField.text;
+			convertedField.text = newText;
+			_cmdQueue.Enqueue(BBContainer => UpdateKeyOnDisk(oldKey, newText));
+		}
+
 		private void DisplayFields(Blackboard runtimeBB)
 		{
 			if (runtimeBB == null)
@@ -60,6 +75,13 @@ namespace RR.AI
 			var fields = runtimeBB.Map((key, val) => 
 			{
 				var BBVal = val as IBBValue;
+
+				if (val == null)
+				{
+					Debug.LogError("Invalid cast from ScriptableObject to IBBValue");
+					return new VisualElement();
+				}
+
 				return CreateBBField(BBVal.ValueTypeString, BBVal.CreatePropField(), key);
 			});
 			
@@ -147,11 +169,34 @@ namespace RR.AI
 
 			_typeToKeysMap[valType].Add(key);
 
-			var newEntryAsIBBValue = newEntry as IBBValue;
 			BBVal = newEntry as IBBValue;
 
 			return true;
 		}
+
+		private bool AddEntryOnDisk(string key, ScriptableObject valueContainer, ScriptableObject BBContainer)
+		{
+			var containerAsIBBValue = valueContainer as IBBValue;
+
+			if (containerAsIBBValue == null)
+			{
+				Debug.LogError("Invalid cast from ScriptableObject to IBBValue");
+				return false;
+			}
+
+			var valType = containerAsIBBValue.ValueType;
+
+			if (!_typeToKeysMap.TryGetValue(valType, out var _))
+			{
+				_typeToKeysMap.Add(valType, new List<string>());
+			}
+
+			_runtimeBB.Add(key, valueContainer);
+			_typeToKeysMap[valType].Add(key);
+			return true;
+		}
+
+		public bool UpdateKeyOnDisk(string oldKey, string newKey) => _runtimeBB.Update(oldKey, newKey);
 
 		// public bool Update<T>(string key, T value)
 		// {

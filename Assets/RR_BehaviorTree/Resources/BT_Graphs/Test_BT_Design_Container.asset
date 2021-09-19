@@ -42,9 +42,24 @@ MonoBehaviour:
   _blackboard:
     _map:
       _entries:
-      - Key: Num Players
-        Value: {fileID: 6047937073080711145}
---- !u!114 &6047937073080711145
+      - Key: Players Left
+        Value: {fileID: 8382675888021559229}
+      - Key: Remaining Attacks
+        Value: {fileID: 8313737712602205529}
+--- !u!114 &8313737712602205529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bb80cb348c7184e8e7644e88f0d8c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _value: 31
+--- !u!114 &8382675888021559229
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

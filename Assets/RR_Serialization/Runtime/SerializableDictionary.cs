@@ -66,6 +66,25 @@ namespace RR.Serialization
             return true;
         }
 
+        public bool Update(TKey oldKey, TKey newKey)
+        {
+            if (!_map.ContainsKey(oldKey))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < _entries.Count; i++)
+            {
+                if (_entries[i].Key.Equals(oldKey))
+                {
+                    _entries[i].Key = newKey;
+                    break;
+                }
+            }
+
+            return true;
+        }
+
         public bool AddOrUpdate(TKey key, TValue value)
         {
             if (Add(key, value))

@@ -67,6 +67,8 @@ namespace RR.AI
 			return true;
 		}
 
+		public bool Update(string oldKey, string newKey) => _map.Update(oldKey, newKey);
+
 		public bool Update<T>(string key, T value)
 		{
 			// if (!_map.TryGetValue(key, out var SO))

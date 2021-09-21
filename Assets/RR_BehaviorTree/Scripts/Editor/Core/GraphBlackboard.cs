@@ -43,9 +43,10 @@ namespace RR.AI
 				contentRect.width, 
 				(key, valView, BBvalueInfo) => 
 				{
-					var BBField = CreateBBField(BBvalueInfo.TypeText, valView, key);
-					Add(BBField);
-					BBvalueInfo.AddToBlackboard(this, key, valView, _BBcontainer);
+					var BBField = CreateBBField(BBvalueInfo.TypeText, key);
+					BBvalueInfo.AddToBlackboard(this, key, valView, _BBcontainer, out var valueView);
+					var BBEntry = CreateBBEntry(valueView.CreatePropView(), BBField);
+					Add(BBEntry);
 				}));
 		}
 
@@ -74,7 +75,8 @@ namespace RR.AI
 					return new VisualElement();
 				}
 
-				return CreateBBField(BBVal.ValueTypeString, BBVal.CreatePropField(), key);
+				var BBField = CreateBBField(BBVal.ValueTypeString, key);
+				return CreateBBEntry(BBVal.CreatePropView(), BBField);
 			});
 			
 			foreach(var field in fields)
@@ -83,16 +85,32 @@ namespace RR.AI
 			}
 		}
 
-		private VisualElement CreateBBField(string typeText, VisualElement propView, string key = "")
+		private VisualElement CreateBBEntry(string typeText, VisualElement propView, string key = "")
 		{
 			var container = new VisualElement();
 			propView.style.height = 16f;
 			propView.style.width = contentRect.width - 16f;
-			var BBField = new BlackboardField() { text = string.IsNullOrEmpty(key) ? "Key" : key, typeText = typeText };
+			var BBField = CreateBBField(typeText, key);
 			var entry = new BlackboardRow(BBField, propView);
 			container.Add(entry);
 			_BBFieldToRowMap.Add(BBField, container);
 			return container;
+		}
+
+		private VisualElement CreateBBEntry(VisualElement propView, BlackboardField blackboardField)
+		{
+			var container = new VisualElement();
+			propView.style.height = 16f;
+			propView.style.width = contentRect.width - 16f;
+			var entry = new BlackboardRow(blackboardField, propView);
+			container.Add(entry);
+			_BBFieldToRowMap.Add(blackboardField, container);
+			return container;
+		}
+
+		private BlackboardField CreateBBField(string typeText, string key = "")
+		{
+			return new BlackboardField() { text = string.IsNullOrEmpty(key) ? "Key" : key, typeText = typeText };
 		}
 
 		private void OnElementDeleted(GraphElement element)
@@ -186,17 +204,6 @@ namespace RR.AI
 
 			return _runtimeBB.Update(oldKey, newKey);
 		}
-
-		// public bool Update<T>(string key, T value)
-		// {
-		// 	if (!_runtimeBlackboard.TryGetValue(key, out var _))
-		// 	{
-		// 		return false;
-		// 	}
-
-		// 	_keyToItemMap[key] = value as IBBEntry;
-		// 	return true;
-		// }
 
 		private bool RemoveEntryOnDisk(string key, ScriptableObject BBContainer)
 		{

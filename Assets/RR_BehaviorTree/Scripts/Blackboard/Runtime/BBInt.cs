@@ -1,3 +1,5 @@
+using UnityEngine.UIElements;
+
 namespace RR.AI
 {
     [System.Serializable]
@@ -5,6 +7,6 @@ namespace RR.AI
     {
         public override string ValueTypeString => "Int";
 
-        public override UnityEngine.UIElements.VisualElement CreatePropField() => new UnityEditor.UIElements.IntegerField() { value = Value };
+        protected override BaseField<int> PrimitivePropView => new UnityEditor.UIElements.IntegerField() { value = Value };
     }
 }

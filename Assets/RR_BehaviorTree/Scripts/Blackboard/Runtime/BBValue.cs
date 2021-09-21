@@ -7,7 +7,7 @@ namespace RR.AI
     {
         System.Type ValueType { get; }
         string ValueTypeString { get; }
-        VisualElement CreatePropField();
+        VisualElement CreatePropView();
     }
 
     // [Serializable]
@@ -20,6 +20,13 @@ namespace RR.AI
         public System.Type ValueType => typeof(T);
 
         public abstract string ValueTypeString { get; }
-        public abstract VisualElement CreatePropField();
+        public virtual VisualElement CreatePropView()
+        {
+            var field = PrimitivePropView;
+            field.RegisterValueChangedCallback(evt => _value = evt.newValue);
+            return field;
+        }
+
+        protected abstract BaseField<T> PrimitivePropView { get; }
     }
 }

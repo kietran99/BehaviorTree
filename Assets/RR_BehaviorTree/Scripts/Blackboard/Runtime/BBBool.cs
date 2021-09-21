@@ -1,3 +1,5 @@
+using UnityEngine.UIElements;
+
 namespace RR.AI
 {
 	[System.Serializable]
@@ -5,6 +7,6 @@ namespace RR.AI
 	{
 		public override string ValueTypeString => "Bool";
 
-		public override UnityEngine.UIElements.VisualElement CreatePropField() => new UnityEngine.UIElements.Toggle() { value = Value };
-	}
+        protected override BaseField<bool> PrimitivePropView => new UnityEngine.UIElements.Toggle() { value = Value };
+    }
 }

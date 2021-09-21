@@ -11,7 +11,7 @@ namespace RR.AI
 		string TypeText { get; }
 		Func<VisualElement> CreateValView { get; set; }
 		VisualElement CloneValView(VisualElement valView);
-		bool AddToBlackboard(GraphBlackboard blackboard, string key, VisualElement valView, ScriptableObject BBContainer);
+		bool AddToBlackboard(GraphBlackboard blackboard, string key, VisualElement valView, ScriptableObject BBContainer, out IBBValue BBValue);
 	}
 
 	public class AddBBEntryBox : VisualElement
@@ -49,17 +49,18 @@ namespace RR.AI
 				return clone;
             }
 
-            public bool AddToBlackboard(GraphBlackboard blackboard, string key, VisualElement valView, ScriptableObject BBContainer)
+            public bool AddToBlackboard(GraphBlackboard blackboard, string key, VisualElement valView, ScriptableObject BBContainer, out IBBValue BBValue)
             {
                 var converted = valView as BaseField<T>;
 
 				if (converted == null)
 				{
 					Debug.LogError($"Invalid cast from VisualElement to BaseField<{typeof(T)}>");
+					BBValue = null;
 					return false;
 				}
 
-				return blackboard.AddEntryOnDisk(key, converted.value, BBContainer, out var val);
+				return blackboard.AddEntryOnDisk(key, converted.value, BBContainer, out BBValue);
             }
         }
 

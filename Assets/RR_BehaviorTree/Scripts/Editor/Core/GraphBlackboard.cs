@@ -52,6 +52,12 @@ namespace RR.AI
 
 		private void OnEditKey(UnityEditor.Experimental.GraphView.Blackboard _, VisualElement BBField, string newKey)
 		{
+			if (_runtimeBB.TryGetValue(newKey, out var _))
+			{
+				Debug.LogError($"Key {newKey} already exists");
+				return;
+			}
+
 			var convertedField = BBField as BlackboardField;
 			var oldKey = convertedField.text;
 			convertedField.text = newKey;

@@ -59,7 +59,7 @@ namespace RR.AI
 					BBValue = null;
 					return false;
 				}
-
+				
 				return blackboard.AddEntryOnDisk(key, converted.value, BBContainer, out BBValue);
             }
         }

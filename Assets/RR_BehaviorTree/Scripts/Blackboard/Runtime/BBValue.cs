@@ -7,6 +7,8 @@ namespace RR.AI
     {
         System.Type ValueType { get; }
         string ValueTypeString { get; }
+
+        bool SetValue(object value);
         VisualElement CreatePropView();
     }
 
@@ -20,9 +22,22 @@ namespace RR.AI
         public System.Type ValueType => typeof(T);
 
         public abstract string ValueTypeString { get; }
+         
+        public bool SetValue(object value)
+        {
+            if (!(value is T))
+            {
+                return false;
+            }
+
+            Value = (T) value;
+            return true;
+        }
+
         public virtual VisualElement CreatePropView()
         {
             var field = PrimitivePropView;
+            field.value = Value;
             field.RegisterValueChangedCallback(evt => _value = evt.newValue);
             return field;
         }

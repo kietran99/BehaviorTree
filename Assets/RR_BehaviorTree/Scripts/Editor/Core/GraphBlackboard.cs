@@ -10,7 +10,6 @@ namespace RR.AI
 		private Blackboard _runtimeBB;
 		private ScriptableObject _BBcontainer;
 		private Dictionary<System.Type, List<string>> _typeToKeysMap;
-
 		private Dictionary<GraphElement, VisualElement> _BBFieldToRowMap;
 
         public GraphBlackboard(
@@ -28,10 +27,9 @@ namespace RR.AI
 			_typeToKeysMap = runtimeBlackboard.TypeToKeysMap;
 
 			addItemRequested = OnAddItemRequested;
-			editTextRequested += OnEditKey;
+			editTextRequested += OnKeyEdited;
 			
-			_BBFieldToRowMap = new Dictionary<GraphElement, VisualElement>();
-			DisplayFields(runtimeBlackboard);
+			_BBFieldToRowMap = DisplayFields(runtimeBlackboard);
 			graphView.OnElementDeleted += OnElementDeleted;
 
 			style.backgroundColor = new StyleColor(new Color(50f / 255f, 50f / 255f, 50f / 255f));
@@ -43,14 +41,21 @@ namespace RR.AI
 				contentRect.width, 
 				(key, valView, BBvalueInfo) => 
 				{
+					var addRes = BBvalueInfo.AddToBlackboard(this, key, valView, _BBcontainer, out var BBValue);
+
+					if (!addRes)
+					{
+						return;
+					}			
+
 					var BBField = CreateBBField(BBvalueInfo.TypeText, key);
-					BBvalueInfo.AddToBlackboard(this, key, valView, _BBcontainer, out var valueView);
-					var BBEntry = CreateBBEntry(valueView.CreatePropView(), BBField);
+					var (BBEntry, fieldRowPair) = CreateBBEntry(BBValue.CreatePropView(), BBField);
 					Add(BBEntry);
+					_BBFieldToRowMap.Add(fieldRowPair.Key, fieldRowPair.Value);
 				}));
 		}
 
-		private void OnEditKey(UnityEditor.Experimental.GraphView.Blackboard _, VisualElement BBField, string newKey)
+		private void OnKeyEdited(UnityEditor.Experimental.GraphView.Blackboard _, VisualElement BBField, string newKey)
 		{
 			if (_runtimeBB.TryGetValue(newKey, out var _))
 			{
@@ -64,54 +69,46 @@ namespace RR.AI
 			UpdateKeyOnDisk(oldKey, newKey);
 		}
 
-		private void DisplayFields(Blackboard runtimeBB)
+		private Dictionary<GraphElement, VisualElement> DisplayFields(Blackboard runtimeBB)
 		{
 			if (runtimeBB == null)
 			{
-				return;
+				return null;
 			}
 
-			var fields = runtimeBB.Map((key, val) => 
+			var BBFieldToRowMap = new Dictionary<GraphElement, VisualElement>();
+
+			var resultList = runtimeBB.Map<(VisualElement entry, KeyValuePair<GraphElement, VisualElement> BBfieldRowPair)>((key, val) => 
 			{
 				var BBVal = val as IBBValue;
 
 				if (val == null)
 				{
 					Debug.LogError("Invalid cast from ScriptableObject to IBBValue");
-					return new VisualElement();
+					return (null, new KeyValuePair<GraphElement, VisualElement>(null, null));
 				}
 
 				var BBField = CreateBBField(BBVal.ValueTypeString, key);
 				return CreateBBEntry(BBVal.CreatePropView(), BBField);
 			});
 			
-			foreach(var field in fields)
+			foreach(var result in resultList)
 			{
-				Add(field);
+				Add(result.entry);
+				BBFieldToRowMap.Add(result.BBfieldRowPair.Key, result.BBfieldRowPair.Value);
 			}
+
+			return BBFieldToRowMap;
 		}
 
-		private VisualElement CreateBBEntry(string typeText, VisualElement propView, string key = "")
+		private (VisualElement entry, KeyValuePair<GraphElement, VisualElement> BBfieldRowPair) CreateBBEntry(
+			VisualElement propView, BlackboardField blackboardField)
 		{
 			var container = new VisualElement();
-			propView.style.height = 16f;
-			propView.style.width = contentRect.width - 16f;
-			var BBField = CreateBBField(typeText, key);
-			var entry = new BlackboardRow(BBField, propView);
-			container.Add(entry);
-			_BBFieldToRowMap.Add(BBField, container);
-			return container;
-		}
-
-		private VisualElement CreateBBEntry(VisualElement propView, BlackboardField blackboardField)
-		{
-			var container = new VisualElement();
-			propView.style.height = 16f;
 			propView.style.width = contentRect.width - 16f;
 			var entry = new BlackboardRow(blackboardField, propView);
 			container.Add(entry);
-			_BBFieldToRowMap.Add(blackboardField, container);
-			return container;
+			return (container, new KeyValuePair<GraphElement, VisualElement>(blackboardField, container));
 		}
 
 		private BlackboardField CreateBBField(string typeText, string key = "")
@@ -126,6 +123,7 @@ namespace RR.AI
 				return;
 			}
 
+			_BBFieldToRowMap.Remove(element);
 			Remove(entry);
 			RemoveEntryOnDisk((element as BlackboardField).text, _BBcontainer);
 		}
@@ -134,11 +132,15 @@ namespace RR.AI
 		{
 			Clear();
 
-			if (runtimeBlackboard != null && BBContainer != null)
+			if (runtimeBlackboard == null || BBContainer == null)
 			{
-				DisplayFields(runtimeBlackboard);
-				_BBcontainer = BBContainer;
+				return;
 			}
+
+			_runtimeBB = runtimeBlackboard;
+			_BBcontainer = BBContainer;
+			_typeToKeysMap = runtimeBlackboard.TypeToKeysMap;
+			_BBFieldToRowMap = DisplayFields(runtimeBlackboard);
 		}
 
 		public List<string> GetKeys(System.Type type)
@@ -167,7 +169,7 @@ namespace RR.AI
 			}
 
 			var newEntry = BBValueFactory.New<T>(BBContainer, value);
-
+			
 			if (newEntry == null)
 			{
 				BBVal = null;

@@ -9,14 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3be741d0ef2a3c348952c4ec3baf981f, type: 3}
-  m_Name: BTTaskWithinRange
+  m_Script: {fileID: 11500000, guid: 7126609689526494b80d159281f2e2f4, type: 3}
+  m_Name: BTTaskTriggerAnimation
   m_EditorClassIdentifier: 
-  _icon: {fileID: 2800000, guid: a676732933fb28a4488e0851f645bb82, type: 3}
+  _icon: {fileID: 0}
   _propMap:
     _entries:
-    - Key: b7a9715d-04f5-4077-8221-9a16642e4f60
+    - Key: fd05861a-39a3-4dc3-9573-2b12b3584f71
       Value:
-        Range: 3
-        TargetTag: Player
-        MaxTargets: 1
+        Name: Should_Activate

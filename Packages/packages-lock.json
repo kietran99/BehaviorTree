@@ -73,7 +73,7 @@
       "dependencies": {}
     },
     "com.unity.collab-proxy": {
-      "version": "1.9.0",
+      "version": "1.11.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -105,7 +105,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.vscode": {
-      "version": "1.2.3",
+      "version": "1.2.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {},

@@ -5,7 +5,7 @@ namespace RR.AI.BehaviorTree
 {
     public class BTGraphView : AbstractGraphView
     {
-        private UnityEngine.Vector2 defaultRootSpawnPos = new UnityEngine.Vector2(100f, 300f);
+        private UnityEngine.Vector2 defaultRootSpawnPos = new UnityEngine.Vector2(300f, 300f);
         private readonly UnityEngine.Rect BB_RECT = new UnityEngine.Rect(10, 30, 250, 500);
 
         private GraphBlackboard _blackboard;

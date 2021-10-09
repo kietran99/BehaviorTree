@@ -6,4 +6,10 @@ namespace RR.AI.BehaviorTree
         FAILURE,
         RUNNING
     }
+
+    public static class BTNodeStateExtension
+    {
+        public static BTNodeState ToBTNodeState(this bool val) => val ? BTNodeState.SUCCESS : BTNodeState.FAILURE;
+        public static BTNodeState ToBTNodeState(this int val) => val != 0 ? BTNodeState.SUCCESS : BTNodeState.FAILURE;
+    }
 }

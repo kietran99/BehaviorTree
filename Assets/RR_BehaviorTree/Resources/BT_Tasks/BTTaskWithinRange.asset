@@ -19,4 +19,5 @@ MonoBehaviour:
       Value:
         Range: 3
         TargetTag: Player
+        TargetLayers: 1
         MaxTargets: 1

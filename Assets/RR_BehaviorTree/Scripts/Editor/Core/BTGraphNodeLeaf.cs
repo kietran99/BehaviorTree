@@ -118,6 +118,13 @@ namespace RR.AI.BehaviorTree
 
             if (type == typeof(int))
             {
+                var layerMaskFieldAttribs = fieldInfo.GetCustomAttributes(typeof(RR.Serialization.LayerMaskFieldAttribute), true);
+                
+                if (layerMaskFieldAttribs.Length > 0)
+                {
+                    return CreatePropField(new LayerMaskField(), fieldInfo, propFieldData);
+                }
+
                 return CreatePropField(new IntegerField(), fieldInfo, propFieldData);
             }
 

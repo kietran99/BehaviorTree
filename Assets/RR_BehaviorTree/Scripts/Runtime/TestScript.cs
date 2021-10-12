@@ -13,7 +13,10 @@ public class TestScript : MonoBehaviour, IMyInterface
 {
     [TagField]
     public string someTag;
+    [LayerMaskField]
+    public int someLayer;
     // public SerializableDictionary<string, int> intDict;
     public SerializableDictionary<string, int[]> intArrDict;
     public SerializableDictionary<string, TestValue> testValueDict;
+    void Awake() => Debug.Log(someLayer);
 }

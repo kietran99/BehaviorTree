@@ -122,7 +122,6 @@ namespace RR.Serialization
             return false;
         }
             
-
         public bool TryGetValue(TKey key, out TValue value)
         {
             return _map.TryGetValue(key, out value);

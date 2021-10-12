@@ -17,4 +17,4 @@ MonoBehaviour:
     _entries:
     - Key: fd05861a-39a3-4dc3-9573-2b12b3584f71
       Value:
-        Name: Should_Activate
+        Name: Activate

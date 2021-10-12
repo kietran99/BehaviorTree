@@ -14,7 +14,10 @@ namespace RR.AI.BehaviorTree
         public override BTNodeState Tick(GameObject actor, Blackboard blackboard, BTTaskWithinRangeData prop)
         {
             var filter = new ContactFilter2D();
-            int nTargetsInRangeWithoutTag = Physics2D.OverlapCircle(actor.transform.position, prop.Range, filter.NoFilter(), prop.Targets);
+            filter.useLayerMask = true;
+            filter.SetLayerMask(prop.TargetLayers);
+
+            int nTargetsInRangeWithoutTag = Physics2D.OverlapCircle(actor.transform.position, prop.Range, filter, prop.Targets);
             
             if (nTargetsInRangeWithoutTag == 0)
             {
@@ -39,6 +42,8 @@ namespace RR.AI.BehaviorTree
         
         [RR.Serialization.TagField]
         public string TargetTag;
+        [RR.Serialization.LayerMaskField]
+        public int TargetLayers;
         public int MaxTargets;
 
         public Collider2D[] Targets { get; set; }

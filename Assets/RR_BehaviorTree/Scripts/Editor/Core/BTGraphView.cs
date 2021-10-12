@@ -21,9 +21,9 @@ namespace RR.AI.BehaviorTree
 
         public BTGraphView(BTDesignContainer designContainer) : base()
         {
-            UpdateView(designContainer);
             _blackboard = CreateBlackboard(this, designContainer.Blackboard, designContainer, "Shared Variables", BB_RECT);
             Add(_blackboard);
+            UpdateView(designContainer);
             graphViewChanged += OnGraphViewChanged;       
         }
 

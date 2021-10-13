@@ -6,7 +6,7 @@ namespace RR.AI.BehaviorTree
     {
         public override string Name => "Trigger Animation";
 
-        public override void Init(GameObject actor, Blackboard blackboard, BTTaskTriggerAnimationData prop)
+        public override void Init(GameObject actor, RuntimeBlackboard blackboard, BTTaskTriggerAnimationData prop)
         {
             if (!actor.TryGetComponent<Animator>(out var animator))
             {
@@ -16,7 +16,7 @@ namespace RR.AI.BehaviorTree
             prop.ActorAnimator = animator;
         }
 
-        public override BTNodeState Tick(GameObject actor, Blackboard blackboard, BTTaskTriggerAnimationData prop)
+        public override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, BTTaskTriggerAnimationData prop)
         {
             prop.ActorAnimator.SetTrigger(prop.Name);
             return BTNodeState.SUCCESS;

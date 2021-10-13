@@ -1,4 +1,5 @@
 using RR.Serialization;
+using RR.AI;
 using UnityEngine;
 
 [System.Serializable]
@@ -18,5 +19,4 @@ public class TestScript : MonoBehaviour, IMyInterface
     // public SerializableDictionary<string, int> intDict;
     public SerializableDictionary<string, int[]> intArrDict;
     public SerializableDictionary<string, TestValue> testValueDict;
-    void Awake() => Debug.Log(someLayer);
 }

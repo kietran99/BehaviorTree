@@ -12,7 +12,7 @@ namespace RR.AI.BehaviorTree
         public BTRoot(string guid) : base(guid)
         {}
 
-        public override bool Init(BTBaseNode[] children, GameObject actor, Blackboard blackboard)
+        public override bool Init(BTBaseNode[] children, GameObject actor, RuntimeBlackboard blackboard)
         {
             if (children.Length != 1)
             {
@@ -24,7 +24,7 @@ namespace RR.AI.BehaviorTree
             return true;
         }
 
-        public override BTNodeState Update(GameObject actor, Blackboard blackboard)
+        public override BTNodeState Update(GameObject actor, RuntimeBlackboard blackboard)
         {
             OnRootTick?.Invoke(_guid);
             
@@ -41,7 +41,7 @@ namespace RR.AI.BehaviorTree
             // return _child.Update(actor, blackboard);
         }
 
-        public override BTNodeState InternalUpdate(GameObject actor, Blackboard blackboard, out BTBaseNode runningNodeParent)
+        public override BTNodeState InternalUpdate(GameObject actor, RuntimeBlackboard blackboard, out BTBaseNode runningNodeParent)
         {
             runningNodeParent = null;
             return BTNodeState.FAILURE;

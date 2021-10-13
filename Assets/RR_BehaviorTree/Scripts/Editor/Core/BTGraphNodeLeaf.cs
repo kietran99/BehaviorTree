@@ -33,13 +33,13 @@ namespace RR.AI.BehaviorTree
 
             foreach (var fieldInfo in fieldInfoList)
             {
-                var childContainer = CreatePropContainer(20f, 175f);
+                var childContainer = CreatePropContainer(20f, 190f);
 
-                childContainer.Add(CreatePropLabel(fieldInfo.Name, 70f)); 
+                childContainer.Add(CreatePropLabel(fieldInfo.Name, 90f)); 
 
                 var (field, bindPropFieldFn) = DrawPropField(fieldInfo, propFieldData, blackboard);
                 childContainer.Add(field);
-                field.style.maxWidth = 110f;
+                field.style.maxWidth = 100f;
                 
                 bindPropDataFn += bindPropFieldFn;
 
@@ -93,6 +93,7 @@ namespace RR.AI.BehaviorTree
                 if (BBValueAttribs.Length > 0)
                 {
                     var valType = (BBValueAttribs[0] as BlackboardValueAttribute).ValueType;
+                    
                     var BBKeys = blackboard.GetKeys(valType);
 
                     if (BBKeys.Count == 0)

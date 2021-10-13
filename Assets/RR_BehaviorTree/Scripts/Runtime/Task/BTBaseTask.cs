@@ -10,18 +10,18 @@ namespace RR.AI.BehaviorTree
 
         public override Type PropertyType => typeof(TProp);
         
-        public override void Init(GameObject actor, Blackboard blackboard, string nodeGuid)
+        public override void Init(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid)
         {
             Init(actor, blackboard, LoadPropData(nodeGuid) as TProp);
         }
 
-        public override BTNodeState Tick(GameObject actor, Blackboard blackboard, string nodeGuid)
+        public override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid)
         {
             return Tick(actor, blackboard, LoadPropData(nodeGuid) as TProp);
         }
 
-        public abstract void Init(GameObject actor, Blackboard blackboard, TProp prop);
-        public abstract BTNodeState Tick(GameObject actor, Blackboard blackboard, TProp prop);
+        public abstract void Init(GameObject actor, RuntimeBlackboard blackboard, TProp prop);
+        public abstract BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, TProp prop);
 
         #region SAVE & LOAD
         public override bool SavePropData(string key, object data)
@@ -61,8 +61,8 @@ namespace RR.AI.BehaviorTree
         public virtual System.Type PropertyType => typeof(BTTaskDataNone);
         public Texture2D Icon => _icon;
 
-        public abstract void Init(GameObject actor, Blackboard blackboard, string nodeGuid);
-        public abstract BTNodeState Tick(GameObject actor, Blackboard blackboard, string nodeGuid);
+        public abstract void Init(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid);
+        public abstract BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid);
         public virtual bool SavePropData(string key, object data) => true;
         public virtual object LoadPropData(string key) 
         {

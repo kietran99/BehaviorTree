@@ -14,6 +14,7 @@ namespace RR.AI.BehaviorTree
         public BTDesignContainer DesignContainer => _designContainer;
 
         private BTBaseNode _root;
+        private RuntimeBlackboard _runtimeBlackboard;
 
         private void Start()
         {
@@ -124,11 +125,13 @@ namespace RR.AI.BehaviorTree
             {
                 data.Node.Init(data.Children, _actor, null);
             }
+
+            _runtimeBlackboard = _designContainer.Blackboard.RuntimeBlackboard;
         }
 
         private void Update()
         {
-            _root.Update(_actor, _designContainer.Blackboard);
+            _root.Update(_actor, _runtimeBlackboard);
         }
     }
 }

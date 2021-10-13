@@ -2,14 +2,14 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace RR.AI
-{
-    public interface IBBValue
+{  
+    public interface IBBValue : IBBValueBase
     {
-        System.Type ValueType { get; }
         string ValueTypeString { get; }
 
         bool SetValue(object value);
-        VisualElement CreatePropView();
+        UnityEngine.UIElements.VisualElement CreatePropView();
+        bool AddToRuntimeBlackboard(RuntimeBlackboard runtimeBB, string key);
     }
 
     // [Serializable]
@@ -41,6 +41,8 @@ namespace RR.AI
             field.RegisterValueChangedCallback(evt => _value = evt.newValue);
             return field;
         }
+
+        public bool AddToRuntimeBlackboard(RuntimeBlackboard runtimeBB, string key) => runtimeBB.Add(key, _value);
 
         protected abstract BaseField<T> PrimitivePropView { get; }
     }

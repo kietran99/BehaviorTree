@@ -6,12 +6,12 @@ namespace RR.AI.BehaviorTree
 	{
 		public override string Name => "Within Range";
 
-        public override void Init(GameObject actor, Blackboard blackboard, BTTaskWithinRangeData prop)
+        public override void Init(GameObject actor, RuntimeBlackboard blackboard, BTTaskWithinRangeData prop)
         {
             prop.Targets = new Collider2D[prop.MaxTargets];
         }
 
-        public override BTNodeState Tick(GameObject actor, Blackboard blackboard, BTTaskWithinRangeData prop)
+        public override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, BTTaskWithinRangeData prop)
         {
             var filter = new ContactFilter2D();
             filter.useLayerMask = true;

@@ -9,9 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7126609689526494b80d159281f2e2f4, type: 3}
-  m_Name: BTTaskTriggerAnimation
+  m_Script: {fileID: 11500000, guid: 2bb696062beca2549a5ce151034567d1, type: 3}
+  m_Name: ActivateSkeleton
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _propMap:
-    _entries: []
+    _entries:
+    - Key: a428cd49-5ef5-4ef4-9e0d-3938d9ee6778
+      Value:
+        AnimParam: Activate
+        ActivatedKey: Has_Activated

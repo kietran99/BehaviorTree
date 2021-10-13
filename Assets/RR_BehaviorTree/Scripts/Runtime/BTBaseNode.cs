@@ -16,8 +16,8 @@ namespace RR.AI.BehaviorTree
             _guid = guid;
         }
 
-        public abstract bool Init(BTBaseNode[] children, GameObject actor, Blackboard blackboard);
-        public abstract BTNodeState Update(GameObject actor, Blackboard blackboard);
-        public abstract BTNodeState InternalUpdate(GameObject actor, Blackboard blackboard, out BTBaseNode runningNode);
+        public abstract bool Init(BTBaseNode[] children, GameObject actor, RuntimeBlackboard blackboard);
+        public abstract BTNodeState Update(GameObject actor, RuntimeBlackboard blackboard);
+        public abstract BTNodeState InternalUpdate(GameObject actor, RuntimeBlackboard blackboard, out BTBaseNode runningNode);
     }
 }

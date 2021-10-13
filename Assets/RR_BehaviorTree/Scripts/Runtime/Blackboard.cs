@@ -40,18 +40,20 @@ namespace RR.AI
 			return true;
 		}
 
-		public bool Add<T>(string key, T value)
+		public T ValueOr<T>(string key, T defaultValue)
 		{
-			if (_map.TryGetValue(key, out var _))
+			if (_map.TryGetValue(key, out var SO))
 			{
-				Debug.LogWarning($"Key {key} not found");
-				return false;
+				if (SO is BBValue<T> valSO)
+				{
+					return valSO.Value;
+				}
+
+				Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {SO.GetType()}");
+				return defaultValue;
 			}
 
-			// var BBVal = BBValueFactory.New<T>(BBContainer, value);
-			// _map.Add(key, BBVal);
-
-			return true;
+			return defaultValue;
 		}
 
 		public bool Add(string key, ScriptableObject BBValue)
@@ -120,5 +122,20 @@ namespace RR.AI
 		}
 
 		public System.Collections.Generic.IEnumerable<T> Map<T>(System.Func<string, ScriptableObject, T> fn) => _map.Map(fn);
+
+		public RuntimeBlackboard RuntimeBlackboard
+		{
+			get
+			{
+				var RTBlackboard = new RuntimeBlackboard();
+
+				foreach (var entry in _map.Entries)
+				{
+					(entry.Value as IBBValue).AddToRuntimeBlackboard(RTBlackboard, entry.Key);
+				}
+
+				return RTBlackboard;
+			}
+		}
 	}
 }

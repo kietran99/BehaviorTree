@@ -15,7 +15,7 @@ namespace RR.AI.BehaviorTree
         protected BTComposite(string guid) : base(guid)
         {}
 
-        public override bool Init(BTBaseNode[] children, GameObject actor, Blackboard blackboard)
+        public override bool Init(BTBaseNode[] children, GameObject actor, RuntimeBlackboard blackboard)
         {
 			if (children.Length == 0)
 			{
@@ -27,7 +27,7 @@ namespace RR.AI.BehaviorTree
             return true;
         }
 
-        public override BTNodeState InternalUpdate(GameObject actor, Blackboard blackboard, out BTBaseNode runningNode)
+        public override BTNodeState InternalUpdate(GameObject actor, RuntimeBlackboard blackboard, out BTBaseNode runningNode)
         {
             OnTick?.Invoke(_guid);
 
@@ -48,7 +48,7 @@ namespace RR.AI.BehaviorTree
             return TickChildren(0, actor, blackboard, out runningNode);
         }
 
-        private BTNodeState TickChildren(int startIdx, GameObject actor, Blackboard blackboard, out BTBaseNode runningNode)
+        private BTNodeState TickChildren(int startIdx, GameObject actor, RuntimeBlackboard blackboard, out BTBaseNode runningNode)
         {
             runningNode = null;
 
@@ -81,7 +81,7 @@ namespace RR.AI.BehaviorTree
             return FinalReturnState;
         }
 
-        public override BTNodeState Update(UnityEngine.GameObject actor, Blackboard blackboard)
+        public override BTNodeState Update(UnityEngine.GameObject actor, RuntimeBlackboard blackboard)
         {
             OnTick?.Invoke(_guid);
 

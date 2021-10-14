@@ -9,7 +9,7 @@ namespace RR.Utils
 			
             for (int i = 1; i < str.Length; i++)
             {
-                if (System.Char.IsUpper(str[i]))
+                if (System.Char.IsUpper(str[i]) && (System.Char.IsLower(str[i - 1]) || System.Char.IsLower(str[i + 1])))
                 {
                     strBuilder.Insert(i + nWhiteSpaces, ' ');
 					nWhiteSpaces++;

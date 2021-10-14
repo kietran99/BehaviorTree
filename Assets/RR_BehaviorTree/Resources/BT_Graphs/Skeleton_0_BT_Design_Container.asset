@@ -41,26 +41,36 @@ MonoBehaviour:
       _parentGuid: 60a36044-e6cf-4750-95cb-961fbd899e07
       _position: {x: 622, y: 300}
     _nodeType: 1
+  - _graphData:
+      _guid: d5a93280-7595-41e1-a716-d58a020272d6
+      _parentGuid: 1dcb06cf-3bbe-4982-950c-8aa60ae1ec62
+      _position: {x: 875, y: 301}
+    _nodeType: 2
+  - _graphData:
+      _guid: 73417c30-46b7-4702-84f3-f92fbd2931c1
+      _parentGuid: d5a93280-7595-41e1-a716-d58a020272d6
+      _position: {x: 1082, y: 300}
+    _nodeType: 1
   taskDataList:
+  - _graphData:
+      _guid: a428cd49-5ef5-4ef4-9e0d-3938d9ee6778
+      _parentGuid: 73417c30-46b7-4702-84f3-f92fbd2931c1
+      _position: {x: 1278, y: 300}
+    _task: {fileID: 11400000, guid: 83cd9c7baaeca474591a43bea316d9ff, type: 2}
+  - _graphData:
+      _guid: 28525154-f2dc-4cc0-a111-f5fff655cf4f
+      _parentGuid: 73417c30-46b7-4702-84f3-f92fbd2931c1
+      _position: {x: 1277, y: 130}
+    _task: {fileID: 11400000, guid: 9ec8009fda96ce440a4ad2dd2d93bd78, type: 2}
   - _graphData:
       _guid: b7a9715d-04f5-4077-8221-9a16642e4f60
       _parentGuid: 1dcb06cf-3bbe-4982-950c-8aa60ae1ec62
-      _position: {x: 842, y: 80}
+      _position: {x: 817, y: 39}
     _task: {fileID: 11400000, guid: a6d97443bcf06864a884166ec200adb6, type: 2}
   - _graphData:
-      _guid: 44c34ebf-7e96-429f-9b3a-d03e3d9ca874
-      _parentGuid: 1dcb06cf-3bbe-4982-950c-8aa60ae1ec62
-      _position: {x: 843, y: -49}
-    _task: {fileID: 11400000, guid: aba22c4164a5f8644b18e21e6df432ab, type: 2}
-  - _graphData:
-      _guid: a428cd49-5ef5-4ef4-9e0d-3938d9ee6778
-      _parentGuid: 1dcb06cf-3bbe-4982-950c-8aa60ae1ec62
-      _position: {x: 843, y: 301}
-    _task: {fileID: 11400000, guid: 83cd9c7baaeca474591a43bea316d9ff, type: 2}
-  - _graphData:
       _guid: b58d14b6-6b5a-4f48-b437-f887664ac897
-      _parentGuid: 1dcb06cf-3bbe-4982-950c-8aa60ae1ec62
-      _position: {x: 846, y: 471}
+      _parentGuid: d5a93280-7595-41e1-a716-d58a020272d6
+      _position: {x: 1045, y: 484}
     _task: {fileID: 11400000, guid: a1e6d559127f2744e82915c522e5408c, type: 2}
   _blackboard:
     _map:

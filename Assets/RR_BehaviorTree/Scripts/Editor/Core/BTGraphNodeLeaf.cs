@@ -103,7 +103,8 @@ namespace RR.AI.BehaviorTree
                         return (label, _ => {});
                     }
 
-                    var field = new PopupField<string>(BBKeys, BBKeys[0]);
+                    var fieldValue = (string) fieldInfo.GetValue(propFieldData);
+                    var field = new PopupField<string>(BBKeys, string.IsNullOrEmpty(fieldValue) ? BBKeys[0] : fieldValue);
                     return (StylizePropField(field), prop => fieldInfo.SetValue(prop, field.value));
                 }
 

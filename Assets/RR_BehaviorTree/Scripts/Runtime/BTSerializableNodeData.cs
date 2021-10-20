@@ -13,59 +13,78 @@ namespace RR.AI.BehaviorTree
         private string _parentGuid = string.Empty;
 
         [SerializeField]
-        private Vector2 _position = Vector2.zero;
+        private string _name = string.Empty;
 
-        public BTNodeGraphData(Vector2 position, string guid, string parentGuid)
+        [SerializeField]
+        private Vector2 _position = Vector2.zero;
+        
+        [SerializeField]
+        [TextArea]
+        private string _description = string.Empty;
+
+        public BTNodeGraphData(Vector2 position, string name, string description, string guid, string parentGuid)
         {
             _guid = guid;
             _parentGuid = parentGuid;
             _position = position;
+            _name = name;
+            _description = description;
         }
 
         public string Guid => _guid;
         public string ParentGuid => _parentGuid;
-        public Vector2 Position => _position;        
+        public string Name => _name;
+        public Vector2 Position => _position;    
+        public string Description => _description;    
     }
 
     [Serializable]
-    public class BTSerializableNodeData
+    public abstract class BTSerializableNodeDataBase
     {
         [SerializeField]
         private BTNodeGraphData _graphData = null;
 
-        [SerializeField]
-        private BTNodeType _nodeType = BTNodeType.Root;
-
-        public BTSerializableNodeData(Vector2 position, string guid, string parentGuid, BTNodeType nodeType)
+        public BTSerializableNodeDataBase(Vector2 position, string name, string description, string guid, string parentGuid)
         {
-            _graphData = new BTNodeGraphData(position, guid, parentGuid);
-            _nodeType = nodeType;
+            _graphData = new BTNodeGraphData(position, name, description, guid, parentGuid);
         }
 
         public string Guid => _graphData.Guid;
         public string ParentGuid => _graphData.ParentGuid;
+        public string Name => _graphData.Name;
         public Vector2 Position => _graphData.Position;
+        public string Description => _graphData.Description;
+    }
+
+    [Serializable]
+    public class BTSerializableNodeData : BTSerializableNodeDataBase
+    {
+        [SerializeField]
+        private BTNodeType _nodeType = BTNodeType.Root;
+
+        public BTSerializableNodeData(
+            Vector2 position, string name, string description, string guid, string parentGuid, BTNodeType nodeType)
+            : base(position, name, description, guid, parentGuid)
+        {
+            _nodeType = nodeType;
+        }
+
         public BTNodeType NodeType => _nodeType;
     }
 
     [Serializable]
-    public class BTSerializableTaskData
+    public class BTSerializableTaskData : BTSerializableNodeDataBase
     {
-        [SerializeField]
-        private BTNodeGraphData _graphData = null;
-
         [SerializeField]
         private BTBaseTask _task = null;
 
-        public BTSerializableTaskData(Vector2 position, string guid, string parentGuid, BTBaseTask task)
+        public BTSerializableTaskData(
+            Vector2 position, string name, string description, string guid, string parentGuid, BTBaseTask task)
+            : base(position, name, description, guid, parentGuid)
         {
-            _graphData = new BTNodeGraphData(position, guid, parentGuid);
             _task = task;
         }
 
-        public string Guid => _graphData.Guid;
-        public string ParentGuid => _graphData.ParentGuid;
-        public Vector2 Position => _graphData.Position;
         public BTBaseTask Task => _task;
     }
 }

@@ -33,5 +33,7 @@ namespace RR.AI.BehaviorTree
 		public float Speed;
 		[BlackboardValue(typeof(Vector3))]
 		public string TargetPosition;
+		[BlackboardValue(typeof(Vector3))]
+		public string Velocity;
 	}
 }

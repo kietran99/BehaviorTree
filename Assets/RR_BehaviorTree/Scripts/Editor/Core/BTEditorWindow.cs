@@ -13,46 +13,30 @@ namespace RR.AI.BehaviorTree
         private BTNodeSearchWindow _searchWindow;
         private Toolbar _toolbar;
 
-        public static System.Action OnSaveAssetsClick { get; set; }
+        public static System.Action OnClose { get; set; }
 
-
-        [MenuItem("Graph/Behavior Tree")]
-        public static void Init()
+        public static void Init(BehaviorTree behaviorTree)
         {
             var window = GetWindow<BTEditorWindow>("Behavior Tree");
-            // window.position = new Rect(500, 500, 500, 500);
-            // window.minSize = new Vector2(1100, 800);
+            window._inspectedBT = behaviorTree;
+            window._graphView.Init(behaviorTree.DesignContainer);
         }
 
         private void CreateGUI()
         {
-            (_graphView, _inspectedBT) = CreateGraphView();
-
+            _graphView = CreateGraphView();
             _searchWindow = CreateNodeSearchWindow(_graphView);
-
-            _graphView.GetBlackboard().visible = _inspectedBT != null;
             _toolbar = CreateToolbar();
-            _toolbar.visible = _inspectedBT != null;
-
-            Selection.selectionChanged += OnGOSelectionChanged;
 
             rootVisualElement.Add(_graphView);
             rootVisualElement.Add(_toolbar);
         }
 
-        private (BTGraphView, BehaviorTree) CreateGraphView()
+        private BTGraphView CreateGraphView()
         {
-            if (Selection.activeGameObject == null)
-            {
-                var emptyGraphView = new BTGraphView();
-                emptyGraphView.StretchToParentSize();  
-                return (emptyGraphView, null);
-            }
-
-            var res = TryGetBehaviorTree(Selection.activeGameObject, out var BT);
-            var graphView = res ? new BTGraphView(BT.DesignContainer) : new BTGraphView();
+            var graphView = new BTGraphView();
             graphView.StretchToParentSize();
-            return (graphView, res ? BT : null);
+            return graphView;
         }
 
         private Toolbar CreateToolbar()
@@ -61,11 +45,8 @@ namespace RR.AI.BehaviorTree
 
             var saveBtn = new Button(() => 
             { 
-                if (_inspectedBT != null) 
-                {
-                    _inspectedBT.DesignContainer.Save(_graphView.nodes);
-                    _graphView.Save();
-                }
+                _inspectedBT.DesignContainer.Save(_graphView.nodes);
+                _graphView.Save();
             }) { text = "Save Assets" };
 
             toolbar.Add(saveBtn);
@@ -86,50 +67,25 @@ namespace RR.AI.BehaviorTree
             window.Init((nodeType, pos) => 
             {
                 var localMousePos = contextToLocalMousePos(pos);
-                var node = BTGraphNodeFactory.CreateGraphNode(nodeType, _graphView.GetBlackboard() as GraphBlackboard, localMousePos);
+                var node = BTGraphNodeFactory.CreateDefaultGraphNode(nodeType, _graphView.GetBlackboard() as GraphBlackboard, localMousePos);
                 graphView.AddElement(node);
             });
 
             return window;
         }
 
-        private void OnGOSelectionChanged()
-        {
-            var selectedGO = Selection.activeGameObject;
-
-            if (selectedGO == null)
-            {
-                return;
-            }
-
-            if (!TryGetBehaviorTree(selectedGO, out _inspectedBT))
-            {
-                _graphView.OnGOSelectionChanged(null);
-                _toolbar.visible = false;
-                return;
-            }
-
-            _toolbar.visible = true;
-            _graphView.OnGOSelectionChanged(_inspectedBT.DesignContainer);
-        }
-
-        private bool TryGetBehaviorTree(GameObject GO, out BehaviorTree behaviorTree)
-        {
-            if (!GO.TryGetComponent<BehaviorTree>(out var BT))
-            {
-                behaviorTree = null;
-                return false;
-            }
-
-            behaviorTree = BT;
-            return true;
-        }
-
         private void OnDisable()
         {
-            Selection.selectionChanged -= OnGOSelectionChanged;
-            OnSaveAssetsClick = null;
-            // _graphView.RemoveElement(_blackboard);
+            OnClose?.Invoke();
+
+            if (OnClose != null)
+            {
+                foreach (var listener in OnClose.GetInvocationList())
+                {
+                    OnClose -= (System.Action) listener;
+                }
+            }  
+
             rootVisualElement.Remove(_graphView);
             rootVisualElement.Remove(_toolbar);
         }

@@ -8,7 +8,7 @@ namespace RR.AI.BehaviorTree
 
         public override void Init(GameObject actor, RuntimeBlackboard blackboard, BTTaskWithinRangeData prop)
         {
-            prop.Targets = new Collider2D[prop.MaxTargets];
+            prop.Targets = new Collider2D[1];
         }
 
         public override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, BTTaskWithinRangeData prop)
@@ -31,6 +31,11 @@ namespace RR.AI.BehaviorTree
                 nTargetsInRangeWithTag += prop.Targets[i].CompareTag(prop.TargetTag) ? 1 : 0;
             }
             
+            if (nTargetsInRangeWithTag > 0)
+            {
+                blackboard.Update<Vector2>(prop.TargetPosition, prop.Targets[0].transform.position);
+            }
+
             return nTargetsInRangeWithTag.ToBTNodeState();
         }
     }
@@ -40,11 +45,9 @@ namespace RR.AI.BehaviorTree
 	{
 		public float Range;
         
-        [RR.Serialization.TagField]
-        public string TargetTag;
-        [RR.Serialization.LayerMaskField]
-        public int TargetLayers;
-        public int MaxTargets;
+        [RR.Serialization.TagField] public string TargetTag;
+        [RR.Serialization.LayerMaskField] public int TargetLayers;
+        [BlackboardValue(typeof(Vector2))] public string TargetPosition;
 
         public Collider2D[] Targets { get; set; }
 	}

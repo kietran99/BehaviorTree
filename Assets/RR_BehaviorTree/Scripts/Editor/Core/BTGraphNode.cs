@@ -12,7 +12,7 @@ namespace RR.AI.BehaviorTree
 
     public class BTGraphNode<T> : Node, IBTGraphNode, IBTSavable where T : IBTGraphNodeInfo, new()
     {
-        private static Vector2 _defaultNodeSize = new Vector2(600f, 400f);
+        private static Vector2 DEFAULT_NODE_SIZE = new Vector2(600f, 400f);
         private static Color DEFAULT_EDGE_COLOR = new Color(146f / 255f, 146f/ 255f, 146f / 255f);
         private static Color DEBUG_ACTIVE_EDGE_COLOR = new Color(222f / 255f, 240f/ 255f, 61f / 255f);
         private static Color DEBUG_INACTIVE_EDGE_COLOR = new Color(158f / 255f, 202f/ 255f, 255f / 255f, .2f);
@@ -20,17 +20,20 @@ namespace RR.AI.BehaviorTree
         // public static OnEdgeDrag
 
         protected T _nodeAction;
-
+        protected string _name;
+        protected string _description;
         protected string _guid;
-        public string Guid => _guid; 
+        public string Guid => _guid;
 
-        public BTGraphNode(Vector2 pos, GraphBlackboard blackboard, string guid="")
+        public BTGraphNode(Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid="")
         {
             styleSheets.Add(Resources.Load<UnityEngine.UIElements.StyleSheet>("Stylesheets/BTGraphNode"));
             AddToClassList("bold-text");
 
             _nodeAction = new T();
             CreatePorts(inputContainer, outputContainer, _nodeAction.Capacity.In, _nodeAction.Capacity.Out);
+            _name = string.IsNullOrEmpty(name) ? _nodeAction.Name : name;
+            _description = desc;
             _guid = string.IsNullOrEmpty(guid) ? System.Guid.NewGuid().ToString() : guid;
             
             titleContainer.Clear();
@@ -38,7 +41,7 @@ namespace RR.AI.BehaviorTree
             var container = CreateTitleContent(_nodeAction.NodeType);
             titleContainer.Add(container);
             
-            SetPosition(new Rect(pos, _defaultNodeSize));
+            SetPosition(new Rect(pos, DEFAULT_NODE_SIZE));
 
             if (_nodeAction.NodeType == BTNodeType.Root)
             {
@@ -46,8 +49,8 @@ namespace RR.AI.BehaviorTree
                 capabilities &= ~Capabilities.Deletable;
             }
 
-            BTBaseNode.OnRootTick += RootTickCallback;
-            BTBaseNode.OnTick += NodeTickCallback;
+            BTBaseNode.OnRootTick += OnRootTick;
+            BTBaseNode.OnTick += OnNodeTick;
             // var label = new Label("0");
             // label.style.fontSize = 15;
             // titleButtonContainer.Add(label);
@@ -59,6 +62,17 @@ namespace RR.AI.BehaviorTree
             // }
         }
 
+        public override void OnSelected()
+        {
+            BTGraphView.OnNodeSelected?.Invoke(_guid);
+            base.OnSelected();
+        }
+
+        public override void OnUnselected()
+        {
+            base.OnUnselected();
+        }
+
         // private void OnMouseUp(MouseUpEvent evt)
         // {
             // Debug.Log((outputContainer[0] as Port).connected);
@@ -67,7 +81,7 @@ namespace RR.AI.BehaviorTree
             // Debug.Log(evt.originalMousePosition);
         // }
 
-        private void RootTickCallback(string _)
+        private void OnRootTick(string _)
         {
             if (inputContainer.childCount == 0)
             {
@@ -88,13 +102,13 @@ namespace RR.AI.BehaviorTree
             }
         }
 
-        private void NodeTickCallback(string guid)
+        private void OnNodeTick(string guid)
         {
             if (_guid != guid)
             {
                 return;
             }
-            // Debug.Log(guid);
+            
             if (inputContainer.childCount == 0)
             {
                 return;
@@ -129,16 +143,13 @@ namespace RR.AI.BehaviorTree
             var icon = new Image();
             icon.image = GetIcon(type);
             icon.scaleMode = ScaleMode.ScaleToFit;
-            // icon.style.paddingBottom = 1;
-            // icon.style.paddingTop = 1;
-            // icon.style.paddingLeft = 1;
-            // icon.style.paddingRight = 1;
             icon.style.marginRight = 5;
             container.Add(icon);
 
-            var titleLabel = new Label(_nodeAction.Name);
+            var titleLabel = new Label(_name);
             titleLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
             titleLabel.style.fontSize = 14;
+            titleLabel.style.color = Color.white;
             container.Add(titleLabel);
 
             return container;
@@ -211,8 +222,9 @@ namespace RR.AI.BehaviorTree
     
         public virtual void Save(BTDesignContainer designContainer)
         {
-            designContainer.nodeDataList.Add(
-                new BTSerializableNodeData(GetPosition().position, _guid, GetParentGuid(inputContainer), _nodeAction.NodeType));
+            designContainer.NodeDataList.Add(
+                new BTSerializableNodeData(
+                    GetPosition().position, _name, _description, _guid, GetParentGuid(inputContainer), _nodeAction.NodeType));
         }
 
         protected string GetParentGuid(VisualElement inputContainer)
@@ -237,8 +249,8 @@ namespace RR.AI.BehaviorTree
 
         public void OnRemove()
         {
-            BTBaseNode.OnTick -= NodeTickCallback;
-            BTBaseNode.OnRootTick -= RootTickCallback;
+            BTBaseNode.OnTick -= OnNodeTick;
+            BTBaseNode.OnRootTick -= OnRootTick;
         }
     }
 }

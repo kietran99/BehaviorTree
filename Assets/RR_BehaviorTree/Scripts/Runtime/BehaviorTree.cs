@@ -18,7 +18,7 @@ namespace RR.AI.BehaviorTree
 
         private void Start()
         {
-            if (_designContainer.nodeDataList.Count == 0 || _designContainer.taskDataList.Count == 0)
+            if (_designContainer.NodeDataList.Count == 0 || _designContainer.TaskDataList.Count == 0)
             {
                 Debug.LogError("Invalid Behavior Tree");
                 gameObject.SetActive(false);
@@ -39,12 +39,12 @@ namespace RR.AI.BehaviorTree
         private (BTBaseNode root, BTNodeData[] nodeDataList) Extract(BTDesignContainer designContainer)
         {
             BTBaseNode root = null;
-            var nodeDict = new Dictionary<string, (BTBaseNode node, int yPos)>(designContainer.nodeDataList.Count);
-            var linkDataList = new List<BTLinkData>(designContainer.nodeDataList.Count);
-            var linkDict = new Dictionary<BTBaseNode, List<(BTBaseNode node, int yPos)>>(designContainer.nodeDataList.Count);
+            var nodeDict = new Dictionary<string, (BTBaseNode node, int yPos)>(designContainer.NodeDataList.Count);
+            var linkDataList = new List<BTLinkData>(designContainer.NodeDataList.Count);
+            var linkDict = new Dictionary<BTBaseNode, List<(BTBaseNode node, int yPos)>>(designContainer.NodeDataList.Count);
             var emptyList = new List<(BTBaseNode node, int yPos)>();
             
-            designContainer.nodeDataList.ForEach(nodeData => 
+            designContainer.NodeDataList.ForEach(nodeData => 
             {
                 var node = BTNodeFactory.Create(nodeData.NodeType, nodeData.Guid);
 
@@ -62,7 +62,7 @@ namespace RR.AI.BehaviorTree
                 }
             });
 
-            designContainer.taskDataList.ForEach(taskData => 
+            designContainer.TaskDataList.ForEach(taskData => 
             {
                 var node = BTNodeFactory.CreateLeaf(taskData.Task, taskData.Guid);
 

@@ -8,7 +8,8 @@ namespace RR.AI.BehaviorTree
     {
         private System.Func<object> TaskPropConstructFn;
 
-        public BTGraphNodeLeaf(Vector2 pos, GraphBlackboard blackboard, string guid = "") : base(pos, blackboard, guid)
+        public BTGraphNodeLeaf(Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid = "") 
+            : base(pos, blackboard, name, desc, guid)
         {
             mainContainer.style.backgroundColor = new StyleColor(new Color(50f / 255f, 50f / 255f, 50f / 255f));
             DrawTaskProperties(_nodeAction.Task.PropertyType, blackboard);
@@ -187,8 +188,10 @@ namespace RR.AI.BehaviorTree
                     ? TaskPropConstructFn() 
                     : System.Activator.CreateInstance(_nodeAction.Task.PropertyType));            
 
-            designContainer.taskDataList.Add(
+            designContainer.TaskDataList.Add(
                 new BTSerializableTaskData(GetPosition().position, 
+                _name,
+                _description,
                 _guid, 
                 GetParentGuid(inputContainer), 
                 _nodeAction.Task));

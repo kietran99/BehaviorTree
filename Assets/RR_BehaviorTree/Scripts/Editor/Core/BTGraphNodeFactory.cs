@@ -8,13 +8,22 @@ namespace RR.AI.BehaviorTree
     {
         private static Dictionary<System.Type, System.Type> _nodeInfoToGraphNodeMap = new Dictionary<System.Type, System.Type>();
 
-        public static Node CreateDefaultGraphNode(System.Type graphInfoType, GraphBlackboard blackboard, Vector2 pos)
+        public static Node CreateDefaultGraphNode(
+            System.Type graphInfoType
+            , GraphBlackboard blackboard
+            , Vector2 pos
+            , System.Func<System.Type, BTBaseTask> GetOrCreateTaskFn 
+            )
         {
-            var ctorParams = new object[] { pos, blackboard, string.Empty, string.Empty, string.Empty };
+            var isTaskNode = typeof(BTBaseTask).IsAssignableFrom(graphInfoType);
+
+            var ctorParams = isTaskNode
+                ? new object[] { GetOrCreateTaskFn(graphInfoType), pos, blackboard, string.Empty, string.Empty, string.Empty }
+                : new object[] { pos, blackboard, string.Empty, string.Empty, string.Empty, null };
             
             if (!_nodeInfoToGraphNodeMap.TryGetValue(graphInfoType, out var graphNodeType))
             {
-                graphNodeType = typeof(BTBaseTask).IsAssignableFrom(graphInfoType)
+                graphNodeType = isTaskNode
                     ? typeof(BTGraphNodeLeaf<>).MakeGenericType(graphInfoType)
                     : typeof(BTGraphNode<>).MakeGenericType(graphInfoType);
                 _nodeInfoToGraphNodeMap.Add(graphInfoType, graphNodeType);
@@ -39,7 +48,8 @@ namespace RR.AI.BehaviorTree
             }
         }
 
-        public static Node CreateGraphNodeLeaf(BTBaseTask task, Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid="")
+        public static Node CreateGraphNodeLeaf(
+            BTBaseTask task, Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid="")
         {
             var graphNodeleafType = typeof(BTGraphNodeLeaf<>).MakeGenericType(task.GetType());
             return System.Activator.CreateInstance(graphNodeleafType, new object[] { pos, blackboard, name, desc, guid }) as Node;

@@ -54,7 +54,7 @@ namespace RR.Serialization.Editor
 
         private void DrawChildrenProps(SerializedProperty prop, Rect baseRect, float propHeight, float padding)
         {
-            if (!prop.hasChildren)
+            if (!prop.hasChildren || prop.propertyType == SerializedPropertyType.ObjectReference)
             {
                 var rect = new Rect(baseRect.x, baseRect.y, baseRect.width, EditorGUIUtility.singleLineHeight);
                 EditorGUI.PropertyField(rect, prop, GUIContent.none);

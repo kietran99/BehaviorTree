@@ -9,7 +9,6 @@ namespace RR.AI.BehaviorTree
     {
         private System.Collections.Generic.List<Type> _taskTypes = new System.Collections.Generic.List<Type>();
         private Action<Type, Vector2> OnEntrySelected;
-        private BTTaskReferenceContainer _taskRefContainer;
         private Texture2D _indentation;
 
         public void Init(Action<Type, Vector2> entrySelectedCallback)
@@ -19,8 +18,6 @@ namespace RR.AI.BehaviorTree
             _indentation = new Texture2D(1, 1);
             _indentation.SetPixel(0, 0, new Color(0, 0, 0, 0));
             _indentation.Apply();
-
-            _taskRefContainer = Resources.Load<BTTaskReferenceContainer>(BTTaskReferenceContainer.TASK_REF_CONTAINER_PATH);
             
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 

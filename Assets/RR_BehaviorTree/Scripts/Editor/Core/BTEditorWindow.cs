@@ -67,7 +67,11 @@ namespace RR.AI.BehaviorTree
             window.Init((nodeType, pos) => 
             {
                 var localMousePos = contextToLocalMousePos(pos);
-                var node = BTGraphNodeFactory.CreateDefaultGraphNode(nodeType, _graphView.GetBlackboard() as GraphBlackboard, localMousePos);
+                var node = BTGraphNodeFactory.CreateDefaultGraphNode(
+                    nodeType, 
+                    _graphView.GetBlackboard() as GraphBlackboard, 
+                    localMousePos,
+                    graphView.DesignContainer.GetOrCreateTask);
                 graphView.AddElement(node);
             });
 

@@ -12,11 +12,5 @@ public class TestValue
 
 public class TestScript : MonoBehaviour, IMyInterface
 {
-    [TagField]
-    public string someTag;
-    [LayerMaskField]
-    public int someLayer;
-    // public SerializableDictionary<string, int> intDict;
-    public SerializableDictionary<string, int[]> intArrDict;
-    public SerializableDictionary<string, TestValue> testValueDict;
+    public SerializableDictionary<int, ScriptableObject> _dict;
 }

@@ -6,7 +6,7 @@ namespace RR.AI.BehaviorTree
     public abstract class BTBaseTask<TProp> : BTBaseTask where TProp : class, new()
     {
         [SerializeField]
-        private BTTaskPropertyMap<TProp> _propMap;
+        private BTTaskPropertyMap<TProp> _propMap = null;
 
         public override Type PropertyType => typeof(TProp);
         

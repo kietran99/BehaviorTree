@@ -1,18 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-1369812884981179675
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23aae0924f9a1eb41b94096738813b0b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _value: {x: 0, y: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27,37 +14,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _nodeDataList:
   - _graphData:
-      _guid: 3caffd3c-2c62-4067-bdc4-5748141f43d2
+      _guid: c272c03e-d0cd-4dd6-b84b-243f7777c92c
       _parentGuid: 
       _name: Root
       _position: {x: 400, y: 480}
-      _description: The entry point of the tree, can only has one child.
+      _description: 
     _nodeType: 0
   - _graphData:
-      _guid: 951f40cd-b219-45b8-9a98-ba57e45f6cb5
-      _parentGuid: 3caffd3c-2c62-4067-bdc4-5748141f43d2
+      _guid: 78b638f8-fd19-43f9-a2d1-50a906b17322
+      _parentGuid: c272c03e-d0cd-4dd6-b84b-243f7777c92c
       _name: Selector
-      _position: {x: 595, y: 480}
-      _description: Ticks next child node until one returns SUCESS or RUNNING.
+      _position: {x: 633, y: 480}
+      _description: 
     _nodeType: 2
-  _taskDataList:
-  - _graphData:
-      _guid: e1398e68-b3ce-4081-9355-fd2c7c5a6dd8
-      _parentGuid: 951f40cd-b219-45b8-9a98-ba57e45f6cb5
-      _name: Log
-      _position: {x: 812, y: 479}
-      _description: Prints a message to the console.
-    _task: {fileID: 11400000, guid: bd4ef22bd57a4a646b266eadda77f010, type: 2}
+  _taskDataList: []
   _blackboard:
     _map:
-      _entries:
-      - Key: Has_Activated
-        Value: {fileID: 4871811360098065843}
-      - Key: Target_Position
-        Value: {fileID: -1369812884981179675}
-      - Key: Velocity
-        Value: {fileID: 9119548030808481535}
---- !u!114 &4871811360098065843
+      _entries: []
+  _taskDict:
+    _entries:
+    - Key: 1983184568
+      Value: {fileID: 1382227343790362406}
+--- !u!114 &1382227343790362406
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -66,20 +44,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52c3f5b5f27309244a11377ce369b7e5, type: 3}
+  m_Script: {fileID: 11500000, guid: 6be54ab0e15258b498335ab42e648517, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _value: 0
---- !u!114 &9119548030808481535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23aae0924f9a1eb41b94096738813b0b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _value: {x: 0, y: 0}
+  _icon: {fileID: 0}
+  _propMap:
+    _entries: []

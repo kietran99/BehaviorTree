@@ -25,10 +25,11 @@ namespace RR.AI.BehaviorTree
         protected string _guid;
         public string Guid => _guid;
 
-        public BTGraphNode(Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid="")
+        public BTGraphNode(Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid="", Texture2D icon = null)
         {
             styleSheets.Add(Resources.Load<UnityEngine.UIElements.StyleSheet>("Stylesheets/BTGraphNode"));
             AddToClassList("bold-text");
+            mainContainer.style.minWidth = 100;
 
             _nodeAction = new T();
             CreatePorts(inputContainer, outputContainer, _nodeAction.Capacity.In, _nodeAction.Capacity.Out);
@@ -38,7 +39,8 @@ namespace RR.AI.BehaviorTree
             
             titleContainer.Clear();
             StylizeTitleContainer(titleContainer);
-            var container = CreateTitleContent(_nodeAction.NodeType);
+            
+            var container = CreateTitleContent(_nodeAction.NodeType, icon);
             titleContainer.Add(container);
             
             SetPosition(new Rect(pos, DEFAULT_NODE_SIZE));
@@ -135,13 +137,13 @@ namespace RR.AI.BehaviorTree
             container.style.paddingRight = 5;
         }
 
-        private VisualElement CreateTitleContent(BTNodeType type)
+        private VisualElement CreateTitleContent(BTNodeType type, Texture2D nodeIcon = null)
         {
             var container = new VisualElement();
             container.style.flexDirection = FlexDirection.Row;
 
             var icon = new Image();
-            icon.image = GetIcon(type);
+            icon.image = type != BTNodeType.Leaf ? GetIcon(type) : nodeIcon;
             icon.scaleMode = ScaleMode.ScaleToFit;
             icon.style.marginRight = 5;
             container.Add(icon);

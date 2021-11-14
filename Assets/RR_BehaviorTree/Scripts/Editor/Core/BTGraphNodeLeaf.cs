@@ -8,6 +8,14 @@ namespace RR.AI.BehaviorTree
     {
         private System.Func<object> TaskPropConstructFn;
 
+        public BTGraphNodeLeaf(
+            BTBaseTask task, Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid = "") 
+            : base(pos, blackboard, task.Name, desc, guid, task.Icon)
+        {
+            _nodeAction.Task = task;
+            _name = task.Name;
+        }
+
         public BTGraphNodeLeaf(Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid = "") 
             : base(pos, blackboard, name, desc, guid)
         {
@@ -178,7 +186,7 @@ namespace RR.AI.BehaviorTree
 
         protected override Texture2D GetIcon(BTNodeType _)
         {
-            return _nodeAction.Task.Icon;
+            return _nodeAction.Task == null ? null : _nodeAction.Task.Icon;
         }
 
         public override void Save(BTDesignContainer designContainer)

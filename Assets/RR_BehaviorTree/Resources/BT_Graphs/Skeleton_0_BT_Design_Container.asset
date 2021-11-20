@@ -1,5 +1,33 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4106908840911962836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abcb170c4cca62f4e9e801b580f6cda4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 0}
+  _propMap:
+    _entries: []
+--- !u!114 &-3751396166517632394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6f0359194183a44088ffc5d706ca526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _value: {x: 0, y: 0, z: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30,11 +58,17 @@ MonoBehaviour:
   _taskDataList: []
   _blackboard:
     _map:
-      _entries: []
+      _entries:
+      - Key: Target_Position
+        Value: {fileID: -3751396166517632394}
   _taskDict:
     _entries:
     - Key: 1983184568
       Value: {fileID: 1382227343790362406}
+    - Key: 646957711
+      Value: {fileID: -4106908840911962836}
+    - Key: 322375701
+      Value: {fileID: 5343796404105331447}
 --- !u!114 &1382227343790362406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45,6 +79,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6be54ab0e15258b498335ab42e648517, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 0}
+  _propMap:
+    _entries: []
+--- !u!114 &5343796404105331447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3be741d0ef2a3c348952c4ec3baf981f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}

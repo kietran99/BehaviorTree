@@ -1,124 +1,21 @@
 using UnityEditor.Experimental.GraphView;
 using System.Collections.Generic;
-using UnityEngine.UIElements;
 using UnityEditor;
 
 namespace RR.AI.BehaviorTree
 {
     public class BTGraphView : AbstractGraphView
     {
-        private class NodeDetails : GraphElement
-        {
-            private TextField _nameField, _descField;
-            private VisualElement _taskPropContainer;
-
-            public NodeDetails(UnityEngine.Rect rect)
-            {
-                style.backgroundColor = RR.Utils.ColorExtension.Create(96f);
-                SetPosition(rect);
-                
-                var titleContainer = CreateTitle();
-                Add(titleContainer);
-
-                // var (name, desc) = selectedNode == null 
-                //     ? (string.Empty, string.Empty) 
-                //     : (selectedNode.FindPropertyRelative("_name").stringValue, selectedNode.FindPropertyRelative("_description").stringValue);
-                var generalContainer = CreateGeneralContainer();
-                Add(generalContainer);
-
-                _taskPropContainer = CreateTaskPropContainer();
-                Add(_taskPropContainer);
-            }
-
-            private VisualElement CreateTitle()
-            {
-                var container = new VisualElement();
-                container.style.alignItems = Align.Center;
-                container.style.marginBottom = 5f;
-
-                var label = new Label("Details");
-                label.style.fontSize = 14;
-                label.style.unityFontStyleAndWeight = UnityEngine.FontStyle.Bold;
-
-                container.Add(label);
-
-                return container;
-            }
-
-            private VisualElement CreateContainerBase(string labelText, VisualElement content)
-            {
-                var container = new VisualElement();
-                container.style.backgroundColor = RR.Utils.ColorExtension.Create(62f);
-
-                var label = new Label(labelText);
-                label.style.backgroundColor = RR.Utils.ColorExtension.Create(30f);
-                label.style.unityFontStyleAndWeight = UnityEngine.FontStyle.Bold;
-                label.style.paddingLeft = 5f;
-                label.style.paddingTop = 2f;
-                label.style.paddingBottom = 2f;
-
-                content.style.paddingTop = 2f;
-                content.style.paddingBottom = 2f;
-
-                container.Add(label);
-                container.Add(content);
-
-                return container;
-            }
-
-            private VisualElement CreateGeneralContainer()
-            {
-                var container = new VisualElement();
-                _nameField = new TextField("Name");
-                _nameField.labelElement.style.marginRight = -70;
-                _descField = new TextField("Description") { multiline = true };
-                _descField.labelElement.style.marginRight = -70;
-                _descField.style.whiteSpace = WhiteSpace.Normal;
-
-                container.Add(_nameField);
-                container.Add(_descField);
-
-                return CreateContainerBase("General", container);
-            }
-        
-            private VisualElement CreateTaskPropContainer()
-            {
-                var container = new VisualElement();
-                return CreateContainerBase("Properties", container);
-            }
-
-            public void ShowNodeInfo(string name, string desc)
-            {
-                _nameField.value = name;
-                _descField.value = desc;
-            }
-
-            public void ShowTaskProp(SerializedProperty prop)
-            {
-                _taskPropContainer.Clear();
-
-                if (prop == null)
-                {
-                    return;
-                }
-
-                foreach (SerializedProperty propField in prop)
-                {
-                    var UIField = new UnityEditor.UIElements.PropertyField(propField, propField.displayName);
-                    _taskPropContainer.Add(UIField);
-                }
-            }
-        }
-
         private readonly UnityEngine.Vector2 DEFAULT_ROOT_SPAWN_POS = new UnityEngine.Vector2(400f, 480f);
         private readonly UnityEngine.Rect NODE_INFO_RECT = new UnityEngine.Rect(10, 30, 320, 560);
         private readonly UnityEngine.Rect BB_RECT = new UnityEngine.Rect(10, 30 + 560 + 10, 320, 400);
 
         private SerializedObject _serializedDesContainer;
         private GraphBlackboard _blackboard;
-        private NodeDetails _nodeDetails;
+        private BTGraphDetails _nodeDetails;
 
         public static System.Action<string> OnNodeSelected { get; set; }
+        public static System.Action<string, string, string, BTBaseTask> OnNewNodeSelected { get; set; }
         public System.Action OnNodeDeleted { get; set; }
 
         public BTDesignContainer DesignContainer => _serializedDesContainer.targetObject as BTDesignContainer;
@@ -127,18 +24,23 @@ namespace RR.AI.BehaviorTree
         {
             _blackboard = CreateBlackboard(this, null, null, "Shared Variables", BB_RECT);
             Add(_blackboard);
-            _nodeDetails = new NodeDetails(NODE_INFO_RECT);
+            _nodeDetails = new BTGraphDetails(NODE_INFO_RECT);
             Add(_nodeDetails);
 
             graphViewChanged += OnGraphViewChanged;
 
-            OnNodeSelected += HandleNodeSelected;
+            // OnNodeSelected += HandleNodeSelected;
+            OnNewNodeSelected += HandleNewNodeSelected;
 
             BTEditorWindow.OnClose += () =>
             {
-                foreach (var listener in OnNodeSelected.GetInvocationList())
+                // foreach (var listener in OnNodeSelected.GetInvocationList())
+                // {
+                //     OnNodeSelected -= (System.Action<string>) listener;
+                // }
+                foreach (var listener in OnNewNodeSelected.GetInvocationList())
                 {
-                    OnNodeSelected -= (System.Action<string>) listener;
+                    OnNewNodeSelected -= (System.Action<string, string, string, BTBaseTask>) listener;
                 }
             };
         }
@@ -147,10 +49,20 @@ namespace RR.AI.BehaviorTree
         {
             _blackboard = CreateBlackboard(this, designContainer.Blackboard, designContainer, "Shared Variables", BB_RECT);
             Add(_blackboard);
-            _nodeDetails = new NodeDetails(NODE_INFO_RECT);
+            _nodeDetails = new BTGraphDetails(NODE_INFO_RECT);
             Add(_nodeDetails);
             Init(designContainer);
-            graphViewChanged += OnGraphViewChanged;       
+            graphViewChanged += OnGraphViewChanged;
+
+            OnNewNodeSelected += HandleNewNodeSelected;
+
+            BTEditorWindow.OnClose += () =>
+            {
+                foreach (var listener in OnNewNodeSelected.GetInvocationList())
+                {
+                    OnNewNodeSelected -= (System.Action<string, string, string, BTBaseTask>) listener;
+                }
+            };    
         }
 
         public void Init(BTDesignContainer designContainer)
@@ -211,10 +123,20 @@ namespace RR.AI.BehaviorTree
             });
         }
 
+        private void HandleNewNodeSelected(string guid, string name, string desc, BTBaseTask task)
+        {
+            _nodeDetails.ShowNodeInfo(name, desc);
+            
+            if (task != null)
+            {
+                _nodeDetails.DrawTaskProperties(task.LoadPropData(guid), task.PropertyType, _blackboard);
+            }
+        }
+
         private void HandleNodeSelected(string guid)
         {
             // UnityEngine.Debug.Log(guid);
-
+            
             System.Func<SerializedProperty, bool> FindNodeDetails = nodeDataList =>
             {
                 foreach (SerializedProperty node in nodeDataList)
@@ -279,10 +201,27 @@ namespace RR.AI.BehaviorTree
                     return (string.Empty, string.Empty, null);
                 };
 
-            // FindNodeDetails(_serializedDesContainer.FindProperty("_taskDataList"));
-            var (name, desc, prop) = MapNodeDataList(_serializedDesContainer.FindProperty("_taskDataList"), guid);
+            System.Func<List<BTSerializableTaskData>, string, (string, string, BTBaseTask)> FindTaskDetails = 
+                (taskDataList, nodeGuid) =>
+                {
+                    foreach (var taskData in taskDataList)
+                    {
+                        if (taskData.Guid != nodeGuid)
+                        {
+                            continue;
+                        }
 
+                        return (taskData.Name, taskData.Description, taskData.Task);
+                    }
+
+                    return (string.Empty, string.Empty, null);
+                };
+
+            // FindNodeDetails(_serializedDesContainer.FindProperty("_taskDataList"));
+            // var (name, desc, prop) = MapNodeDataList(_serializedDesContainer.FindProperty("_taskDataList"), guid);
+            var (name, desc, task) = FindTaskDetails(DesignContainer.TaskDataList, guid);
             _nodeDetails.ShowNodeInfo(name, desc);
+            _nodeDetails.DrawTaskProperties(task.LoadPropData(guid), task.PropertyType, _blackboard);
         }
 
         private GraphBlackboard CreateBlackboard(

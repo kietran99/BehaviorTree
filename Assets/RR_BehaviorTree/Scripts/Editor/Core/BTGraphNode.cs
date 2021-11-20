@@ -66,7 +66,8 @@ namespace RR.AI.BehaviorTree
 
         public override void OnSelected()
         {
-            BTGraphView.OnNodeSelected?.Invoke(_guid);
+            // BTGraphView.OnNodeSelected?.Invoke(_guid);
+            BTGraphView.OnNewNodeSelected?.Invoke(_guid, _name, _description, null);
             base.OnSelected();
         }
 

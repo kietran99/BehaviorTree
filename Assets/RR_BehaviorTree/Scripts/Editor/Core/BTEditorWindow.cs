@@ -19,17 +19,29 @@ namespace RR.AI.BehaviorTree
         {
             var window = GetWindow<BTEditorWindow>("Behavior Tree");
             window._inspectedBT = behaviorTree;
-            window._graphView.Init(behaviorTree.DesignContainer);
+            // window._graphView.Init(behaviorTree.DesignContainer);
+            window._graphView = window.CreateGraphView(behaviorTree.DesignContainer);
+            window._searchWindow = window.CreateNodeSearchWindow(window._graphView);
+            window._toolbar = window.CreateToolbar();
+            window.rootVisualElement.Add(window._graphView);
+            window.rootVisualElement.Add(window._toolbar);
         }
 
         private void CreateGUI()
         {
-            _graphView = CreateGraphView();
-            _searchWindow = CreateNodeSearchWindow(_graphView);
-            _toolbar = CreateToolbar();
+            // _graphView = CreateGraphView();
+            // _searchWindow = CreateNodeSearchWindow(_graphView);
+            // _toolbar = CreateToolbar();
 
-            rootVisualElement.Add(_graphView);
-            rootVisualElement.Add(_toolbar);
+            // rootVisualElement.Add(_graphView);
+            // rootVisualElement.Add(_toolbar);
+        }
+
+        private BTGraphView CreateGraphView(BTDesignContainer designContainer)
+        {
+            var graphView = new BTGraphView(designContainer);
+            graphView.StretchToParentSize();
+            return graphView;
         }
 
         private BTGraphView CreateGraphView()

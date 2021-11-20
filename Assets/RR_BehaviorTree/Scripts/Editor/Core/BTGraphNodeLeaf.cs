@@ -23,6 +23,13 @@ namespace RR.AI.BehaviorTree
             DrawTaskProperties(_nodeAction.Task.PropertyType, blackboard);
         }
 
+        public override void OnSelected()
+        {
+            // BTGraphView.OnNodeSelected?.Invoke(_guid);
+            BTGraphView.OnNewNodeSelected?.Invoke(_guid, _name, _description, _nodeAction.Task);
+            base.OnSelected();
+        }
+
         private void DrawTaskProperties(System.Type propType, GraphBlackboard blackboard)
         {
             var serializableAttribs = propType.GetCustomAttributes(typeof(System.SerializableAttribute), true);

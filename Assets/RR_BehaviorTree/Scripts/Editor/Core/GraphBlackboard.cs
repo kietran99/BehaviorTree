@@ -13,15 +13,10 @@ namespace RR.AI
 		private Dictionary<GraphElement, VisualElement> _BBFieldToRowMap;
 
         public GraphBlackboard(
-			Blackboard runtimeBlackboard = null,
-			ScriptableObject BBContainer = null,
-			AbstractGraphView graphView = null) : base(graphView)
+			Blackboard runtimeBlackboard,
+			ScriptableObject BBContainer,
+			AbstractGraphView graphView) : base(graphView)
 		{
-			if (BBContainer == null)
-			{
-				return;
-			}
-
 			_runtimeBB = runtimeBlackboard;
 			_BBcontainer = BBContainer;
 			_typeToKeysMap = runtimeBlackboard.TypeToKeysMap;

@@ -264,5 +264,10 @@ namespace RR.AI.BehaviorTree
         {
             designContainer.NodeDataList.Find(node => node.Guid == _guid).Position = position;
         }
+
+        public virtual void OnConnect(BTDesignContainer designContainer, string parentGuid)
+        {
+            designContainer.NodeDataList.Find(node => node.Guid == _guid).ParentGuid = parentGuid;
+        }
     }
 }

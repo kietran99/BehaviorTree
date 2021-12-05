@@ -1,22 +1,24 @@
 using UnityEditor.Experimental.GraphView;
-using System.Collections.Generic;
+using UnityEngine;
 using UnityEditor;
+using System;
+using System.Collections.Generic;
 
 namespace RR.AI.BehaviorTree
 {
     public class BTGraphView : AbstractGraphView
     {
-        private readonly UnityEngine.Vector2 DEFAULT_ROOT_SPAWN_POS = new UnityEngine.Vector2(400f, 480f);
-        private readonly UnityEngine.Rect NODE_INFO_RECT = new UnityEngine.Rect(10, 30, 320, 560);
-        private readonly UnityEngine.Rect BB_RECT = new UnityEngine.Rect(10, 30 + 560 + 10, 320, 400);
+        private readonly Vector2 DEFAULT_ROOT_SPAWN_POS = new Vector2(400f, 480f);
+        private readonly Rect NODE_INFO_RECT = new Rect(10, 30, 320, 560);
+        private readonly Rect BB_RECT = new Rect(10, 30 + 560 + 10, 320, 400);
 
         private SerializedObject _serializedDesContainer;
         private GraphBlackboard _blackboard;
         private BTGraphDetails _nodeDetails;
 
-        public static System.Action<string> OnNodeSelected { get; set; }
-        public static System.Action<string, string, string, BTBaseTask> OnNewNodeSelected { get; set; }
-        public System.Action OnNodeDeleted { get; set; }
+        public static Action<string> OnNodeSelected { get; set; }
+        public static Action<string, string, string, BTBaseTask> OnNewNodeSelected { get; set; }
+        public Action OnNodeDeleted { get; set; }
 
         public BTDesignContainer DesignContainer => _serializedDesContainer.targetObject as BTDesignContainer;
 
@@ -36,11 +38,11 @@ namespace RR.AI.BehaviorTree
             {
                 // foreach (var listener in OnNodeSelected.GetInvocationList())
                 // {
-                //     OnNodeSelected -= (System.Action<string>) listener;
+                //     OnNodeSelected -= (Action<string>) listener;
                 // }
                 foreach (var listener in OnNewNodeSelected.GetInvocationList())
                 {
-                    OnNewNodeSelected -= (System.Action<string, string, string, BTBaseTask>) listener;
+                    OnNewNodeSelected -= (Action<string, string, string, BTBaseTask>) listener;
                 }
             };
         }
@@ -60,7 +62,7 @@ namespace RR.AI.BehaviorTree
             {
                 foreach (var listener in OnNewNodeSelected.GetInvocationList())
                 {
-                    OnNewNodeSelected -= (System.Action<string, string, string, BTBaseTask>) listener;
+                    OnNewNodeSelected -= (Action<string, string, string, BTBaseTask>) listener;
                 }
             };    
         }
@@ -134,8 +136,6 @@ namespace RR.AI.BehaviorTree
 
         private void HandleNodeSelected(string guid)
         {
-            // UnityEngine.Debug.Log(guid);
-            
             System.Func<SerializedProperty, bool> FindNodeDetails = nodeDataList =>
             {
                 foreach (SerializedProperty node in nodeDataList)
@@ -182,7 +182,7 @@ namespace RR.AI.BehaviorTree
                         
                         foreach (SerializedProperty prop in node.FindPropertyRelative("_task"))
                         {
-                            UnityEngine.Debug.Log(prop.displayName);
+                            Debug.Log(prop.displayName);
                         }
 
                         // foreach (SerializedProperty entry in taskEntries)
@@ -226,9 +226,9 @@ namespace RR.AI.BehaviorTree
         private GraphBlackboard CreateBlackboard(
             BTGraphView graphView, 
             Blackboard runtimeBlackboard, 
-            UnityEngine.ScriptableObject BBContainer,
+            ScriptableObject BBContainer,
             string title, 
-            UnityEngine.Rect rect)
+            Rect rect)
         {
             var blackboard = new GraphBlackboard(runtimeBlackboard, BBContainer, graphView) { title = title, scrollable = true };
             blackboard.SetPosition(rect);      
@@ -237,7 +237,7 @@ namespace RR.AI.BehaviorTree
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange)
         {
-            System.Action<List<GraphElement>> OnElementsRemoved = elementsToRemove =>
+            Action<List<GraphElement>> OnElementsRemoved = elementsToRemove =>
             {
                 if (elementsToRemove == null)
                 {
@@ -253,12 +253,17 @@ namespace RR.AI.BehaviorTree
                 }
             };
 
-            System.Action<List<GraphElement>> OnElementsMoved = movedElements =>
+            Action<List<GraphElement>> OnElementsMoved = movedElements =>
             {
+                if (movedElements == null)
+                {
+                    return;
+                }
+
                 for (int i = 0; i < movedElements.Count; i++)
                 {
                     GraphElement element = movedElements[i];
-                    
+
                     if (element is Node)
                     {
                         (element as IBTSerializableNode).OnMove(DesignContainer, element.GetPosition().position);
@@ -266,13 +271,29 @@ namespace RR.AI.BehaviorTree
                 }
             };
 
+            Action<List<Edge>> OnEdgesCreated = edgesToCreate =>
+            {
+                if (edgesToCreate == null)
+                {
+                    return;
+                }
+
+                for (int i = 0; i < edgesToCreate.Count; i++)
+                {
+                    var inputNode = edgesToCreate[i].output.node as IBTSerializableNode;
+                    var outputNode = edgesToCreate[i].input.node as IBTSerializableNode;
+                    outputNode.OnConnect(DesignContainer, inputNode.Guid);
+                }
+            };
+
             OnElementsRemoved(graphViewChange.elementsToRemove);
             OnElementsMoved(graphViewChange.movedElements);
+            OnEdgesCreated(graphViewChange.edgesToCreate);
 
             return graphViewChange;
         }
 
-        public void AddNode(Node node, UnityEngine.Vector2 pos)
+        public void AddNode(Node node, Vector2 pos)
         {
             AddElement(node);
             (node as IBTGraphNode).OnCreate(DesignContainer, pos);

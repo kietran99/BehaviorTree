@@ -12,7 +12,6 @@ namespace RR.AI
         bool AddToRuntimeBlackboard(RuntimeBlackboard runtimeBB, string key);
     }
 
-    // [Serializable]
     public abstract class BBValue<T> : ScriptableObject, IBBValue
     {
         [SerializeField]

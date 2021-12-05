@@ -58,11 +58,18 @@ MonoBehaviour:
   _taskDataList:
   - _graphData:
       _guid: c824114f-ea0f-4134-b877-120e18d401f3
-      _parentGuid: 
+      _parentGuid: 78b638f8-fd19-43f9-a2d1-50a906b17322
       _name: Log
       _position: {x: 904, y: 591}
       _description: 
     _task: {fileID: 1382227343790362406}
+  - _graphData:
+      _guid: d710fc82-91a4-459d-8bfa-660af101822b
+      _parentGuid: 78b638f8-fd19-43f9-a2d1-50a906b17322
+      _name: Within Range
+      _position: {x: 988, y: 382}
+      _description: 
+    _task: {fileID: 5343796404105331447}
   _blackboard:
     _map:
       _entries:
@@ -113,6 +120,12 @@ MonoBehaviour:
   _propMap:
     _entries:
     - Key: 19d6b40c-6d71-475a-9b41-cd3dcb26fd06
+      Value:
+        Range: 0
+        TargetTag: 
+        TargetLayers: 0
+        TargetPosition: 
+    - Key: d710fc82-91a4-459d-8bfa-660af101822b
       Value:
         Range: 0
         TargetTag: 

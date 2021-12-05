@@ -223,5 +223,10 @@ namespace RR.AI.BehaviorTree
         {
             designContainer.TaskDataList.Find(node => node.Guid == _guid).Position = position;
         }
+
+        public override void OnConnect(BTDesignContainer designContainer, string parentGuid)
+        {
+            designContainer.TaskDataList.Find(node => node.Guid == _guid).ParentGuid = parentGuid;
+        }
     }
 }

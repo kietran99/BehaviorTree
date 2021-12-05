@@ -132,6 +132,10 @@ namespace RR.AI.BehaviorTree
             {
                 _nodeDetails.DrawTaskProperties(task.LoadPropData(guid), task.PropertyType, _blackboard);
             }
+            else
+            {
+                _nodeDetails.ClearTaskPropsContent();
+            }
         }
 
         private void HandleNodeSelected(string guid)

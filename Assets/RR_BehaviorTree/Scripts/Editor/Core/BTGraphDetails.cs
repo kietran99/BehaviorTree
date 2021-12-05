@@ -106,7 +106,8 @@ public class BTGraphDetails : GraphElement
 
     public void DrawTaskProperties(object propFieldData, System.Type propType, GraphBlackboard blackboard)
     {
-        _taskPropsContentContainer.Clear();
+        ClearTaskPropsContent();
+        // _taskPropsContentContainer.Clear();
 
         var serializableAttribs = propType.GetCustomAttributes(typeof(System.SerializableAttribute), true);
         
@@ -251,6 +252,8 @@ public class BTGraphDetails : GraphElement
         field.style.width = _width - 150f - 14f;
         return field;
     }
+
+    public void ClearTaskPropsContent() => _taskPropsContentContainer.Clear();
 
     // public void ShowTaskProp(SerializedProperty prop)
     // {

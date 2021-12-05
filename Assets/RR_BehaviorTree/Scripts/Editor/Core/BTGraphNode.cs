@@ -25,6 +25,8 @@ namespace RR.AI.BehaviorTree
         protected string _guid;
         public string Guid => _guid;
 
+        protected virtual BTBaseTask Task => null;
+
         public BTGraphNode(Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid="", Texture2D icon = null)
         {
             styleSheets.Add(Resources.Load<UnityEngine.UIElements.StyleSheet>("Stylesheets/BTGraphNode"));
@@ -67,7 +69,7 @@ namespace RR.AI.BehaviorTree
         public override void OnSelected()
         {
             // BTGraphView.OnNodeSelected?.Invoke(_guid);
-            BTGraphView.OnNewNodeSelected?.Invoke(_guid, _name, _description, null);
+            BTGraphView.OnNewNodeSelected?.Invoke(_guid, _name, _description, Task);
             base.OnSelected();
         }
 

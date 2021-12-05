@@ -6,6 +6,8 @@ namespace RR.AI.BehaviorTree
 {
     public class BTGraphNodeLeaf<T> : BTGraphNode<BTGraphLeaf<T>> where T : BTBaseTask
     {
+        protected override BTBaseTask Task => _nodeAction.Task;
+
         private System.Func<object> TaskPropConstructFn;
 
         public BTGraphNodeLeaf(
@@ -21,13 +23,6 @@ namespace RR.AI.BehaviorTree
         {
             mainContainer.style.backgroundColor = new StyleColor(new Color(50f / 255f, 50f / 255f, 50f / 255f));
             DrawTaskProperties(_nodeAction.Task.PropertyType, blackboard);
-        }
-
-        public override void OnSelected()
-        {
-            // BTGraphView.OnNodeSelected?.Invoke(_guid);
-            BTGraphView.OnNewNodeSelected?.Invoke(_guid, _name, _description, _nodeAction.Task);
-            base.OnSelected();
         }
 
         private void DrawTaskProperties(System.Type propType, GraphBlackboard blackboard)

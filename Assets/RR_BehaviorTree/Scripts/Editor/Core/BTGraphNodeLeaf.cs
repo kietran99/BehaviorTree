@@ -196,7 +196,7 @@ namespace RR.AI.BehaviorTree
             return _nodeAction.Task == null ? null : _nodeAction.Task.Icon;
         }
 
-        public override void Save(BTDesignContainer designContainer)
+        public override void OnCreate(BTDesignContainer designContainer, UnityEngine.Vector2 position)
         {    
             _nodeAction.Task.SavePropData(_guid, 
                 TaskPropConstructFn != null 
@@ -204,7 +204,7 @@ namespace RR.AI.BehaviorTree
                     : System.Activator.CreateInstance(_nodeAction.Task.PropertyType));            
 
             designContainer.TaskDataList.Add(
-                new BTSerializableTaskData(GetPosition().position, 
+                new BTSerializableTaskData(position, 
                 _name,
                 _description,
                 _guid, 
@@ -212,6 +212,11 @@ namespace RR.AI.BehaviorTree
                 _nodeAction.Task));
         }
 
-        public override System.Action DeleteCallback => () => _nodeAction.Task.RemoveProp(_guid);
+        public override void OnDelete(BTDesignContainer designContainer)
+        {
+            _nodeAction.Task.RemoveProp(_guid);
+            BTSerializableTaskData nodeToDelete = designContainer.TaskDataList.Find(node => node.Guid == _guid);
+            designContainer.TaskDataList.Remove(nodeToDelete);
+        }
     }
 }

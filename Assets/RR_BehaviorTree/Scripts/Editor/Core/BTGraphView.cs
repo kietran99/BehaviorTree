@@ -68,7 +68,6 @@ namespace RR.AI.BehaviorTree
         public void Init(BTDesignContainer designContainer)
         {
             _serializedDesContainer = new SerializedObject(designContainer);
-            OnNodeDeleted = delegate {};
 
             if (designContainer.NodeDataList == null || designContainer.NodeDataList.Count == 0)
             {
@@ -247,15 +246,19 @@ namespace RR.AI.BehaviorTree
             
             foreach (var element in elementsToRemove)
             {
-                OnElementDeleted?.Invoke(element);
-
-                if (element is IBTSavable)
+                if (element is IBTSerializableNode)
                 {
-                    OnNodeDeleted += (element as IBTSavable).DeleteCallback;
+                    (element as IBTSerializableNode).OnDelete(DesignContainer);
                 }
             }
 
             return graphViewChange;
+        }
+
+        public void AddNode(Node node, UnityEngine.Vector2 pos)
+        {
+            AddElement(node);
+            (node as IBTGraphNode).OnCreate(DesignContainer, pos);
         }
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
@@ -274,11 +277,5 @@ namespace RR.AI.BehaviorTree
         }
 
         public override UnityEditor.Experimental.GraphView.Blackboard GetBlackboard() => _blackboard;
-
-        public void Save()
-        {
-            OnNodeDeleted?.Invoke();
-            OnNodeDeleted = delegate {};
-        }
     }
 }

@@ -24,9 +24,6 @@ namespace RR.AI.BehaviorTree
 
         public void Save(UnityEngine.UIElements.UQueryState<UnityEditor.Experimental.GraphView.Node> nodes)
         {
-            _nodeDataList.Clear();
-            _taskDataList.Clear();
-            nodes.ForEach(node => (node as IBTSavable).Save(this));
             UnityEditor.EditorUtility.SetDirty(this);
             UnityEditor.AssetDatabase.SaveAssetIfDirty(this);
         }

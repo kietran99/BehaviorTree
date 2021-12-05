@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
@@ -27,16 +26,6 @@ namespace RR.AI.BehaviorTree
             window.rootVisualElement.Add(window._toolbar);
         }
 
-        private void CreateGUI()
-        {
-            // _graphView = CreateGraphView();
-            // _searchWindow = CreateNodeSearchWindow(_graphView);
-            // _toolbar = CreateToolbar();
-
-            // rootVisualElement.Add(_graphView);
-            // rootVisualElement.Add(_toolbar);
-        }
-
         private BTGraphView CreateGraphView(BTDesignContainer designContainer)
         {
             var graphView = new BTGraphView(designContainer);
@@ -58,7 +47,6 @@ namespace RR.AI.BehaviorTree
             var saveBtn = new Button(() => 
             { 
                 _inspectedBT.DesignContainer.Save(_graphView.nodes);
-                _graphView.Save();
             }) { text = "Save Assets" };
 
             toolbar.Add(saveBtn);
@@ -84,7 +72,7 @@ namespace RR.AI.BehaviorTree
                     _graphView.GetBlackboard() as GraphBlackboard, 
                     localMousePos,
                     graphView.DesignContainer.GetOrCreateTask);
-                graphView.AddElement(node);
+                graphView.AddNode(node, localMousePos);
             });
 
             return window;

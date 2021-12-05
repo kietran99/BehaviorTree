@@ -5,12 +5,12 @@ using System.Linq;
 
 namespace RR.AI.BehaviorTree
 {
-    public interface IBTGraphNode
+    public interface IBTGraphNode : IBTSerializableNode
     {
         void OnRemove();
     }
 
-    public class BTGraphNode<T> : Node, IBTGraphNode, IBTSavable where T : IBTGraphNodeInfo, new()
+    public class BTGraphNode<T> : Node, IBTGraphNode where T : IBTGraphNodeInfo, new()
     {
         private static Vector2 DEFAULT_NODE_SIZE = new Vector2(600f, 400f);
         private static Color DEFAULT_EDGE_COLOR = new Color(146f / 255f, 146f/ 255f, 146f / 255f);
@@ -223,11 +223,11 @@ namespace RR.AI.BehaviorTree
             return InstantiatePort(Orientation.Horizontal, direction, capacity, typeof(float));
         }
     
-        public virtual void Save(BTDesignContainer designContainer)
+        public virtual void OnCreate(BTDesignContainer designContainer, UnityEngine.Vector2 position)
         {
             designContainer.NodeDataList.Add(
                 new BTSerializableNodeData(
-                    GetPosition().position, _name, _description, _guid, GetParentGuid(inputContainer), _nodeAction.NodeType));
+                    position, _name, _description, _guid, GetParentGuid(inputContainer), _nodeAction.NodeType));
         }
 
         protected string GetParentGuid(VisualElement inputContainer)
@@ -245,10 +245,14 @@ namespace RR.AI.BehaviorTree
             }
 
             var parentNode = inputPort.connections.First(edge => edge.output != inputPort).output.node;
-            return (parentNode as IBTSavable).Guid;
+            return (parentNode as IBTSerializableNode).Guid;
         }
 
-        public virtual System.Action DeleteCallback => () => {};
+        public virtual void OnDelete(BTDesignContainer designContainer)
+        {
+            BTSerializableNodeData nodeToDelete = designContainer.NodeDataList.Find(node => node.Guid == _guid);
+            designContainer.NodeDataList.Remove(nodeToDelete);
+        }
 
         public void OnRemove()
         {

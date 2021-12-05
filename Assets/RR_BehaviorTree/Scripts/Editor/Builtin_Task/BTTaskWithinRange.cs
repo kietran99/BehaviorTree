@@ -47,7 +47,7 @@ namespace RR.AI.BehaviorTree
         
         [RR.Serialization.TagField] public string TargetTag;
         [RR.Serialization.LayerMaskField] public int TargetLayers;
-        [BlackboardValue(typeof(Vector2))] public string TargetPosition;
+        [BlackboardValue(typeof(Vector3))] public string TargetPosition;
 
         public Collider2D[] Targets { get; set; }
 	}

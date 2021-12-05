@@ -83,7 +83,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _propMap:
-    _entries: []
+    _entries:
+    - Key: 3696bd11-12f8-485b-b6f3-361191b23c3d
+      Value:
+        Message: 
 --- !u!114 &5343796404105331447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,4 +101,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _propMap:
-    _entries: []
+    _entries:
+    - Key: 19d6b40c-6d71-475a-9b41-cd3dcb26fd06
+      Value:
+        Range: 0
+        TargetTag: 
+        TargetLayers: 0
+        TargetPosition: 

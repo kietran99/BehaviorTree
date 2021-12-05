@@ -52,7 +52,7 @@ namespace RR.AI.BehaviorTree
             BTBaseTask task, Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid="")
         {
             var graphNodeleafType = typeof(BTGraphNodeLeaf<>).MakeGenericType(task.GetType());
-            return System.Activator.CreateInstance(graphNodeleafType, new object[] { pos, blackboard, name, desc, guid }) as Node;
+            return System.Activator.CreateInstance(graphNodeleafType, new object[] { task, pos, blackboard, name, desc, guid }) as Node;
         }
     }
 }

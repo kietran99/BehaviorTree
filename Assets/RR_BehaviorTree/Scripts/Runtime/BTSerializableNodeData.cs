@@ -34,7 +34,12 @@ namespace RR.AI.BehaviorTree
         public string Guid => _guid;
         public string ParentGuid => _parentGuid;
         public string Name => _name;
-        public Vector2 Position => _position;    
+        public Vector2 Position 
+        {
+            get => _position;
+            set => _position = value;
+        }
+
         public string Description => _description;    
     }
 
@@ -52,7 +57,12 @@ namespace RR.AI.BehaviorTree
         public string Guid => _graphData.Guid;
         public string ParentGuid => _graphData.ParentGuid;
         public string Name => _graphData.Name;
-        public Vector2 Position => _graphData.Position;
+        public Vector2 Position 
+        {
+            get => _graphData.Position;
+            set => _graphData.Position = value;
+        }
+
         public string Description => _graphData.Description;
     }
 

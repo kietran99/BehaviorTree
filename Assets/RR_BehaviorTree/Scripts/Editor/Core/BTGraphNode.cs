@@ -259,5 +259,10 @@ namespace RR.AI.BehaviorTree
             BTBaseNode.OnTick -= OnNodeTick;
             BTBaseNode.OnRootTick -= OnRootTick;
         }
+
+        public virtual void OnMove(BTDesignContainer designContainer, Vector2 position)
+        {
+            designContainer.NodeDataList.Find(node => node.Guid == _guid).Position = position;
+        }
     }
 }

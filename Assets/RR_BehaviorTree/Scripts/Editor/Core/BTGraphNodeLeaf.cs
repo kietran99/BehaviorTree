@@ -218,5 +218,10 @@ namespace RR.AI.BehaviorTree
             BTSerializableTaskData nodeToDelete = designContainer.TaskDataList.Find(node => node.Guid == _guid);
             designContainer.TaskDataList.Remove(nodeToDelete);
         }
+
+        public override void OnMove(BTDesignContainer designContainer, Vector2 position)
+        {
+            designContainer.TaskDataList.Find(node => node.Guid == _guid).Position = position;
+        }
     }
 }

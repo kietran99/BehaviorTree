@@ -55,7 +55,14 @@ MonoBehaviour:
       _position: {x: 633, y: 480}
       _description: 
     _nodeType: 2
-  _taskDataList: []
+  _taskDataList:
+  - _graphData:
+      _guid: c824114f-ea0f-4134-b877-120e18d401f3
+      _parentGuid: 
+      _name: Log
+      _position: {x: 904, y: 591}
+      _description: 
+    _task: {fileID: 1382227343790362406}
   _blackboard:
     _map:
       _entries:
@@ -85,6 +92,9 @@ MonoBehaviour:
   _propMap:
     _entries:
     - Key: 3696bd11-12f8-485b-b6f3-361191b23c3d
+      Value:
+        Message: 
+    - Key: c824114f-ea0f-4134-b877-120e18d401f3
       Value:
         Message: 
 --- !u!114 &5343796404105331447

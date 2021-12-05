@@ -237,20 +237,37 @@ namespace RR.AI.BehaviorTree
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange)
         {
-            var elementsToRemove = graphViewChange.elementsToRemove;
-            
-            if (elementsToRemove == null)
+            System.Action<List<GraphElement>> OnElementsRemoved = elementsToRemove =>
             {
-                return graphViewChange;
-            }
-            
-            foreach (var element in elementsToRemove)
-            {
-                if (element is IBTSerializableNode)
+                if (elementsToRemove == null)
                 {
-                    (element as IBTSerializableNode).OnDelete(DesignContainer);
+                    return;
                 }
-            }
+                
+                foreach (var element in elementsToRemove)
+                {
+                    if (element is IBTSerializableNode)
+                    {
+                        (element as IBTSerializableNode).OnDelete(DesignContainer);
+                    }
+                }
+            };
+
+            System.Action<List<GraphElement>> OnElementsMoved = movedElements =>
+            {
+                for (int i = 0; i < movedElements.Count; i++)
+                {
+                    GraphElement element = movedElements[i];
+                    
+                    if (element is Node)
+                    {
+                        (element as IBTSerializableNode).OnMove(DesignContainer, element.GetPosition().position);
+                    }
+                }
+            };
+
+            OnElementsRemoved(graphViewChange.elementsToRemove);
+            OnElementsMoved(graphViewChange.movedElements);
 
             return graphViewChange;
         }

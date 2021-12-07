@@ -103,7 +103,7 @@ MonoBehaviour:
         Message: 
     - Key: c824114f-ea0f-4134-b877-120e18d401f3
       Value:
-        Message: 
+        Message: Hello BT
 --- !u!114 &5343796404105331447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,7 +127,7 @@ MonoBehaviour:
         TargetPosition: 
     - Key: d710fc82-91a4-459d-8bfa-660af101822b
       Value:
-        Range: 0
-        TargetTag: 
-        TargetLayers: 0
+        Range: 2
+        TargetTag: Player
+        TargetLayers: -1
         TargetPosition: 

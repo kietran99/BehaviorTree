@@ -194,10 +194,7 @@ namespace RR.AI.BehaviorTree
 
         public override void OnCreate(BTDesignContainer designContainer, UnityEngine.Vector2 position)
         {    
-            _nodeAction.Task.SavePropData(_guid, 
-                TaskPropConstructFn != null 
-                    ? TaskPropConstructFn() 
-                    : System.Activator.CreateInstance(_nodeAction.Task.PropertyType));            
+            _nodeAction.Task.SavePropData(_guid, System.Activator.CreateInstance(_nodeAction.Task.PropertyType));        
 
             designContainer.TaskDataList.Add(
                 new BTSerializableTaskData(position, 

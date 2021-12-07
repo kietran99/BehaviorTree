@@ -10,6 +10,7 @@ namespace RR.AI.BehaviorTree
 
         private System.Func<object> TaskPropConstructFn;
 
+        // Invoked by BTGraphNodeFactory using Reflection
         public BTGraphNodeLeaf(
             BTBaseTask task, Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid = "") 
             : base(pos, blackboard, task.Name, desc, guid, task.Icon)

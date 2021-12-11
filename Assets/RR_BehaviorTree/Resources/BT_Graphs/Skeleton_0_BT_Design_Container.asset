@@ -1,33 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4106908840911962836
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: abcb170c4cca62f4e9e801b580f6cda4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _icon: {fileID: 0}
-  _propMap:
-    _entries: []
---- !u!114 &-3751396166517632394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f0359194183a44088ffc5d706ca526, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _value: {x: 0, y: 0, z: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42,48 +14,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _nodeDataList:
   - _graphData:
-      _guid: c272c03e-d0cd-4dd6-b84b-243f7777c92c
+      _guid: 2acd9f81-3b50-457a-8627-abb130310415
       _parentGuid: 
       _name: Root
       _position: {x: 400, y: 480}
       _description: 
     _nodeType: 0
   - _graphData:
-      _guid: 78b638f8-fd19-43f9-a2d1-50a906b17322
-      _parentGuid: c272c03e-d0cd-4dd6-b84b-243f7777c92c
+      _guid: 49817220-3d5e-42b6-ab24-502076b72883
+      _parentGuid: 2acd9f81-3b50-457a-8627-abb130310415
       _name: Selector
-      _position: {x: 633, y: 480}
+      _position: {x: 634, y: 480}
       _description: 
     _nodeType: 2
   _taskDataList:
   - _graphData:
-      _guid: c824114f-ea0f-4134-b877-120e18d401f3
-      _parentGuid: 78b638f8-fd19-43f9-a2d1-50a906b17322
+      _guid: 558dc300-5735-4762-989a-d5f70f5f99a6
+      _parentGuid: 49817220-3d5e-42b6-ab24-502076b72883
       _name: Log
-      _position: {x: 904, y: 591}
+      _position: {x: 912, y: 616}
       _description: 
-    _task: {fileID: 1382227343790362406}
-  - _graphData:
-      _guid: d710fc82-91a4-459d-8bfa-660af101822b
-      _parentGuid: 78b638f8-fd19-43f9-a2d1-50a906b17322
-      _name: Within Range
-      _position: {x: 988, y: 382}
-      _description: 
-    _task: {fileID: 5343796404105331447}
+    _task: {fileID: 17017294900977073}
   _blackboard:
     _map:
-      _entries:
-      - Key: Target_Position
-        Value: {fileID: -3751396166517632394}
+      _entries: []
   _taskDict:
     _entries:
     - Key: 1983184568
-      Value: {fileID: 1382227343790362406}
-    - Key: 646957711
-      Value: {fileID: -4106908840911962836}
-    - Key: 322375701
-      Value: {fileID: 5343796404105331447}
---- !u!114 &1382227343790362406
+      Value: {fileID: 17017294900977073}
+--- !u!114 &17017294900977073
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -98,36 +57,6 @@ MonoBehaviour:
   _icon: {fileID: 0}
   _propMap:
     _entries:
-    - Key: 3696bd11-12f8-485b-b6f3-361191b23c3d
+    - Key: 558dc300-5735-4762-989a-d5f70f5f99a6
       Value:
         Message: 
-    - Key: c824114f-ea0f-4134-b877-120e18d401f3
-      Value:
-        Message: Hello BT
---- !u!114 &5343796404105331447
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3be741d0ef2a3c348952c4ec3baf981f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _icon: {fileID: 0}
-  _propMap:
-    _entries:
-    - Key: 19d6b40c-6d71-475a-9b41-cd3dcb26fd06
-      Value:
-        Range: 0
-        TargetTag: 
-        TargetLayers: 0
-        TargetPosition: 
-    - Key: d710fc82-91a4-459d-8bfa-660af101822b
-      Value:
-        Range: 2
-        TargetTag: Player
-        TargetLayers: -1
-        TargetPosition: 

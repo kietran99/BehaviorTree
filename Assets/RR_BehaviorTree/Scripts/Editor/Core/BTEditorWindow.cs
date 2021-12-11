@@ -46,10 +46,16 @@ namespace RR.AI.BehaviorTree
 
             var saveBtn = new Button(() => 
             { 
-                _inspectedBT.DesignContainer.Save(_graphView.nodes);
-            }) { text = "Save Assets" };
+                _inspectedBT.DesignContainer.Save();
+            }) { text = "Save" };
+
+            var cleanupBtn = new Button(() => 
+            { 
+                _inspectedBT.DesignContainer.Cleanup();
+            }) { text = "Cleanup" };
 
             toolbar.Add(saveBtn);
+            toolbar.Add(cleanupBtn);
 
             return toolbar;
         }

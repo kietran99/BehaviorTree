@@ -187,15 +187,10 @@ namespace RR.AI.BehaviorTree
             return field;
         }
 
-        protected override Texture2D GetIcon(BTNodeType _)
-        {
-            return _nodeAction.Task == null ? null : _nodeAction.Task.Icon;
-        }
+        protected override Texture2D GetIcon(BTNodeType _) => _nodeAction.Task == null ? null : _nodeAction.Task.Icon;
 
         public override void OnCreate(BTDesignContainer designContainer, UnityEngine.Vector2 position)
-        {    
-            _nodeAction.Task.SavePropData(_guid, System.Activator.CreateInstance(_nodeAction.Task.PropertyType));        
-
+        {   
             designContainer.TaskDataList.Add(
                 new BTSerializableTaskData(position, 
                 _name,
@@ -203,6 +198,8 @@ namespace RR.AI.BehaviorTree
                 _guid, 
                 GetParentGuid(inputContainer), 
                 _nodeAction.Task));
+                
+            _nodeAction.Task.SavePropData(_guid, System.Activator.CreateInstance(_nodeAction.Task.PropertyType));        
         }
 
         public override void OnDelete(BTDesignContainer designContainer)

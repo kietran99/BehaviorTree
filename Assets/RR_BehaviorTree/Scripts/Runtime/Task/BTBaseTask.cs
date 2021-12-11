@@ -26,6 +26,11 @@ namespace RR.AI.BehaviorTree
         #region SAVE & LOAD
         public override bool SavePropData(string key, object data)
         {
+            if (_propMap == null)
+            {
+                _propMap = new BTTaskPropertyMap<TProp>();
+            }
+
             var res = _propMap.AddOrUpdate(key, data as TProp);
             UnityEditor.EditorUtility.SetDirty(this);
             UnityEditor.AssetDatabase.SaveAssetIfDirty(this);

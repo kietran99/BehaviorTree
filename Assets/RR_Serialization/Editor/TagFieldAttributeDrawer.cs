@@ -15,6 +15,11 @@ namespace RR.Serialization
 			}
 
 			property.stringValue = EditorGUI.TagField(position, label, property.stringValue);
+
+			if (string.IsNullOrEmpty(property.stringValue))
+			{
+				property.stringValue = "Untagged";
+			}
 		}
 	}
 }

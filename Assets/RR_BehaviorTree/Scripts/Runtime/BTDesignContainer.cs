@@ -22,15 +22,42 @@ namespace RR.AI.BehaviorTree
         public List<BTSerializableTaskData> TaskDataList => _taskDataList;
         public Blackboard Blackboard => _blackboard;
 
-        public void Save(UnityEngine.UIElements.UQueryState<UnityEditor.Experimental.GraphView.Node> nodes)
+        public void Save()
         {
             UnityEditor.EditorUtility.SetDirty(this);
             UnityEditor.AssetDatabase.SaveAssetIfDirty(this);
         }
 
+        public void Cleanup()
+        {
+            RemoveRedundantBTTaskSOs();
+            Save();
+        }
+
+        private void RemoveRedundantBTTaskSOs()
+        {
+            HashSet<int> allTaskIds = new HashSet<int>();
+
+            foreach (BTSerializableTaskData taskData in _taskDataList)
+            {
+                var taskId = Animator.StringToHash(taskData.Task.GetType().ToString());
+                allTaskIds.Add(taskId);
+            }
+
+            _taskDict.ForEach((id, taskSO) => 
+            { 
+                if (!allTaskIds.Contains(id))  
+                {
+                    UnityEditor.AssetDatabase.RemoveObjectFromAsset(taskSO);
+                }
+            });
+
+            _taskDict.RemoveAll((id, _) => allTaskIds.Contains(id));
+        }
+
         public BTBaseTask GetOrCreateTask(System.Type taskType)
         {
-            var key = Animator.StringToHash(taskType.ToString());
+            int key = Animator.StringToHash(taskType.ToString());
 
             if (!_taskDict.TryGetValue(key, out var task))
             {

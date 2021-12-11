@@ -1,6 +1,13 @@
 namespace RR.Serialization
 {
     [System.Serializable]
+    public class SerializableKeyValuePair<TKey, TValue>
+    {
+        public TKey Key;
+        public TValue Value;
+    }
+
+    [System.Serializable]
     public class SerializableDictionary<TKey, TValue> : UnityEngine.ISerializationCallbackReceiver
     {
         private System.Collections.Generic.Dictionary<TKey, TValue> _map = new System.Collections.Generic.Dictionary<TKey, TValue>();
@@ -121,12 +128,20 @@ namespace RR.Serialization
 
             return false;
         }
-            
+
         public bool TryGetValue(TKey key, out TValue value)
         {
             return _map.TryGetValue(key, out value);
         }
 	
+        public void ForEach(System.Action<TKey, TValue> fn)
+		{
+			foreach (var entry in _entries)
+			{
+				fn(entry.Key, entry.Value);
+			}
+		}
+
 		public System.Collections.Generic.IEnumerable<T> Map<T>(System.Func<TKey, TValue, T> fn)
 		{
 			foreach (var entry in _entries)
@@ -134,12 +149,18 @@ namespace RR.Serialization
 				yield return fn(entry.Key, entry.Value);
 			}
 		}
-    }
 
-    [System.Serializable]
-    public class SerializableKeyValuePair<TKey, TValue>
-    {
-        public TKey Key;
-        public TValue Value;
+        public void RemoveAll(System.Func<TKey, TValue, bool> pred)
+        {
+            for (int i = _entries.Count - 1; i >= 0; i--)
+            {
+                if (!pred(_entries[i].Key, _entries[i].Value))
+                {
+                    _entries.RemoveAt(i);
+                }
+            }
+
+            OnAfterDeserialize();
+        }
     }
 }

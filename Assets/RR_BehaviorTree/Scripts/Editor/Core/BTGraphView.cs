@@ -74,7 +74,7 @@ namespace RR.AI.BehaviorTree
             if (designContainer.NodeDataList == null || designContainer.NodeDataList.Count == 0)
             {
                 var root = BTGraphNodeFactory.CreateGraphNode(BTNodeType.Root, DEFAULT_ROOT_SPAWN_POS, _blackboard);
-                AddElement(root);
+                AddNode(root, DEFAULT_ROOT_SPAWN_POS);
                 return;
             }
 

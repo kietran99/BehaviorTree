@@ -96,7 +96,13 @@ namespace RR.AI
 			get
 			{
 				Dictionary<System.Type, List<string>> res = new Dictionary<System.Type, List<string>>();
+
 				var entries = _map.Entries;
+
+				if (entries == null)
+				{
+					return null;
+				}
 
 				foreach (var entry in entries)
 				{

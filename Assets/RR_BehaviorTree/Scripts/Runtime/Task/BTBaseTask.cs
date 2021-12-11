@@ -8,6 +8,8 @@ namespace RR.AI.BehaviorTree
         [SerializeField]
         private BTTaskPropertyMap<TProp> _propMap = null;
 
+        protected override string DefaultIconPath => $"Icons/{GetType().Name}";
+
         public override Type PropertyType => typeof(TProp);
         
         public override void Init(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid)
@@ -64,7 +66,27 @@ namespace RR.AI.BehaviorTree
 
         public abstract string Name { get; }
         public virtual System.Type PropertyType => typeof(BTTaskDataNone);
-        public Texture2D Icon => _icon;
+
+        protected virtual string DefaultIconPath => string.Empty;
+        public Texture2D Icon
+        {
+            get
+            {
+                if (_icon != null)
+                {
+                    return _icon;
+                }
+                       
+                if (string.IsNullOrEmpty(DefaultIconPath))
+                {
+                    return null;
+                }
+
+                _icon = Resources.Load<Texture2D>(DefaultIconPath);
+                return _icon;
+            }
+        }
+            
 
         public abstract void Init(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid);
         public abstract BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid);

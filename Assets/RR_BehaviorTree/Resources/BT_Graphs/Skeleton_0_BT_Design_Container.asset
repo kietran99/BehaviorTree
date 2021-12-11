@@ -54,7 +54,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6be54ab0e15258b498335ab42e648517, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _icon: {fileID: 0}
+  _icon: {fileID: 2800000, guid: 7f33c3a3b772103409c938289d6e8e6c, type: 3}
   _propMap:
     _entries:
     - Key: 558dc300-5735-4762-989a-d5f70f5f99a6

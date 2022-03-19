@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.rraptor.serialization": "https://github.com/kietran99/RR_Serialization.git",
     "com.rraptor.utils": "https://github.com/kietran99/RR_Utils.git",
     "com.unity.2d.animation": "5.1.0",
     "com.unity.2d.pixel-perfect": "4.0.1",

@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.rraptor.serialization": {
+      "version": "https://github.com/kietran99/RR_Serialization.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "5a0c0906128de3a02af9291bf68bb022454170ea"
+    },
     "com.rraptor.utils": {
       "version": "https://github.com/kietran99/RR_Utils.git",
       "depth": 0,

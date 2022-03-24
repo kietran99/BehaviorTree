@@ -1,0 +1,24 @@
+{
+    "items": [
+        {
+            "taskname": "BTGraphRoot",
+            "icon": "Assets/RR_BehaviorTree/Resources/Icons/root.png"
+        },
+        {
+            "taskname": "BTGraphSelector",
+            "icon": "Assets/RR_BehaviorTree/Resources/Icons/selector.png"
+        },
+        {
+            "taskname": "BTGraphSequencer",
+            "icon": "Assets/RR_BehaviorTree/Resources/Icons/sequencer.png"
+        },
+        {
+            "taskname": "BTTaskLog",
+            "icon": "Assets/RR_BehaviorTree/Resources/Icons/BTTaskLog.png"
+        },
+        {
+            "taskname": "BTTaskWait",
+            "icon": "Assets/RR_BehaviorTree/Resources/Icons/BTTaskWait.png"
+        }
+    ]
+}

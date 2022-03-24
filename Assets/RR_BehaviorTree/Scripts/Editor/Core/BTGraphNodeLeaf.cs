@@ -11,12 +11,10 @@ namespace RR.AI.BehaviorTree
         private System.Func<object> TaskPropConstructFn;
 
         // Invoked by BTGraphNodeFactory using Reflection
-        public BTGraphNodeLeaf(
-            BTBaseTask task, Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid = "") 
-            : base(pos, blackboard, task.Name, desc, guid, task.Icon)
+        public BTGraphNodeLeaf(BTGraphInitParamsNodeLeaf initParams) : base(initParams)
         {
-            _nodeAction.Task = task;
-            _name = task.Name;
+            _nodeAction.Task = initParams.task;
+            _name = initParams.task.Name;
         }
 
         public BTGraphNodeLeaf(Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid = "") 

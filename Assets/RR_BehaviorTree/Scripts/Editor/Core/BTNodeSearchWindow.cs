@@ -52,7 +52,7 @@ namespace RR.AI.BehaviorTree
                 new SearchTreeGroupEntry(new GUIContent("Task"), 1)
             };
 
-            foreach(var type in _taskTypes)
+            foreach (var type in _taskTypes)
             {      
                 tree.Add(
                     new SearchTreeEntry(new GUIContent(GetTaskName(type), _indentation))

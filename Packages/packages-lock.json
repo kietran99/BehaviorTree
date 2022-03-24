@@ -1,11 +1,18 @@
 {
   "dependencies": {
-    "com.rraptor.serialization": {
-      "version": "https://github.com/kietran99/RR_Serialization.git",
+    "com.coffee.upm-git-extension": {
+      "version": "https://github.com/mob-sakai/UpmGitExtension.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "5a0c0906128de3a02af9291bf68bb022454170ea"
+      "hash": "c5bd85b033ee9994cf7b4d711479e2602d42c639"
+    },
+    "com.rraptor.serialization": {
+      "version": "https://github.com/kietran99/RR_Serialization.git#main",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "277c9d500f7d16a435df9ea008ade1d510479f8a"
     },
     "com.rraptor.utils": {
       "version": "https://github.com/kietran99/RR_Utils.git",

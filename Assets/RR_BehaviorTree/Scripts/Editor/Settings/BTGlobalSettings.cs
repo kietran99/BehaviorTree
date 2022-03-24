@@ -1,0 +1,154 @@
+using UnityEngine;
+using UnityEditor;
+
+using System.IO;
+using System.Collections.Generic;
+
+namespace RR.AI.BehaviorTree
+{
+    public class BTGlobalSettings : ScriptableObject
+    {
+        const string DEFAULT_SETTINGS_PATH = "Assets/Resources/BT_Settings/";
+
+        [SerializeField]
+        private TextAsset _nodeIconSettingsAsset = null;
+
+#region SINGLETON
+        private static BTGlobalSettings _instance;
+
+        public static BTGlobalSettings Instance
+        {
+            get
+            {
+                if (_instance != null)
+                {
+                    return _instance;
+                }
+
+                System.Func<string, BTGlobalSettings> createAssetFn = path =>
+                {
+                    var globalSettingsAsset = CreateInstance<BTGlobalSettings>();
+                    Directory.CreateDirectory(path);
+                    AssetDatabase.CreateAsset(globalSettingsAsset, path + $"{ nameof(BTGlobalSettings) }.asset");
+                    AssetDatabase.Refresh();
+                    return globalSettingsAsset;
+                };
+
+                _instance = FindOrCreateAsset<BTGlobalSettings>(createAssetFn, DEFAULT_SETTINGS_PATH);
+                return _instance;
+            }
+        }
+#endregion
+
+        private NodeIconSettingsManager _nodeIconSettingsManager;
+
+
+        public TextAsset NodeIconSettingsAsset
+        {
+            get
+            {
+                if (_nodeIconSettingsAsset != null)
+                {
+                    return _nodeIconSettingsAsset;
+                }
+
+                System.Func<string, TextAsset> createAssetFn = path =>
+                {
+                    string destAssetPath = path + NodeIconSettingsManager.DEFAULT_SETTINGS_ASSET_NAME;
+                    
+                    if (!File.Exists(destAssetPath))
+                    {
+                        File.Copy(NodeIconSettingsManager.TEMPLATE_JSON_PATH, destAssetPath);
+                        AssetDatabase.Refresh();
+                    }
+
+                    return AssetDatabase.LoadAssetAtPath<TextAsset>(destAssetPath);
+                };
+
+                _nodeIconSettingsAsset = FindOrCreateAsset<TextAsset>(
+                    createAssetFn, DEFAULT_SETTINGS_PATH, NodeIconSettingsManager.DEFAULT_SETTINGS_ASSET_NAME);
+                EditorUtility.SetDirty(this);
+                AssetDatabase.SaveAssetIfDirty(this);
+                return _nodeIconSettingsAsset;
+            }
+        }
+
+        public Texture2D GetIcon(string nodeTypeName)
+        {
+            if (_nodeIconSettingsManager == null)
+            {
+                _nodeIconSettingsManager = new NodeIconSettingsManager(NodeIconSettingsAsset);
+            }
+
+            return _nodeIconSettingsManager.GetIcon(nodeTypeName);
+        }
+
+        private static T FindOrCreateAsset<T>(System.Func<string, T> createAssetFn, string path, string name="") where T : Object
+        {
+            T assetToFind = FindAsset<T>(name);
+            return assetToFind == null ? createAssetFn(path) : assetToFind;
+        }
+
+        private static T FindAsset<T>(string name="") where T : Object
+        {
+            string assetFilter = string.IsNullOrEmpty(name) ? $"t:{ nameof(T) }" : name;
+            string[] possibleSettingsGUIDs = AssetDatabase.FindAssets(assetFilter, new[] { "Assets" });
+
+            if (possibleSettingsGUIDs.Length > 0)
+            {
+                string guid = possibleSettingsGUIDs[0];
+                string settingsPath = AssetDatabase.GUIDToAssetPath(guid);
+                var asset = AssetDatabase.LoadAssetAtPath<T>(settingsPath);
+                return asset;
+            }
+
+            return null;
+        }
+
+        private class NodeIconSettingsManager
+        {
+            public const string DEFAULT_SETTINGS_ASSET_NAME = "node-icon-settings.json";
+            //TODO will break if download from package manager
+            public const string TEMPLATE_JSON_PATH = "Assets/RR_BehaviorTree/Resources/TextAssets/node-icon-settings-template.json";
+
+            private Dictionary<string, string> _nodeIconSettingsDict;
+
+            public NodeIconSettingsManager(TextAsset nodeIconSettingsAsset)
+            {
+                _nodeIconSettingsDict = CreateNodeIconDict(nodeIconSettingsAsset);
+            }
+
+            public Texture2D GetIcon(string nodeTypeName)
+            {
+                if (!_nodeIconSettingsDict.ContainsKey(nodeTypeName))
+                {
+                    return null;
+                }
+
+                return AssetDatabase.LoadAssetAtPath<Texture2D>(_nodeIconSettingsDict[nodeTypeName]);
+            }
+
+            private Dictionary<string, string> CreateNodeIconDict(TextAsset nodeIconSettingsAsset)
+            { 
+                if (_nodeIconSettingsDict != null)
+                {
+                    return _nodeIconSettingsDict;
+                }
+
+                Serialization
+                    .JsonWrapper
+                    .ReadJsonArray<NodeIconSettings>(
+                        AssetDatabase.GetAssetPath(nodeIconSettingsAsset), 
+                        out NodeIconSettings[] nodeIconSettingsList);
+
+                _nodeIconSettingsDict = new Dictionary<string, string>(nodeIconSettingsList.Length);
+                foreach (NodeIconSettings settings in nodeIconSettingsList)
+                {
+                    _nodeIconSettingsDict.Add(settings.taskname, settings.icon);
+                }
+
+                return _nodeIconSettingsDict;
+            }
+        }
+    }
+}

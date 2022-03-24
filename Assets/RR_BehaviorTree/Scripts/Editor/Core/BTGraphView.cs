@@ -73,7 +73,8 @@ namespace RR.AI.BehaviorTree
 
             if (designContainer.NodeDataList == null || designContainer.NodeDataList.Count == 0)
             {
-                var root = BTGraphNodeFactory.CreateGraphNode(BTNodeType.Root, DEFAULT_ROOT_SPAWN_POS, _blackboard);
+                var initParams = new BTGraphInitParamsNode() { pos = DEFAULT_ROOT_SPAWN_POS, blackboard = _blackboard };
+                var root = BTGraphNodeFactory.CreateGraphNode(BTNodeType.Root, initParams);
                 AddNode(root, DEFAULT_ROOT_SPAWN_POS);
                 return;
             }
@@ -83,8 +84,32 @@ namespace RR.AI.BehaviorTree
 
             designContainer.NodeDataList.ForEach(nodeData => 
             {
-                var node = BTGraphNodeFactory.CreateGraphNode(
-                    nodeData.NodeType, nodeData.Position, _blackboard, nodeData.Name, nodeData.Description, nodeData.Guid);
+                System.Func<BTNodeType, string> GetGraphNodeTypeName = nodeType =>
+                {
+                    switch (nodeType)
+                    {
+                        case BTNodeType.Root:
+                            return nameof(BTGraphRoot);
+                        case BTNodeType.Selector:
+                            return nameof(BTGraphSelector);
+                        case BTNodeType.Sequencer:
+                            return nameof(BTGraphSequencer);
+                        default:
+                            return nameof(BTGraphRoot);
+                    }
+                };
+
+                var initParams = new BTGraphInitParamsNode()
+                {
+                    pos = nodeData.Position, 
+                    blackboard = _blackboard, 
+                    name = nodeData.Name, 
+                    desc = nodeData.Description, 
+                    guid = nodeData.Guid,
+                    icon = BTGlobalSettings.Instance.GetIcon(GetGraphNodeTypeName(nodeData.NodeType))
+                };
+
+                var node = BTGraphNodeFactory.CreateGraphNode(nodeData.NodeType, initParams);
                 
                 // var badge = IconBadge.CreateComment("0");
                 // badge.badgeText = "0";
@@ -103,8 +128,18 @@ namespace RR.AI.BehaviorTree
 
             designContainer.TaskDataList.ForEach(taskData => 
             {
-                var node = BTGraphNodeFactory.CreateGraphNodeLeaf(
-                    taskData.Task, taskData.Position, _blackboard, taskData.Name, taskData.Description, taskData.Guid);
+                var initParams = new BTGraphInitParamsNodeLeaf()
+                {
+                    task = taskData.Task,
+                    pos = taskData.Position,
+                    blackboard = _blackboard,
+                    name = taskData.Name,
+                    desc = taskData.Description,
+                    guid = taskData.Guid,
+                    icon = BTGlobalSettings.Instance.GetIcon(taskData.Task.GetType().Name)
+                };
+
+                var node = BTGraphNodeFactory.CreateGraphNodeLeaf(initParams);
 
                 nodeDict.Add(taskData.Guid, node);
                 
@@ -300,7 +335,7 @@ namespace RR.AI.BehaviorTree
         public void AddNode(Node node, Vector2 pos)
         {
             AddElement(node);
-            (node as IBTGraphNode).OnCreate(DesignContainer, pos);
+            (node as IBTSerializableNode).OnCreate(DesignContainer, pos);
         }
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)

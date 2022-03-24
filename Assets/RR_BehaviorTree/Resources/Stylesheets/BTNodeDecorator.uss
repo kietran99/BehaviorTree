@@ -1,0 +1,8 @@
+VisualElement {
+    background-color: #00367e;
+    padding: 3px;
+    margin: 0px 4px 3px 4px;
+    border-width: 1px;
+    border-color: #232323;
+    border-radius: 2.5px;
+}

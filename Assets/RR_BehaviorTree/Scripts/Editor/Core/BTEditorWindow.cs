@@ -54,8 +54,15 @@ namespace RR.AI.BehaviorTree
                 _inspectedBT.DesignContainer.Cleanup();
             }) { text = "Cleanup" };
 
+            var settingsBtn = new Button(() => 
+            {
+                var settingsWnd = BTGraphSettingsWindow.GetWindow<BTGraphSettingsWindow>("Settings");
+                settingsWnd.Init(BTGlobalSettings.Instance.NodeIconSettingsAsset);
+            }) { text = "Settings" };
+
             toolbar.Add(saveBtn);
             toolbar.Add(cleanupBtn);
+            toolbar.Add(settingsBtn);
 
             return toolbar;
         }
@@ -96,8 +103,15 @@ namespace RR.AI.BehaviorTree
                 }
             }  
 
-            rootVisualElement.Remove(_graphView);
-            rootVisualElement.Remove(_toolbar);
+            if (_graphView != null)
+            {
+                rootVisualElement.Remove(_graphView);
+            }
+
+            if (_toolbar != null)
+            {
+                rootVisualElement.Remove(_toolbar);
+            }
         }
     }
 }

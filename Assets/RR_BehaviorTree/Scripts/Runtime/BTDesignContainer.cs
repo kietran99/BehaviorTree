@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEditor;
+
 using System.Collections.Generic;
 
 namespace RR.AI.BehaviorTree
@@ -24,8 +26,8 @@ namespace RR.AI.BehaviorTree
 
         public void Save()
         {
-            UnityEditor.EditorUtility.SetDirty(this);
-            UnityEditor.AssetDatabase.SaveAssetIfDirty(this);
+            EditorUtility.SetDirty(this);
+            AssetDatabase.SaveAssetIfDirty(this);
         }
 
         public void Cleanup()
@@ -62,8 +64,8 @@ namespace RR.AI.BehaviorTree
             if (!_taskDict.TryGetValue(key, out var task))
             {
                 task = CreateInstance(taskType) as BTBaseTask;
-                UnityEditor.AssetDatabase.AddObjectToAsset(task, this);
-			    UnityEditor.AssetDatabase.ImportAsset(UnityEditor.AssetDatabase.GetAssetPath(task));
+                AssetDatabase.AddObjectToAsset(task, this);
+			    AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(task));
                 _taskDict.Add(key, task);
             }
  

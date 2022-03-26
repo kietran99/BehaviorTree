@@ -1,24 +1,23 @@
-using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTGraphDetails : GraphElement
+    public class BTSubWndGraphDetails : BaseSubWindow
     {
         private TextField _nameField, _descField;
         private VisualElement _taskPropsContentContainer;
         private float _height, _width;
 
-        public BTGraphDetails(UnityEngine.Rect rect)
+        public BTSubWndGraphDetails(UnityEngine.Rect rect)
         {
             style.backgroundColor = RR.Utils.ColorExtension.Create(96f);
             SetPosition(rect);
             _height = rect.height;
             _width = rect.width;
             
-            var titleContainer = CreateTitle();
+            var titleContainer = Title("Details");
             Add(titleContainer);
 
             var generalContainer = CreateGeneralContainer();
@@ -26,21 +25,6 @@ namespace RR.AI.BehaviorTree
 
             var taskPropsContainer = CreateTaskPropsContainer();
             Add(taskPropsContainer);
-        }
-
-        private VisualElement CreateTitle()
-        {
-            var container = new VisualElement();
-            container.style.alignItems = Align.Center;
-            container.style.marginBottom = 5f;
-
-            var label = new Label("Details");
-            label.style.fontSize = 14;
-            label.style.unityFontStyleAndWeight = UnityEngine.FontStyle.Bold;
-
-            container.Add(label);
-
-            return container;
         }
 
         private VisualElement CreateContainerBase(string labelText, VisualElement content)

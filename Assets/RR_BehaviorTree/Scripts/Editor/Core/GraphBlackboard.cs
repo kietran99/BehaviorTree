@@ -27,7 +27,7 @@ namespace RR.AI
 			_BBFieldToRowMap = DisplayFields(runtimeBlackboard);
 			graphView.OnElementDeleted += OnElementDeleted;
 
-			style.backgroundColor = new StyleColor(new Color(50f / 255f, 50f / 255f, 50f / 255f));
+			style.backgroundColor = new StyleColor(Utils.ColorExtension.Create(50f));
 		}
 
 		private void OnAddItemRequested(UnityEditor.Experimental.GraphView.Blackboard blackboard)

@@ -16,7 +16,7 @@ namespace RR.AI.BehaviorTree
 
         private SerializedObject _serializedDesContainer;
         private GraphBlackboard _blackboard;
-        private BTGraphDetails _nodeDetails;
+        private BTSubWndGraphDetails _nodeDetails;
         private BTSubWndGraphSettings _graphSettingsWnd;
 
         // public static Action<string> OnNodeSelected { get; set; }
@@ -29,7 +29,7 @@ namespace RR.AI.BehaviorTree
         {
             _blackboard = CreateBlackboard(this, null, null, "Shared Variables", BB_RECT);
             Add(_blackboard);
-            _nodeDetails = new BTGraphDetails(NODE_INFO_RECT);
+            _nodeDetails = new BTSubWndGraphDetails(NODE_INFO_RECT);
             AddElement(_nodeDetails);
 
             graphViewChanged += OnGraphViewChanged;
@@ -54,7 +54,7 @@ namespace RR.AI.BehaviorTree
         {
             _blackboard = CreateBlackboard(this, designContainer.Blackboard, designContainer, "Shared Variables", BB_RECT);
             Add(_blackboard);
-            _nodeDetails = new BTGraphDetails(NODE_INFO_RECT);
+            _nodeDetails = new BTSubWndGraphDetails(NODE_INFO_RECT);
             Add(_nodeDetails);
             Init(designContainer);
             graphViewChanged += OnGraphViewChanged;
@@ -363,7 +363,6 @@ namespace RR.AI.BehaviorTree
             if (_graphSettingsWnd == null)
             {
                 (float width, float height) = (SETTINGS_RECT.width, SETTINGS_RECT.height);
-                // (float x, float y) = ((contentRect.width - width) / 2f, (contentRect.height - height) / 2f);
                 (float x, float y) = (contentRect.width - width - SETTINGS_RECT.x, SETTINGS_RECT.y);
 
                 _graphSettingsWnd = new BTSubWndGraphSettings(

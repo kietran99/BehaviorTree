@@ -1,6 +1,7 @@
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEditor;
+
 using System;
 using System.Collections.Generic;
 
@@ -11,14 +12,16 @@ namespace RR.AI.BehaviorTree
         private readonly Vector2 DEFAULT_ROOT_SPAWN_POS = new Vector2(400f, 480f);
         private readonly Rect NODE_INFO_RECT = new Rect(10, 30, 320, 560);
         private readonly Rect BB_RECT = new Rect(10, 30 + 560 + 10, 320, 400);
+        private readonly Rect SETTINGS_RECT = new Rect(10f, 30f, 400f, 400f);
 
         private SerializedObject _serializedDesContainer;
         private GraphBlackboard _blackboard;
         private BTGraphDetails _nodeDetails;
+        private BTSubWndGraphSettings _graphSettingsWnd;
 
-        public static Action<string> OnNodeSelected { get; set; }
+        // public static Action<string> OnNodeSelected { get; set; }
         public static Action<string, string, string, BTBaseTask> OnNewNodeSelected { get; set; }
-        public Action OnNodeDeleted { get; set; }
+        // public Action OnNodeDeleted { get; set; }
 
         public BTDesignContainer DesignContainer => _serializedDesContainer.targetObject as BTDesignContainer;
 
@@ -27,7 +30,7 @@ namespace RR.AI.BehaviorTree
             _blackboard = CreateBlackboard(this, null, null, "Shared Variables", BB_RECT);
             Add(_blackboard);
             _nodeDetails = new BTGraphDetails(NODE_INFO_RECT);
-            Add(_nodeDetails);
+            AddElement(_nodeDetails);
 
             graphViewChanged += OnGraphViewChanged;
 
@@ -354,5 +357,23 @@ namespace RR.AI.BehaviorTree
         }
 
         public override UnityEditor.Experimental.GraphView.Blackboard GetBlackboard() => _blackboard;
+
+        public void OpenGraphSettingsWnd()
+        {
+            if (_graphSettingsWnd == null)
+            {
+                (float width, float height) = (SETTINGS_RECT.width, SETTINGS_RECT.height);
+                // (float x, float y) = ((contentRect.width - width) / 2f, (contentRect.height - height) / 2f);
+                (float x, float y) = (contentRect.width - width - SETTINGS_RECT.x, SETTINGS_RECT.y);
+
+                _graphSettingsWnd = new BTSubWndGraphSettings(
+                    BTGlobalSettings.Instance.NodeIconSettingsAsset,
+                    () => RemoveElement(_graphSettingsWnd),
+                    new Rect(x, y, width, height));
+            }
+
+            _graphSettingsWnd.Open();
+            AddElement(_graphSettingsWnd);
+        }
     }
 }

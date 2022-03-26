@@ -56,8 +56,7 @@ namespace RR.AI.BehaviorTree
 
             var settingsBtn = new Button(() => 
             {
-                var settingsWnd = BTGraphSettingsWindow.GetWindow<BTGraphSettingsWindow>("Settings");
-                settingsWnd.Init(BTGlobalSettings.Instance.NodeIconSettingsAsset);
+                _graphView.OpenGraphSettingsWnd();
             }) { text = "Settings" };
 
             toolbar.Add(saveBtn);

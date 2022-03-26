@@ -4,5 +4,10 @@ namespace RR.AI.BehaviorTree
     public class NodeIconSettings
     {
         public string taskname, icon;
+
+        public override string ToString()
+        {
+            return $"{taskname}: {icon}";
+        }
     }
 }

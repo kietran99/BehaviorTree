@@ -168,7 +168,7 @@ namespace RR.AI.BehaviorTree
             
             if (task != null)
             {
-                _nodeDetails.DrawTaskProperties(task.LoadPropData(guid), task.PropertyType, _blackboard);
+                _nodeDetails.DrawTaskProperties(task.LoadPropValue(guid), task.PropertyType, _blackboard);
             }
             else
             {
@@ -262,7 +262,7 @@ namespace RR.AI.BehaviorTree
             // var (name, desc, prop) = MapNodeDataList(_serializedDesContainer.FindProperty("_taskDataList"), guid);
             var (name, desc, task) = FindTaskDetails(DesignContainer.TaskDataList, guid);
             _nodeDetails.ShowNodeInfo(name, desc);
-            _nodeDetails.DrawTaskProperties(task.LoadPropData(guid), task.PropertyType, _blackboard);
+            _nodeDetails.DrawTaskProperties(task.LoadPropValue(guid), task.PropertyType, _blackboard);
         }
 
         private GraphBlackboard CreateBlackboard(

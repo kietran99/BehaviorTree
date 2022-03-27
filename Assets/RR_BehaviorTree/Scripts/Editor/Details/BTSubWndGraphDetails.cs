@@ -6,12 +6,16 @@ namespace RR.AI.BehaviorTree
 {
     public class BTSubWndGraphDetails : BaseSubWindow
     {
+        private BTDetailsPropFieldFactory _propFieldFactory;
         private TextField _nameField, _descField;
         private VisualElement _taskPropsContentContainer;
         private float _height, _width;
 
+
         public BTSubWndGraphDetails(UnityEngine.Rect rect)
         {
+            _propFieldFactory = new BTDetailsPropFieldFactory();
+
             style.backgroundColor = RR.Utils.ColorExtension.Create(96f);
             SetPosition(rect);
             _height = rect.height;
@@ -89,7 +93,7 @@ namespace RR.AI.BehaviorTree
             _descField.value = desc;
         }
 
-        public void DrawTaskProperties(object propFieldData, System.Type propType, GraphBlackboard blackboard)
+        public void DrawTaskProperties(object propFieldValue, System.Type propType, GraphBlackboard blackboard)
         {
             ClearTaskPropsContent();
 
@@ -109,9 +113,8 @@ namespace RR.AI.BehaviorTree
                 var childContainer = CreatePropFieldContainer();
                 childContainer.Add(CreatePropLabel(fieldInfo.Name, 150f)); 
 
-                var field = DrawPropField(fieldInfo, propFieldData, blackboard);
+                var field = DrawPropField(fieldInfo, propFieldValue, blackboard);
                 childContainer.Add(field);
-                // field.style.maxWidth = 100f;
 
                 container.Add(childContainer);
             }
@@ -139,92 +142,11 @@ namespace RR.AI.BehaviorTree
 
         private VisualElement DrawPropField(
             System.Reflection.FieldInfo fieldInfo, 
-            object propFieldData, 
+            object propFieldValue, 
             GraphBlackboard blackboard)
         {
             var type = fieldInfo.FieldType;
-
-            if (type == typeof(string))
-            {
-                var BBValueAttribs = fieldInfo.GetCustomAttributes(typeof(RR.AI.BlackboardValueAttribute), true);
-                if (BBValueAttribs.Length > 0)
-                {
-                    var valType = (BBValueAttribs[0] as BlackboardValueAttribute).ValueType;
-                    
-                    var BBKeys = blackboard.GetKeys(valType);
-
-                    if (BBKeys.Count == 0)
-                    {
-                        var label = new Label($"No {valType} entry");
-                        label.style.whiteSpace = WhiteSpace.Normal;
-                        return label;
-                    }
-
-                    var fieldValue = (string) fieldInfo.GetValue(propFieldData);
-                    var field = new PopupField<string>(BBKeys, string.IsNullOrEmpty(fieldValue) ? BBKeys[0] : fieldValue);
-                    return StylizePropField(field);
-                }
-
-                var tagFieldAttribs = fieldInfo.GetCustomAttributes(typeof(RR.Serialization.TagFieldAttribute), true);
-                
-                if (tagFieldAttribs.Length > 0)
-                {
-                    return CreatePropField(new TagField(string.Empty, "Untagged"), fieldInfo, propFieldData);
-                }
-
-                return CreatePropField(new TextField(string.Empty, 200, true, false, '*'), fieldInfo, propFieldData);
-            }
-
-            if (type == typeof(int))
-            {
-                var layerMaskFieldAttribs = fieldInfo.GetCustomAttributes(typeof(RR.Serialization.LayerMaskFieldAttribute), true);
-                
-                if (layerMaskFieldAttribs.Length > 0)
-                {
-                    return CreatePropField(new LayerMaskField(), fieldInfo, propFieldData);
-                }
-
-                return CreatePropField(new IntegerField(), fieldInfo, propFieldData);
-            }
-
-            if (type == typeof(float))
-            {
-                return CreatePropField(new FloatField(), fieldInfo, propFieldData);
-            }
-
-            if (type == typeof(bool))
-            {
-                return CreatePropField(new Toggle(), fieldInfo, propFieldData);
-            }
-
-            if (type == typeof(Vector2))
-            {
-                return CreatePropField(new Vector2Field(), fieldInfo, propFieldData);
-            }
-
-            if (type == typeof(Vector3))
-            {
-                return CreatePropField(new Vector3Field(), fieldInfo, propFieldData);
-            }
-
-            if (typeof(ScriptableObject).IsAssignableFrom(type) || type.IsInterface)
-            {
-                var field = new ObjectField() { objectType = type };
-                return StylizePropField(field);
-            }
-
-            return new Label($"Unsupported type\n {type}");
-        }
-
-        private VisualElement CreatePropField<TProp>(
-            BaseField<TProp> baseField, 
-            System.Reflection.FieldInfo fieldInfo, 
-            object propFieldData)
-        {
-            var field = baseField;
-            field.value = (TProp) fieldInfo.GetValue(propFieldData);
-            field.RegisterValueChangedCallback(evt => fieldInfo.SetValue(propFieldData, evt.newValue));
-            return StylizePropField(field);
+            return StylizePropField(_propFieldFactory.PropField(type, fieldInfo, propFieldValue, blackboard));
         }
 
         private VisualElement StylizePropField(VisualElement field)

@@ -14,12 +14,12 @@ namespace RR.AI.BehaviorTree
         
         public override void Init(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid)
         {
-            Init(actor, blackboard, LoadPropData(nodeGuid) as TProp);
+            Init(actor, blackboard, LoadPropValue(nodeGuid) as TProp);
         }
 
         public override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid)
         {
-            return Tick(actor, blackboard, LoadPropData(nodeGuid) as TProp);
+            return Tick(actor, blackboard, LoadPropValue(nodeGuid) as TProp);
         }
 
         public abstract void Init(GameObject actor, RuntimeBlackboard blackboard, TProp prop);
@@ -39,7 +39,7 @@ namespace RR.AI.BehaviorTree
             return res;
         }
 
-        public override object LoadPropData(string key)
+        public override object LoadPropValue(string key)
         {
             if (!_propMap.TryGetValue(key, out var data))
             {
@@ -91,7 +91,7 @@ namespace RR.AI.BehaviorTree
         public abstract void Init(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid);
         public abstract BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid);
         public virtual bool SavePropData(string key, object data) => true;
-        public virtual object LoadPropData(string key) 
+        public virtual object LoadPropValue(string key) 
         {
             return new BTTaskDataNone();
         } 

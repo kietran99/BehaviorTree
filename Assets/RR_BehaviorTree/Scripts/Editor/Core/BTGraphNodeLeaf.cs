@@ -34,7 +34,7 @@ namespace RR.AI.BehaviorTree
                 return;
             }
 
-            var propFieldData = _nodeAction.Task.LoadPropData(_guid);
+            var propFieldData = _nodeAction.Task.LoadPropValue(_guid);
 
             var container = new VisualElement();
             var fieldInfoList = propType.GetFields();

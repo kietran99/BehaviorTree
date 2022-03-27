@@ -9,7 +9,7 @@ namespace RR.AI.BehaviorTree
     {
         private TextAsset _nodeIconSettingsAsset;
 
-        private NodeIconSettings[] _nodeIconSettingsList;
+        private BTSettingsNodeIconItem[] _nodeIconSettingsList;
 
         public void Init(TextAsset nodeIconSettingsAsset)
         {
@@ -17,7 +17,7 @@ namespace RR.AI.BehaviorTree
 
             Serialization
                 .JsonWrapper
-                .ReadJsonArray<NodeIconSettings>(GetIconSettingsAssetPath(_nodeIconSettingsAsset), out _nodeIconSettingsList);
+                .ReadJsonArray<BTSettingsNodeIconItem>(GetIconSettingsAssetPath(_nodeIconSettingsAsset), out _nodeIconSettingsList);
         }
 
         private void OnGUI()
@@ -73,23 +73,23 @@ namespace RR.AI.BehaviorTree
 
             if (GUILayout.Button("Save"))
             {
-                Serialization.JsonWrapper.OverwriteJsonArray<NodeIconSettings>(GetIconSettingsAssetPath(_nodeIconSettingsAsset), _nodeIconSettingsList);
+                Serialization.JsonWrapper.OverwriteJsonArray<BTSettingsNodeIconItem>(GetIconSettingsAssetPath(_nodeIconSettingsAsset), _nodeIconSettingsList);
             }
 
             EditorGUILayout.EndHorizontal();
         }
 
-        private NodeIconSettings[] UpdateIconSettings()
+        private BTSettingsNodeIconItem[] UpdateIconSettings()
         {
             var assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
 
-            System.Func<NodeIconSettings[], string, NodeIconSettings> CreateSettings = (settings, taskName) =>
+            System.Func<BTSettingsNodeIconItem[], string, BTSettingsNodeIconItem> CreateSettings = (settings, taskName) =>
             {
                 var icon = settings.FirstOrDefault(setting => setting.taskname == taskName).icon;
-                return new NodeIconSettings(){ taskname = taskName, icon = icon };
+                return new BTSettingsNodeIconItem(){ taskname = taskName, icon = icon };
             };
 
-            var nodeIconSettingList = new System.Collections.Generic.List<NodeIconSettings>(3)
+            var nodeIconSettingList = new System.Collections.Generic.List<BTSettingsNodeIconItem>(3)
             {
                 CreateSettings(_nodeIconSettingsList, nameof(BTGraphRoot)),
                 CreateSettings(_nodeIconSettingsList, nameof(BTGraphSelector)),

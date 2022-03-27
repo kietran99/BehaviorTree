@@ -137,12 +137,12 @@ namespace RR.AI.BehaviorTree
 
                 Serialization
                     .JsonWrapper
-                    .ReadJsonArray<NodeIconSettings>(
+                    .ReadJsonArray<BTSettingsNodeIconItem>(
                         AssetDatabase.GetAssetPath(nodeIconSettingsAsset), 
-                        out NodeIconSettings[] nodeIconSettingsList);
+                        out BTSettingsNodeIconItem[] nodeIconSettingsList);
 
                 _nodeIconSettingsDict = new Dictionary<string, string>(nodeIconSettingsList.Length);
-                foreach (NodeIconSettings settings in nodeIconSettingsList)
+                foreach (BTSettingsNodeIconItem settings in nodeIconSettingsList)
                 {
                     _nodeIconSettingsDict.Add(settings.taskname, settings.icon);
                 }

@@ -12,7 +12,7 @@ namespace RR.AI.BehaviorTree
     {
         private float _width, _height;
         private TextAsset _iconSettingsAsset;
-        private NodeIconSettings[] _iconSettingsList;
+        private BTSettingsNodeIconItem[] _iconSettingsList;
         private VisualElement _iconSettingsItemsContainer;
 
         private Action _onClose;
@@ -37,7 +37,7 @@ namespace RR.AI.BehaviorTree
 
                 Serialization
                     .JsonWrapper
-                    .ReadJsonArray<NodeIconSettings>(GetIconSettingsAssetPath(_iconSettingsAsset), out _iconSettingsList);
+                    .ReadJsonArray<BTSettingsNodeIconItem>(GetIconSettingsAssetPath(_iconSettingsAsset), out _iconSettingsList);
                 
                 Add(Title("Settings"));
                 Add(IconSettingsAssetField(iconSettingsAsset));
@@ -68,7 +68,7 @@ namespace RR.AI.BehaviorTree
             return field;
         }
 
-        private VisualElement IconSettingsSection(NodeIconSettings[] iconSettingsList)
+        private VisualElement IconSettingsSection(BTSettingsNodeIconItem[] iconSettingsList)
         {
             var iconSettingsSection = new VisualElement();
             _iconSettingsItemsContainer = new VisualElement();
@@ -84,7 +84,7 @@ namespace RR.AI.BehaviorTree
             return iconSettingsSection;
         }
 
-        private VisualElement[] IconSettingsItems(NodeIconSettings[] iconSettingsList)
+        private VisualElement[] IconSettingsItems(BTSettingsNodeIconItem[] iconSettingsList)
         {
             var items = new VisualElement[iconSettingsList.Length];
 
@@ -144,7 +144,7 @@ namespace RR.AI.BehaviorTree
             {
                 Serialization
                     .JsonWrapper
-                    .OverwriteJsonArray<NodeIconSettings>(GetIconSettingsAssetPath(_iconSettingsAsset), _iconSettingsList);
+                    .OverwriteJsonArray<BTSettingsNodeIconItem>(GetIconSettingsAssetPath(_iconSettingsAsset), _iconSettingsList);
             }, "Icons/General/Save");
             iconSettingsActionContainer.Add(saveBtn);
 
@@ -179,18 +179,18 @@ namespace RR.AI.BehaviorTree
             return okBtn;
         }
 
-        private NodeIconSettings[] RefreshIconSettings(NodeIconSettings[] oldSettingsList)
+        private BTSettingsNodeIconItem[] RefreshIconSettings(BTSettingsNodeIconItem[] oldSettingsList)
         {
             System.Reflection.Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            Func<NodeIconSettings[], string, NodeIconSettings> CreateSettings = (settings, taskName) =>
+            Func<BTSettingsNodeIconItem[], string, BTSettingsNodeIconItem> CreateSettings = (settings, taskName) =>
             {
-                NodeIconSettings setting = settings.FirstOrDefault(setting => setting.taskname == taskName);
+                BTSettingsNodeIconItem setting = settings.FirstOrDefault(setting => setting.taskname == taskName);
                 string icon = setting == null ? string.Empty : setting.icon;
-                return new NodeIconSettings(){ taskname = taskName, icon = icon };
+                return new BTSettingsNodeIconItem(){ taskname = taskName, icon = icon };
             };
 
-            var nodeIconSettingList = new System.Collections.Generic.List<NodeIconSettings>(3)
+            var nodeIconSettingList = new System.Collections.Generic.List<BTSettingsNodeIconItem>(3)
             {
                 CreateSettings(oldSettingsList, nameof(BTGraphRoot)),
                 CreateSettings(oldSettingsList, nameof(BTGraphSelector)),

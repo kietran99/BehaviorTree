@@ -1,7 +1,7 @@
 namespace RR.AI.BehaviorTree
 {
     [System.Serializable]
-    public class NodeIconSettings
+    public class BTSettingsNodeIconItem
     {
         public string taskname, icon;
 

@@ -35,13 +35,6 @@ MonoBehaviour:
       _position: {x: 912, y: 616}
       _description: 
     _task: {fileID: 17017294900977073}
-  - _graphData:
-      _guid: e7ada9de-51d7-47a0-853f-40b52dac9df2
-      _parentGuid: 
-      _name: Log
-      _position: {x: 920, y: 413}
-      _description: 
-    _task: {fileID: 17017294900977073}
   _blackboard:
     _map:
       _entries: []

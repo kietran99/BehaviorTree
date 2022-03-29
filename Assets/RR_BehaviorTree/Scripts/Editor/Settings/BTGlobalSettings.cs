@@ -54,11 +54,19 @@ namespace RR.AI.BehaviorTree
 
                 System.Func<string, TextAsset> createAssetFn = path =>
                 {
-                    string destAssetPath = path + NodeIconSettingsManager.DEFAULT_SETTINGS_ASSET_NAME;
+                    string destAssetPath = path + NodeIconSettingsManager.DEF_SETTINGS_ASSET_NAME;
                     
                     if (!File.Exists(destAssetPath))
                     {
-                        File.Copy(NodeIconSettingsManager.TEMPLATE_JSON_PATH, destAssetPath);
+                        var templatePath = NodeIconSettingsManager.FindTemplateJsonPath();
+                        Debug.Log(templatePath);
+
+                        if (string.IsNullOrEmpty(templatePath))
+                        {
+                            return null;
+                        }
+
+                        File.Copy(templatePath, destAssetPath);
                         AssetDatabase.Refresh();
                     }
 
@@ -66,7 +74,7 @@ namespace RR.AI.BehaviorTree
                 };
 
                 _nodeIconSettingsAsset = FindOrCreateAsset<TextAsset>(
-                    createAssetFn, DEFAULT_SETTINGS_PATH, NodeIconSettingsManager.DEFAULT_SETTINGS_ASSET_NAME);
+                    createAssetFn, DEFAULT_SETTINGS_PATH, NodeIconSettingsManager.DEF_SETTINGS_ASSET_NAME);
                 EditorUtility.SetDirty(this);
                 AssetDatabase.SaveAssetIfDirty(this);
                 return _nodeIconSettingsAsset;
@@ -107,15 +115,26 @@ namespace RR.AI.BehaviorTree
 
         private class NodeIconSettingsManager
         {
-            public const string DEFAULT_SETTINGS_ASSET_NAME = "node-icon-settings.json";
-            //TODO will break if download from package manager
-            public const string TEMPLATE_JSON_PATH = "Assets/RR_BehaviorTree/Resources/TextAssets/node-icon-settings-template.json";
-
+            public const string DEF_SETTINGS_ASSET_NAME = "node-icon-settings.json";
+            public const string DEF_SETTINGS_TEMPLATE_NAME = "node-icon-settings-template";
+            
             private Dictionary<string, string> _nodeIconSettingsDict;
 
             public NodeIconSettingsManager(TextAsset nodeIconSettingsAsset)
             {
                 _nodeIconSettingsDict = CreateNodeIconDict(nodeIconSettingsAsset);
+            }
+
+            public static string FindTemplateJsonPath()
+            {
+                string[] templateGuidList = AssetDatabase.FindAssets($"{DEF_SETTINGS_TEMPLATE_NAME} t:TextAsset");
+
+                foreach (var templateGuid in templateGuidList)
+                {
+                    return AssetDatabase.GUIDToAssetPath(templateGuid);
+                }
+
+                return string.Empty;
             }
 
             public Texture2D GetIcon(string nodeTypeName)

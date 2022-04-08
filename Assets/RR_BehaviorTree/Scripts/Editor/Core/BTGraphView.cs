@@ -57,8 +57,8 @@ namespace RR.AI.BehaviorTree
             _nodeDetails = new BTSubWndGraphDetails(NODE_INFO_RECT);
             Add(_nodeDetails);
             Init(designContainer);
-            graphViewChanged += OnGraphViewChanged;
 
+            graphViewChanged += OnGraphViewChanged;
             OnNewNodeSelected += HandleNewNodeSelected;
 
             BTEditorWindow.OnClose += () =>
@@ -67,7 +67,7 @@ namespace RR.AI.BehaviorTree
                 {
                     OnNewNodeSelected -= (Action<string, string, string, BTBaseTask>) listener;
                 }
-            };    
+            };  
         }
 
         public void Init(BTDesignContainer designContainer)
@@ -85,23 +85,23 @@ namespace RR.AI.BehaviorTree
             var linkDataList = new List<BTLinkData>(designContainer.NodeDataList.Count);
             var nodeDict = new Dictionary<string, Node>(designContainer.NodeDataList.Count);
 
-            designContainer.NodeDataList.ForEach(nodeData => 
+            System.Func<BTNodeType, string> GetGraphNodeTypeName = nodeType =>
             {
-                System.Func<BTNodeType, string> GetGraphNodeTypeName = nodeType =>
+                switch (nodeType)
                 {
-                    switch (nodeType)
-                    {
-                        case BTNodeType.Root:
-                            return nameof(BTGraphRoot);
-                        case BTNodeType.Selector:
-                            return nameof(BTGraphSelector);
-                        case BTNodeType.Sequencer:
-                            return nameof(BTGraphSequencer);
-                        default:
-                            return nameof(BTGraphRoot);
-                    }
-                };
+                    case BTNodeType.Root:
+                        return nameof(BTGraphRoot);
+                    case BTNodeType.Selector:
+                        return nameof(BTGraphSelector);
+                    case BTNodeType.Sequencer:
+                        return nameof(BTGraphSequencer);
+                    default:
+                        return nameof(BTGraphRoot);
+                }
+            };
 
+            Func<BTSerializableNodeData, BTGraphNodeBase> CreateGraphNode = nodeData =>
+            {
                 var initParams = new BTGraphInitParamsNode()
                 {
                     pos = nodeData.Position, 
@@ -113,23 +113,10 @@ namespace RR.AI.BehaviorTree
                 };
 
                 var node = BTGraphNodeFactory.CreateGraphNode(nodeData.NodeType, initParams);
-                
-                // var badge = IconBadge.CreateComment("0");
-                // badge.badgeText = "0";
-                // badge.distance = 0;
-                // node.titleContainer.Add(badge);
+                return node;
+            };
 
-                nodeDict.Add(nodeData.Guid, node);
-                
-                if (!string.IsNullOrEmpty(nodeData.ParentGuid)) 
-                {
-                    linkDataList.Add(new BTLinkData() { startGuid = nodeData.ParentGuid, endGuid = nodeData.Guid });
-                }
-
-                AddElement(node);
-            });
-
-            designContainer.TaskDataList.ForEach(taskData => 
+            Func<BTSerializableTaskData, BTGraphNodeBase> CreateGraphNodeLeaf = taskData =>
             {
                 var initParams = new BTGraphInitParamsNodeLeaf()
                 {
@@ -143,16 +130,41 @@ namespace RR.AI.BehaviorTree
                 };
 
                 var node = BTGraphNodeFactory.CreateGraphNodeLeaf(initParams);
+                return node;
+            };
 
-                nodeDict.Add(taskData.Guid, node);
-                
-                if (!string.IsNullOrEmpty(taskData.ParentGuid)) 
+            var nodeDataList = new BTValidator<BTSerializableNodeDataBase, BTGraphNodeBase>()
+                .OnObjectCreate((node, parentGuid) =>
                 {
-                    linkDataList.Add(new BTLinkData() { startGuid = taskData.ParentGuid, endGuid = taskData.Guid });
-                }
+                    nodeDict.Add(node.Guid, node);
+                
+                    if (!string.IsNullOrEmpty(parentGuid)) 
+                    {
+                        linkDataList.Add(new BTLinkData() { startGuid = parentGuid, endGuid = node.Guid });
+                    }
 
-                AddElement(node);
-            });
+                    AddElement(node);
+                })
+                .OnObjectOrder((node, idx) =>
+                {
+                    const int maxCharForDefaultSize = 8;
+                    int titleLen = node.Name.Length;
+                    var xOffset = 108 + (titleLen <= maxCharForDefaultSize ? 0 : (titleLen - maxCharForDefaultSize) * 17) - 14;
+                    var pos = new Vector2(node.x + xOffset, node.y);
+                    var orderLb = new BTGraphOrderLabel(pos, idx);
+                    AddElement(orderLb);
+                    node.OrderLabel = orderLb;
+                })
+                .Execute(
+                    designContainer.AsNodeDataBaseList,
+                    data => 
+                    {
+                        bool isTaskNode = data.GetType().Equals(typeof(BTSerializableTaskData));
+                        return isTaskNode 
+                                ? CreateGraphNodeLeaf(data as BTSerializableTaskData)
+                                : CreateGraphNode(data as BTSerializableNodeData);
+                    }
+                );
 
             linkDataList.ForEach(linkData =>
             {
@@ -308,7 +320,9 @@ namespace RR.AI.BehaviorTree
 
                     if (element is Node)
                     {
-                        (element as IBTSerializableNode).OnMove(DesignContainer, element.GetPosition().position);
+                        var node = (element as IBTSerializableNode);
+                        var newPos = element.GetPosition();
+                        node.OnMove(DesignContainer, graphViewChange.moveDelta);
                     }
                 }
             };

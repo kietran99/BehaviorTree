@@ -207,9 +207,10 @@ namespace RR.AI.BehaviorTree
             designContainer.TaskDataList.Remove(nodeToDelete);
         }
 
-        public override void OnMove(BTDesignContainer designContainer, Vector2 position)
+        public override void OnMove(BTDesignContainer designContainer, Vector2 moveDelta)
         {
-            designContainer.TaskDataList.Find(node => node.Guid == _guid).Position = position;
+            designContainer.TaskDataList.Find(node => node.Guid == _guid).Position = GetPosition().position;
+            SyncOrderLabelPosition(moveDelta);
         }
 
         public override void OnConnect(BTDesignContainer designContainer, string parentGuid)

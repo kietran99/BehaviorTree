@@ -34,7 +34,7 @@ namespace RR.AI.BehaviorTree
             return node as Node;
         }
 
-        public static Node CreateGraphNode(BTNodeType nodeType, BTGraphInitParamsNode initParams) 
+        public static BTGraphNodeBase CreateGraphNode(BTNodeType nodeType, BTGraphInitParamsNode initParams) 
         {
             switch (nodeType)
             {
@@ -49,10 +49,10 @@ namespace RR.AI.BehaviorTree
             }
         }
 
-        public static Node CreateGraphNodeLeaf(BTGraphInitParamsNodeLeaf initParams)
+        public static BTGraphNodeBase CreateGraphNodeLeaf(BTGraphInitParamsNodeLeaf initParams)
         {
             var graphNodeleafType = typeof(BTGraphNodeLeaf<>).MakeGenericType(initParams.task.GetType());
-            return Activator.CreateInstance(graphNodeleafType, new object[] { initParams }) as Node;
+            return Activator.CreateInstance(graphNodeleafType, new object[] { initParams }) as BTGraphNodeBase;
         }
     }
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
+using System.Linq;
 using System.Collections.Generic;
 
 namespace RR.AI.BehaviorTree
@@ -23,6 +24,11 @@ namespace RR.AI.BehaviorTree
         public List<BTSerializableNodeData> NodeDataList => _nodeDataList;
         public List<BTSerializableTaskData> TaskDataList => _taskDataList;
         public Blackboard Blackboard => _blackboard;
+
+        public List<BTSerializableNodeDataBase> AsNodeDataBaseList =>
+            _nodeDataList.Select(node => node as BTSerializableNodeDataBase)
+            .Concat(_taskDataList.Select(node => node as BTSerializableNodeDataBase))
+            .ToList();
 
         public void Save()
         {

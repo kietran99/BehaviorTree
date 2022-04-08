@@ -4,13 +4,33 @@ using UnityEditor.Experimental.GraphView;
 
 using System.Linq;
 
-using RR.Utils;
-
 namespace RR.AI.BehaviorTree
 {
-    public class BTGraphNode<T> : Node, IBTSerializableNode where T : IBTGraphNodeInfo, new()
+    public abstract class BTGraphNodeBase : Node, IBTSerializableNode
     {
-        private static Vector2 DEFAULT_NODE_SIZE = new Vector2(600f, 400f);
+        protected string _guid;
+
+        public  string Guid => _guid;
+        public abstract string Name { get; }
+        public BTGraphOrderLabel OrderLabel { get; set; }
+        public int OrderValue
+        {
+            get => OrderLabel.Value;
+            set => OrderLabel.Value = value;
+        }
+
+        public int x { get; protected set; }
+        public int y { get; protected set; }
+
+        public abstract void OnConnect(BTDesignContainer designContainer, string parentGuid);
+        public abstract void OnCreate(BTDesignContainer designContainer, Vector2 position);
+        public abstract void OnDelete(BTDesignContainer designContainer);
+        public abstract void OnMove(BTDesignContainer designContainer, Vector2 moveDelta);
+    }
+
+    public class BTGraphNode<T> : BTGraphNodeBase where T : IBTGraphNodeInfo, new()
+    {
+        private static Vector2 DEFAULT_NODE_SIZE = new Vector2(800f, 400f);
         private static Color DEFAULT_EDGE_COLOR = new Color(146f / 255f, 146f/ 255f, 146f / 255f);
         private static Color DEBUG_ACTIVE_EDGE_COLOR = new Color(222f / 255f, 240f/ 255f, 61f / 255f);
         private static Color DEBUG_INACTIVE_EDGE_COLOR = new Color(158f / 255f, 202f/ 255f, 255f / 255f, .2f);
@@ -20,9 +40,8 @@ namespace RR.AI.BehaviorTree
         protected T _nodeAction;
         protected string _name;
         protected string _description;
-        protected string _guid;
-        public string Guid => _guid;
 
+        public override string Name => _name;
         protected virtual BTBaseTask Task => null;
 
         public BTGraphNode(BTGraphInitParamsNode initParams)
@@ -44,7 +63,10 @@ namespace RR.AI.BehaviorTree
             var titleContent = CreateTitleContent(_name, titleIcon);
             titleContainer.Add(titleContent);
 
-            SetPosition(new Rect(initParams.pos, DEFAULT_NODE_SIZE));
+            var pos = initParams.pos;
+            SetPosition(new Rect(pos, DEFAULT_NODE_SIZE));
+            x = Mathf.FloorToInt(pos.x);
+            y = Mathf.FloorToInt(pos.y);
 
             if (_nodeAction.NodeType == BTNodeType.Root)
             {
@@ -54,13 +76,28 @@ namespace RR.AI.BehaviorTree
 
             BTBaseNode.OnRootTick += OnRootTick;
             BTBaseNode.OnTick += OnNodeTick;
+
+            RegisterCallback<PointerDownEvent>(OnMouseDown);
+            RegisterCallback<PointerMoveEvent>(OnMouseMove);
             
             // Debug.Log(_nodeAction.Name);
 
             // if (_nodeAction.NodeType != BTNodeType.Leaf)
             // {
-            //     (outputContainer[0] as Port).RegisterCallback<UnityEngine.UIElements.MouseUpEvent>(OnMouseUp);
+            //     (outputContainer[0] as Port).RegisterCallback<MouseUpEvent>(OnMouseUp);
             // }
+        }
+
+        private void OnMouseMove(PointerMoveEvent evt) // No idea why this callback is invoked on mouse up
+        {
+            OrderLabel.SetEnabled(true);
+            OrderLabel.visible = true;
+        }
+
+        private void OnMouseDown(PointerDownEvent evt)
+        {
+            OrderLabel.visible = false;
+            OrderLabel.SetEnabled(false);
         }
 
         public BTGraphNode(Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid="", Texture2D icon = null)
@@ -83,6 +120,7 @@ namespace RR.AI.BehaviorTree
             titleContainer.Add(titleContent);
 
             SetPosition(new Rect(pos, DEFAULT_NODE_SIZE));
+            y = Mathf.FloorToInt(pos.y);
 
             if (_nodeAction.NodeType == BTNodeType.Root)
             {
@@ -260,7 +298,7 @@ namespace RR.AI.BehaviorTree
             return InstantiatePort(Orientation.Horizontal, direction, capacity, typeof(float));
         }
     
-        public virtual void OnCreate(BTDesignContainer designContainer, UnityEngine.Vector2 position)
+        public override void OnCreate(BTDesignContainer designContainer, UnityEngine.Vector2 position)
         {
             designContainer.NodeDataList.Add(
                 new BTSerializableNodeData(
@@ -285,18 +323,26 @@ namespace RR.AI.BehaviorTree
             return (parentNode as IBTSerializableNode).Guid;
         }
 
-        public virtual void OnDelete(BTDesignContainer designContainer)
+        public override void OnDelete(BTDesignContainer designContainer)
         {
             BTSerializableNodeData nodeToDelete = designContainer.NodeDataList.Find(node => node.Guid == _guid);
             designContainer.NodeDataList.Remove(nodeToDelete);
         }
 
-        public virtual void OnMove(BTDesignContainer designContainer, Vector2 position)
+        public override void OnMove(BTDesignContainer designContainer, Vector2 moveDelta)
         {
-            designContainer.NodeDataList.Find(node => node.Guid == _guid).Position = position;
+            designContainer.NodeDataList.Find(node => node.Guid == _guid).Position = GetPosition().position;
+            SyncOrderLabelPosition(moveDelta);
         }
 
-        public virtual void OnConnect(BTDesignContainer designContainer, string parentGuid)
+        protected void SyncOrderLabelPosition(Vector2 moveDelta)
+        {
+            Rect position = GetPosition();
+            OrderLabel.Move(moveDelta);
+            OrderLabel.BringToFront();
+        }
+
+        public override void OnConnect(BTDesignContainer designContainer, string parentGuid)
         {
             designContainer.NodeDataList.Find(node => node.Guid == _guid).ParentGuid = parentGuid;
         }
@@ -307,21 +353,15 @@ namespace RR.AI.BehaviorTree
 
             evt.menu.InsertAction(1, "Add Decorator", action => 
             {
-                var decorator = CreateTitleContent("Is Player in Range", GetIcon(BTNodeType.Root));
+                var decorator = CreateTitleContent("Within Range", GetIcon(BTNodeType.Root));
                 decorator.styleSheets.Add(Resources.Load<StyleSheet>("Stylesheets/BTNodeDecorator"));
-                extensionContainer.style.backgroundColor = ColorExtension.Create(62f);
+                extensionContainer.style.backgroundColor = Utils.ColorExtension.Create(62f);
                 extensionContainer.style.paddingTop = 3f;
                 extensionContainer.Add(decorator);
                 RefreshExpandedState();
             });
 
             evt.menu.InsertSeparator("/", 1);
-            // var orderLabel = new Label("0");
-            // orderLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
-            // orderLabel.style.fontSize = 14;
-            // orderLabel.style.color = Color.white;
-            
-            // titleButtonContainer.Add(orderLabel);
         }
     }
 }

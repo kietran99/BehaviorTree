@@ -24,15 +24,43 @@ MonoBehaviour:
       _guid: 49817220-3d5e-42b6-ab24-502076b72883
       _parentGuid: 2acd9f81-3b50-457a-8627-abb130310415
       _name: Selector
-      _position: {x: 634, y: 480}
+      _position: {x: 639, y: 479}
+      _description: 
+    _nodeType: 2
+  - _graphData:
+      _guid: 96e35096-96d1-4d7b-b846-6cb83120626c
+      _parentGuid: 49817220-3d5e-42b6-ab24-502076b72883
+      _name: Sequencer
+      _position: {x: 939, y: 317}
+      _description: 
+    _nodeType: 1
+  - _graphData:
+      _guid: e58a83c1-e0f4-4600-9ace-499314bd81d2
+      _parentGuid: 49817220-3d5e-42b6-ab24-502076b72883
+      _name: Selector
+      _position: {x: 930, y: 650}
       _description: 
     _nodeType: 2
   _taskDataList:
   - _graphData:
       _guid: 558dc300-5735-4762-989a-d5f70f5f99a6
-      _parentGuid: 49817220-3d5e-42b6-ab24-502076b72883
+      _parentGuid: e58a83c1-e0f4-4600-9ace-499314bd81d2
       _name: Log
-      _position: {x: 912, y: 616}
+      _position: {x: 1262, y: 764}
+      _description: 
+    _task: {fileID: 17017294900977073}
+  - _graphData:
+      _guid: b1f4179b-8747-456b-8cb8-b31c96e3129e
+      _parentGuid: e58a83c1-e0f4-4600-9ace-499314bd81d2
+      _name: Log
+      _position: {x: 1261, y: 564}
+      _description: 
+    _task: {fileID: 17017294900977073}
+  - _graphData:
+      _guid: 85593e60-cfc6-4647-8559-b9ed4051de56
+      _parentGuid: 96e35096-96d1-4d7b-b846-6cb83120626c
+      _name: Log
+      _position: {x: 1264, y: 318}
       _description: 
     _task: {fileID: 17017294900977073}
   _blackboard:
@@ -58,5 +86,11 @@ MonoBehaviour:
   _propMap:
     _entries:
     - Key: 558dc300-5735-4762-989a-d5f70f5f99a6
+      Value:
+        Message: 
+    - Key: b1f4179b-8747-456b-8cb8-b31c96e3129e
+      Value:
+        Message: 
+    - Key: 85593e60-cfc6-4647-8559-b9ed4051de56
       Value:
         Message: 

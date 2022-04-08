@@ -42,7 +42,6 @@ namespace RR.AI.BehaviorTree
             var nodeDict = new Dictionary<string, (BTBaseNode node, int yPos)>(designContainer.NodeDataList.Count);
             var linkDataList = new List<BTLinkData>(designContainer.NodeDataList.Count);
             var linkDict = new Dictionary<BTBaseNode, List<(BTBaseNode node, int yPos)>>(designContainer.NodeDataList.Count);
-            var emptyList = new List<(BTBaseNode node, int yPos)>();
             
             designContainer.NodeDataList.ForEach(nodeData => 
             {
@@ -67,7 +66,7 @@ namespace RR.AI.BehaviorTree
                 var node = BTNodeFactory.CreateLeaf(taskData.Task, taskData.Guid);
 
                 nodeDict.Add(taskData.Guid, (node, Mathf.FloorToInt(taskData.Position.y)));
-                linkDict.Add(node, emptyList);
+                linkDict.Add(node, new List<(BTBaseNode node, int yPos)>());
                 
                 if (!string.IsNullOrEmpty(taskData.ParentGuid)) 
                 {
@@ -83,9 +82,9 @@ namespace RR.AI.BehaviorTree
                 var children = linkDict[parent.node];
                 children.Add(child);
                 children.Sort(nodePriorityComparer);
-            });
+            }); // Needs optimization
 
-            return (root, Map(linkDict));
+            return (root, MapToNodeDataList(linkDict));
         }
 
         private class NodePriorityComparer : IComparer<(BTBaseNode node, int yPos)>
@@ -93,29 +92,29 @@ namespace RR.AI.BehaviorTree
             public int Compare((BTBaseNode node, int yPos) x, (BTBaseNode node, int yPos) y) => x.yPos.CompareTo(y.yPos);
         }
 
-        private BTNodeData[] Map(Dictionary<BTBaseNode, List<(BTBaseNode node, int yPos)>> linkDict)
+        private BTNodeData[] MapToNodeDataList(Dictionary<BTBaseNode, List<(BTBaseNode node, int yPos)>> linkDict)
         {
             var nodeDataList = new BTNodeData[linkDict.Count];
             int idx = 0;
 
+            System.Func<List<(BTBaseNode node, int yPos)>, BTBaseNode[]> MapToBaseNodeList = childrenData =>
+            {
+                var childNodes = new BTBaseNode[childrenData.Count];
+
+                for (int i = 0; i < childrenData.Count; i++)
+                {
+                    childNodes[i] = childrenData[i].node;
+                }
+
+                return childNodes;
+            };
+
             foreach (var entry in linkDict)
             {
-                nodeDataList[idx++] = new BTNodeData(entry.Key, Map(entry.Value));
+                nodeDataList[idx++] = new BTNodeData(entry.Key, MapToBaseNodeList(entry.Value));
             }
 
             return nodeDataList;
-        }
-
-        private BTBaseNode[] Map(List<(BTBaseNode node, int yPos)> childrenData)
-        {
-            var childNodes = new BTBaseNode[childrenData.Count];
-
-            for (int i = 0; i < childrenData.Count; i++)
-            {
-                childNodes[i] = childrenData[i].node;
-            }
-
-            return childNodes;
         }
 
         private void InitTree(BTNodeData[] nodeDataList)

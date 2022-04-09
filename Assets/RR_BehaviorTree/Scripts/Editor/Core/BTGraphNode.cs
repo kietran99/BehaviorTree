@@ -144,6 +144,7 @@ namespace RR.AI.BehaviorTree
             // BTGraphView.OnNodeSelected?.Invoke(_guid);
             BTGraphView.OnNewNodeSelected?.Invoke(_guid, _name, _description, Task);
             base.OnSelected();
+            OrderLabel.BringToFront();
         }
 
         public override void OnUnselected()

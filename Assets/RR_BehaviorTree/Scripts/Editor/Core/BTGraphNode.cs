@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 using UnityEditor.Experimental.GraphView;
 
 using System.Linq;
+using System.Collections.Generic;
 
 namespace RR.AI.BehaviorTree
 {
@@ -41,8 +42,22 @@ namespace RR.AI.BehaviorTree
         protected string _name;
         protected string _description;
 
+        private List<BTGraphNodeDecorator> _decorators;
+
         public override string Name => _name;
         protected virtual BTBaseTask Task => null;
+        private List<BTGraphNodeDecorator> Decorators
+        {
+            get
+            {
+                if (_decorators == null)
+                {
+                    _decorators = new List<BTGraphNodeDecorator>();
+                }
+
+                return _decorators;
+            }
+        }
 
         public BTGraphNode(BTGraphInitParamsNode initParams)
         {
@@ -149,6 +164,10 @@ namespace RR.AI.BehaviorTree
 
         public override void OnUnselected()
         {
+            foreach (var decorator in Decorators)
+            {
+                decorator.OnUnselected();
+            }
             base.OnUnselected();
         }
 
@@ -354,11 +373,11 @@ namespace RR.AI.BehaviorTree
 
             evt.menu.InsertAction(1, "Add Decorator", action => 
             {
-                var decorator = CreateTitleContent("Within Range", GetIcon(BTNodeType.Root));
-                decorator.styleSheets.Add(Resources.Load<StyleSheet>("Stylesheets/BTNodeDecorator"));
+                var decorator = new BTGraphNodeDecorator();
                 extensionContainer.style.backgroundColor = Utils.ColorExtension.Create(62f);
                 extensionContainer.style.paddingTop = 3f;
                 extensionContainer.Add(decorator);
+                Decorators.Add(decorator);
                 RefreshExpandedState();
             });
 

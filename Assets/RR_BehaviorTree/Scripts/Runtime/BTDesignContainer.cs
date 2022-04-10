@@ -26,8 +26,8 @@ namespace RR.AI.BehaviorTree
         public Blackboard Blackboard => _blackboard;
 
         public List<BTSerializableNodeDataBase> AsNodeDataBaseList =>
-            _nodeDataList.Select(node => node as BTSerializableNodeDataBase)
-            .Concat(_taskDataList.Select(node => node as BTSerializableNodeDataBase))
+            _nodeDataList.Cast<BTSerializableNodeDataBase>()
+            .Concat(_taskDataList.Cast<BTSerializableNodeDataBase>())
             .ToList();
 
         public void Save()

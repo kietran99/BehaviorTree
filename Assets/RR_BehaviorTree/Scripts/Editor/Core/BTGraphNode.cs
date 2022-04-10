@@ -23,6 +23,8 @@ namespace RR.AI.BehaviorTree
         public int x { get; protected set; }
         public int y { get; protected set; }
 
+        public static System.Action<Vector2> DecoCreationRequest { get; set; }
+
         public abstract void OnConnect(BTDesignContainer designContainer, string parentGuid);
         public abstract void OnCreate(BTDesignContainer designContainer, Vector2 position);
         public abstract void OnDelete(BTDesignContainer designContainer);
@@ -373,11 +375,13 @@ namespace RR.AI.BehaviorTree
 
             evt.menu.InsertAction(1, "Add Decorator", action => 
             {
-                var decorator = new BTGraphNodeDecorator();
-                extensionContainer.style.backgroundColor = Utils.ColorExtension.Create(62f);
+                // var decorator = new BTGraphNodeDecorator();
+                // extensionContainer.style.backgroundColor = Utils.ColorExtension.Create(62f);
+                var mousePos = GetPosition().position;
+                DecoCreationRequest?.Invoke(mousePos);
                 extensionContainer.style.paddingTop = 3f;
-                extensionContainer.Add(decorator);
-                Decorators.Add(decorator);
+                // extensionContainer.Add(decorator);
+                // Decorators.Add(decorator);
                 RefreshExpandedState();
             });
 

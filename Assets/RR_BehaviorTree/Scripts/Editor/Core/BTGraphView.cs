@@ -1,6 +1,6 @@
 using UnityEditor.Experimental.GraphView;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 using System;
 using System.Collections.Generic;
@@ -177,7 +177,6 @@ namespace RR.AI.BehaviorTree
                 AddElement(edge);
             });
         }
-
         
         private BTDecoratorSearchWindow CreateDecoSearchWindow()
         {

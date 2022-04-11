@@ -25,8 +25,8 @@ namespace RR.AI.BehaviorTree
             foreach (var assembly in assemblies)
             {
                 IEnumerable<Type> types = assembly.GetTypes()
-                                            .Where(type => typeof(BTBaseTask).IsAssignableFrom(type) 
-                                                && typeof(IBTBaseDecorator).IsAssignableFrom(type) 
+                                            .Where(type => typeof(IBTBaseDecorator).IsAssignableFrom(type)
+                                                && !type.IsAbstract
                                                 && type != typeof(BTBaseTask)
                                                 && !type.IsGenericType
                                                 && type != typeof(BTTaskNull));

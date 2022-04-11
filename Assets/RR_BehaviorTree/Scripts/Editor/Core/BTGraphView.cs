@@ -185,9 +185,13 @@ namespace RR.AI.BehaviorTree
             return wnd;
         }
 
-        private void OpenDecoSearchWnd(Vector2 pos, Action<Type> onEntrySelectCb)
+        private void OpenDecoSearchWnd(Vector2 pos, Action<string, Texture2D> onEntrySelectCb)
         {
-            _decoSearchWnd.SetEntrySelectCallback(onEntrySelectCb);
+            _decoSearchWnd.SetEntrySelectCallback(type =>
+            {
+                var deco = DesignContainer.CreateDummyTask(type);
+                onEntrySelectCb(deco.Name, BTGlobalSettings.Instance.GetIcon(type.Name));
+            });
             SearchWindow.Open(new SearchWindowContext(pos), _decoSearchWnd);
         }
 

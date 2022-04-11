@@ -37,7 +37,7 @@ namespace RR.AI.BehaviorTree
         public int x { get; protected set; }
         public int y { get; protected set; }
 
-        protected Action<Vector2, Action<Type>> OpenDecoSearchWnd;
+        protected Action<Vector2, Action<string, Texture2D>> OpenDecoSearchWnd;
 
         public abstract void OnConnect(BTDesignContainer designContainer, string parentGuid);
         public abstract void OnCreate(BTDesignContainer designContainer, Vector2 position);
@@ -58,9 +58,9 @@ namespace RR.AI.BehaviorTree
             evt.menu.InsertSeparator("/", 1);
         }
 
-        private void CreateDecorator(Type decoType)
+        private void CreateDecorator(string decoName, Texture2D icon)
         {
-            var decorator = new BTGraphNodeDecorator();
+            var decorator = new BTGraphNodeDecorator(decoName, icon);
             extensionContainer.style.backgroundColor = Utils.ColorExtension.Create(62f);
             extensionContainer.style.paddingTop = 3f;
             extensionContainer.Add(decorator);

@@ -10,8 +10,8 @@ namespace RR.AI.BehaviorTree
         public RR.AI.GraphBlackboard blackboard;
         public string name = "";
         public string desc = "";
-        public string guid="";
+        public string guid = "";
         public Texture2D icon = null;
-        public Action<Vector2, Action<Type>> OpenDecoSearchWindow;
+        public Action<Vector2, Action<string, Texture2D>> OpenDecoSearchWindow;
     }
 }

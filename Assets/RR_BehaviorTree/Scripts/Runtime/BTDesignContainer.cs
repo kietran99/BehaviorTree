@@ -77,5 +77,8 @@ namespace RR.AI.BehaviorTree
  
             return task;
         }
+
+        public BTBaseTask CreateDummyTask(System.Type taskType)
+            => CreateInstance(taskType) as BTBaseTask;
     }
 }

@@ -13,6 +13,9 @@ namespace RR.AI.BehaviorTree
         [SerializeField]
         private TextAsset _nodeIconSettingsAsset = null;
 
+        [SerializeField]
+        private bool _playgroundMode = true;
+
 #region SINGLETON
         private static BTGlobalSettings _instance;
 
@@ -42,6 +45,8 @@ namespace RR.AI.BehaviorTree
 
         private NodeIconSettingsManager _nodeIconSettingsManager;
 
+
+        public bool PlaygroundMode => _playgroundMode;
 
         public TextAsset NodeIconSettingsAsset
         {

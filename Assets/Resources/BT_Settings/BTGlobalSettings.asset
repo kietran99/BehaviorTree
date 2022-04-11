@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: BTGlobalSettings
   m_EditorClassIdentifier: 
   _nodeIconSettingsAsset: {fileID: 4900000, guid: be874c70585973744becf567ebbcaab8, type: 3}
+  _playgroundMode: 0

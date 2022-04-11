@@ -13,6 +13,18 @@
             "icon": "Assets/RR_BehaviorTree/Resources/Icons/sequencer.png"
         },
         {
+            "taskname": "BTDecoFailer",
+            "icon": "Assets/RR_BehaviorTree/Resources/Icons/BTDecoFailer.png"
+        },
+        {
+            "taskname": "BTDecoSucceeder",
+            "icon": "Assets/RR_BehaviorTree/Resources/Icons/BTDecoSucceeder.png"
+        },
+        {
+            "taskname": "BTDecoWithinRange",
+            "icon": "Assets/RR_BehaviorTree/Resources/Icons/BTDecoWithinRange.png"
+        },
+        {
             "taskname": "BTTaskLog",
             "icon": "Assets/RR_BehaviorTree/Resources/Icons/BTTaskLog.png"
         },

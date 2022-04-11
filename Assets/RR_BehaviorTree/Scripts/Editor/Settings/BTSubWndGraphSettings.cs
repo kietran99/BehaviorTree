@@ -145,6 +145,8 @@ namespace RR.AI.BehaviorTree
                 Serialization
                     .JsonWrapper
                     .OverwriteJsonArray<BTSettingsNodeIconItem>(GetIconSettingsAssetPath(_iconSettingsAsset), _iconSettingsList);
+
+                UnityEditor.AssetDatabase.Refresh();
             }, "Icons/General/Save");
             iconSettingsActionContainer.Add(saveBtn);
 

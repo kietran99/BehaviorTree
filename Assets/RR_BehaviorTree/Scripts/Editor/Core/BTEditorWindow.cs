@@ -10,7 +10,6 @@ namespace RR.AI.BehaviorTree
         private BTGraphView _graphView;
         private BehaviorTree _inspectedBT;
         private BTNodeSearchWindow _searchWindow;
-        private BTDecoratorSearchWindow _decoSearchWnd;
         private Toolbar _toolbar;
 
         public static System.Action OnClose { get; set; }
@@ -21,7 +20,6 @@ namespace RR.AI.BehaviorTree
             window._inspectedBT = behaviorTree;
             window._graphView = window.CreateGraphView(behaviorTree.DesignContainer);
             window._searchWindow = window.CreateNodeSearchWindow(window._graphView);
-            window._decoSearchWnd = window.CreateDecoSearchWindow(window._graphView);
             window._toolbar = window.CreateToolbar();
             window.rootVisualElement.Add(window._graphView);
             window.rootVisualElement.Add(window._toolbar);
@@ -89,25 +87,6 @@ namespace RR.AI.BehaviorTree
             });
 
             return window;
-        }
-
-        private BTDecoratorSearchWindow CreateDecoSearchWindow(BTGraphView graphView)
-        {
-            var wnd = ScriptableObject.CreateInstance<BTDecoratorSearchWindow>();
-            BTGraphNodeBase.DecoCreationRequest += mousePos => SearchWindow.Open(new SearchWindowContext(mousePos), wnd);
-
-            System.Func<Vector2, Vector2> contextToLocalMousePos = contextMousePos =>
-            {
-                var worldPos = rootVisualElement.ChangeCoordinatesTo(rootVisualElement.parent, contextMousePos - position.position);
-                return graphView.WorldToLocal(worldPos);
-            };
-
-            wnd.Init((nodeType, pos) => 
-            {
-                var localMousePos = contextToLocalMousePos(pos);
-            });
-
-            return wnd;
         }
 
         private void OnDisable()

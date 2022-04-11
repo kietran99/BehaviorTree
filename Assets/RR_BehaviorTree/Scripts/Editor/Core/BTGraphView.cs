@@ -18,6 +18,7 @@ namespace RR.AI.BehaviorTree
         private GraphBlackboard _blackboard;
         private BTSubWndGraphDetails _nodeDetails;
         private BTSubWndGraphSettings _graphSettingsWnd;
+        private BTDecoratorSearchWindow _decoSearchWnd;
 
         // public static Action<string> OnNodeSelected { get; set; }
         public static Action<string, string, string, BTBaseTask> OnNewNodeSelected { get; set; }
@@ -57,6 +58,7 @@ namespace RR.AI.BehaviorTree
             _nodeDetails = new BTSubWndGraphDetails(NODE_INFO_RECT);
             Add(_nodeDetails);
             Init(designContainer);
+            _decoSearchWnd = CreateDecoSearchWindow();
 
             graphViewChanged += OnGraphViewChanged;
             OnNewNodeSelected += HandleNewNodeSelected;
@@ -109,7 +111,8 @@ namespace RR.AI.BehaviorTree
                     name = nodeData.Name, 
                     desc = nodeData.Description, 
                     guid = nodeData.Guid,
-                    icon = BTGlobalSettings.Instance.GetIcon(GetGraphNodeTypeName(nodeData.NodeType))
+                    icon = BTGlobalSettings.Instance.GetIcon(GetGraphNodeTypeName(nodeData.NodeType)),
+                    OpenDecoSearchWindow = OpenDecoSearchWnd
                 };
 
                 var node = BTGraphNodeFactory.CreateGraphNode(nodeData.NodeType, initParams);
@@ -126,7 +129,8 @@ namespace RR.AI.BehaviorTree
                     name = taskData.Name,
                     desc = taskData.Description,
                     guid = taskData.Guid,
-                    icon = BTGlobalSettings.Instance.GetIcon(taskData.Task.GetType().Name)
+                    icon = BTGlobalSettings.Instance.GetIcon(taskData.Task.GetType().Name),
+                    OpenDecoSearchWindow = OpenDecoSearchWnd
                 };
 
                 var node = BTGraphNodeFactory.CreateGraphNodeLeaf(initParams);
@@ -172,6 +176,20 @@ namespace RR.AI.BehaviorTree
                 var edge = (child.inputContainer[0] as Port).ConnectTo(parent.outputContainer[0] as Port);
                 AddElement(edge);
             });
+        }
+
+        
+        private BTDecoratorSearchWindow CreateDecoSearchWindow()
+        {
+            var wnd = ScriptableObject.CreateInstance<BTDecoratorSearchWindow>();
+            wnd.Init();
+            return wnd;
+        }
+
+        private void OpenDecoSearchWnd(Vector2 pos, Action<Type> onEntrySelectCb)
+        {
+            _decoSearchWnd.SetEntrySelectCallback(onEntrySelectCb);
+            SearchWindow.Open(new SearchWindowContext(pos), _decoSearchWnd);
         }
 
         private void HandleNewNodeSelected(string guid, string name, string desc, BTBaseTask task)

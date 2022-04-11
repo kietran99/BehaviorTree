@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.Experimental.GraphView;
 
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -10,6 +11,19 @@ namespace RR.AI.BehaviorTree
     public abstract class BTGraphNodeBase : Node, IBTSerializableNode
     {
         protected string _guid;
+        private List<BTGraphNodeDecorator> _decorators;
+        protected List<BTGraphNodeDecorator> Decorators
+        {
+            get
+            {
+                if (_decorators == null)
+                {
+                    _decorators = new List<BTGraphNodeDecorator>();
+                }
+
+                return _decorators;
+            }
+        }
 
         public  string Guid => _guid;
         public abstract string Name { get; }
@@ -23,12 +37,36 @@ namespace RR.AI.BehaviorTree
         public int x { get; protected set; }
         public int y { get; protected set; }
 
-        public static System.Action<Vector2> DecoCreationRequest { get; set; }
+        protected Action<Vector2, Action<Type>> OpenDecoSearchWnd;
 
         public abstract void OnConnect(BTDesignContainer designContainer, string parentGuid);
         public abstract void OnCreate(BTDesignContainer designContainer, Vector2 position);
         public abstract void OnDelete(BTDesignContainer designContainer);
         public abstract void OnMove(BTDesignContainer designContainer, Vector2 moveDelta);
+
+        public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+        {
+            base.BuildContextualMenu(evt);
+
+            evt.menu.InsertAction(1, "Add Decorator", action => 
+            {
+                var rect = GetPosition();
+                var mousePos = rect.position + new Vector2(rect.width, 0f);
+                OpenDecoSearchWnd(mousePos, CreateDecorator);
+            });
+
+            evt.menu.InsertSeparator("/", 1);
+        }
+
+        private void CreateDecorator(Type decoType)
+        {
+            var decorator = new BTGraphNodeDecorator();
+            extensionContainer.style.backgroundColor = Utils.ColorExtension.Create(62f);
+            extensionContainer.style.paddingTop = 3f;
+            extensionContainer.Add(decorator);
+            Decorators.Add(decorator);
+            RefreshExpandedState();
+        }
     }
 
     public class BTGraphNode<T> : BTGraphNodeBase where T : IBTGraphNodeInfo, new()
@@ -44,22 +82,8 @@ namespace RR.AI.BehaviorTree
         protected string _name;
         protected string _description;
 
-        private List<BTGraphNodeDecorator> _decorators;
-
         public override string Name => _name;
         protected virtual BTBaseTask Task => null;
-        private List<BTGraphNodeDecorator> Decorators
-        {
-            get
-            {
-                if (_decorators == null)
-                {
-                    _decorators = new List<BTGraphNodeDecorator>();
-                }
-
-                return _decorators;
-            }
-        }
 
         public BTGraphNode(BTGraphInitParamsNode initParams)
         {
@@ -84,6 +108,8 @@ namespace RR.AI.BehaviorTree
             SetPosition(new Rect(pos, DEFAULT_NODE_SIZE));
             x = Mathf.FloorToInt(pos.x);
             y = Mathf.FloorToInt(pos.y);
+
+            OpenDecoSearchWnd = initParams.OpenDecoSearchWindow;
 
             if (_nodeAction.NodeType == BTNodeType.Root)
             {
@@ -367,25 +393,6 @@ namespace RR.AI.BehaviorTree
         public override void OnConnect(BTDesignContainer designContainer, string parentGuid)
         {
             designContainer.NodeDataList.Find(node => node.Guid == _guid).ParentGuid = parentGuid;
-        }
-
-        public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
-        {
-            base.BuildContextualMenu(evt);
-
-            evt.menu.InsertAction(1, "Add Decorator", action => 
-            {
-                // var decorator = new BTGraphNodeDecorator();
-                // extensionContainer.style.backgroundColor = Utils.ColorExtension.Create(62f);
-                var mousePos = GetPosition().position;
-                DecoCreationRequest?.Invoke(mousePos);
-                extensionContainer.style.paddingTop = 3f;
-                // extensionContainer.Add(decorator);
-                // Decorators.Add(decorator);
-                RefreshExpandedState();
-            });
-
-            evt.menu.InsertSeparator("/", 1);
         }
     }
 }

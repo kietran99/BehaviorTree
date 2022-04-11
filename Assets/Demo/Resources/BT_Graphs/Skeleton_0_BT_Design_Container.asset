@@ -70,6 +70,8 @@ MonoBehaviour:
     _entries:
     - Key: 1983184568
       Value: {fileID: 17017294900977073}
+    - Key: -550586847
+      Value: {fileID: 6832032503280376093}
 --- !u!114 &17017294900977073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,3 +96,16 @@ MonoBehaviour:
     - Key: 85593e60-cfc6-4647-8559-b9ed4051de56
       Value:
         Message: 
+--- !u!114 &6832032503280376093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b836410b7116d6419b08bdccef5a2f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 0}

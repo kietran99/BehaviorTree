@@ -189,7 +189,9 @@ namespace RR.AI.BehaviorTree
         {
             _decoSearchWnd.SetEntrySelectCallback(type =>
             {
-                var deco = DesignContainer.CreateDummyTask(type);
+                var deco = BTGlobalSettings.Instance.PlaygroundMode 
+                    ? DesignContainer.CreateDummyTask(type)
+                    : DesignContainer.GetOrCreateTask(type);
                 onEntrySelectCb(deco.Name, BTGlobalSettings.Instance.GetIcon(type.Name));
             });
             SearchWindow.Open(new SearchWindowContext(pos), _decoSearchWnd);

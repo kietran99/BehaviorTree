@@ -1,0 +1,11 @@
+{
+  "name": "com.rraptor.behaviortree",
+  "version": "0.1.0",
+  "displayName": "RR Behavior Tree",
+  "description": "Unity Editor behavior tree visual editor & runtime",
+  "unity": "2019.1",
+  "author": {
+    "name": "Kiet Tran"
+  },
+  "type": "tool"
+}

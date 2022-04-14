@@ -1,0 +1,16 @@
+{
+    "name": "rraptor.behaviortree",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c9755217f2ea1ec4cafe43190d2705c8"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

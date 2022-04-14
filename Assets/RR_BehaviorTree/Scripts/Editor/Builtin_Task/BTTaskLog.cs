@@ -7,13 +7,12 @@ namespace RR.AI.BehaviorTree
         public override string Name => "Log";
 
         public override void Init(GameObject actor, RuntimeBlackboard blackboard, BTTaskLogData prop)
-        {
-            
+        {   
         }
 
         public override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, BTTaskLogData prop)
         {
-            UnityEngine.Debug.Log(prop.Message);
+            Debug.Log(prop.Message);
             return BTNodeState.SUCCESS;
         }
     }
@@ -22,6 +21,5 @@ namespace RR.AI.BehaviorTree
     public class BTTaskLogData
     {
         public string Message;
-        // public TestValue Container;
     }
 }

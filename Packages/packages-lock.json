@@ -22,12 +22,11 @@
       "hash": "cc9ae0075471d0e51800d1e0557539d0f3069072"
     },
     "com.unity.2d.animation": {
-      "version": "5.1.0",
+      "version": "7.0.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "4.1.0",
-        "com.unity.mathematics": "1.1.0",
+        "com.unity.2d.common": "6.0.3",
         "com.unity.2d.sprite": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
         "com.unity.modules.uielements": "1.0.0"
@@ -35,36 +34,38 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.common": {
-      "version": "4.1.0",
+      "version": "6.0.3",
       "depth": 1,
       "source": "registry",
       "dependencies": {
         "com.unity.2d.sprite": "1.0.0",
-        "com.unity.modules.uielements": "1.0.0"
+        "com.unity.mathematics": "1.1.0",
+        "com.unity.modules.uielements": "1.0.0",
+        "com.unity.burst": "1.5.1"
       },
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.path": {
-      "version": "4.0.2",
+      "version": "5.0.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.pixel-perfect": {
-      "version": "4.0.1",
+      "version": "5.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.psdimporter": {
-      "version": "4.2.0",
+      "version": "6.0.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "4.1.0",
-        "com.unity.2d.animation": "5.1.0",
+        "com.unity.2d.animation": "7.0.4",
+        "com.unity.2d.common": "6.0.3",
         "com.unity.2d.sprite": "1.0.0"
       },
       "url": "https://packages.unity.com"
@@ -76,13 +77,13 @@
       "dependencies": {}
     },
     "com.unity.2d.spriteshape": {
-      "version": "5.2.0",
+      "version": "7.0.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.mathematics": "1.1.0",
-        "com.unity.2d.common": "4.1.0",
-        "com.unity.2d.path": "4.0.2",
+        "com.unity.2d.common": "6.0.3",
+        "com.unity.2d.path": "5.0.2",
         "com.unity.modules.physics2d": "1.0.0"
       },
       "url": "https://packages.unity.com"
@@ -93,8 +94,17 @@
       "source": "builtin",
       "dependencies": {}
     },
+    "com.unity.burst": {
+      "version": "1.6.5",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.mathematics": "1.2.1"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.collab-proxy": {
-      "version": "1.15.13",
+      "version": "1.15.15",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -110,11 +120,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
-      "version": "2.0.7",
+      "version": "3.0.13",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.test-framework": "1.1.1"
+        "com.unity.ext.nunit": "1.0.6"
       },
       "url": "https://packages.unity.com"
     },
@@ -135,7 +145,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.mathematics": {
-      "version": "1.1.0",
+      "version": "1.2.5",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -171,7 +181,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.4.8",
+      "version": "1.6.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {

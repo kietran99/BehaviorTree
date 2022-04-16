@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "com.coffee.upm-git-extension": "https://github.com/mob-sakai/UpmGitExtension.git",
     "com.rraptor.serialization": "https://github.com/kietran99/RR_Serialization.git#main",
     "com.rraptor.utils": "https://github.com/kietran99/RR_Utils.git",
     "com.unity.2d.animation": "7.0.4",

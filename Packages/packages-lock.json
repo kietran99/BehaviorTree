@@ -1,12 +1,5 @@
 {
   "dependencies": {
-    "com.coffee.upm-git-extension": {
-      "version": "https://github.com/mob-sakai/UpmGitExtension.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "c5bd85b033ee9994cf7b4d711479e2602d42c639"
-    },
     "com.rraptor.serialization": {
       "version": "https://github.com/kietran99/RR_Serialization.git#main",
       "depth": 0,

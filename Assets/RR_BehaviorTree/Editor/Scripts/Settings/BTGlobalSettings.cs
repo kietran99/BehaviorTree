@@ -149,7 +149,6 @@ namespace RR.AI.BehaviorTree
                     return null;
                 }
 
-                Debug.Log(_nodeIconSettingsDict[nodeTypeName]);
                 return Resources.Load<Texture2D>(_nodeIconSettingsDict[nodeTypeName]);
             }
 

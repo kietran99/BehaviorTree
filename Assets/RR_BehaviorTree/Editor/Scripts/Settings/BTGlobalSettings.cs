@@ -104,7 +104,7 @@ namespace RR.AI.BehaviorTree
 
         private static T FindAsset<T>(string name="") where T : Object
         {
-            string assetFilter = string.IsNullOrEmpty(name) ? $"t:{ nameof(T) }" : name;
+            string assetFilter = string.IsNullOrEmpty(name) ? $"t:{ typeof(T).Name }" : name;
             string[] possibleSettingsGUIDs = AssetDatabase.FindAssets(assetFilter, new[] { "Assets" });
 
             if (possibleSettingsGUIDs.Length > 0)

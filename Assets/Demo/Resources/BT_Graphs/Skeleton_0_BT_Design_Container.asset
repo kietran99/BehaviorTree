@@ -63,6 +63,18 @@ MonoBehaviour:
       _position: {x: 1264, y: 318}
       _description: 
     _task: {fileID: 17017294900977073}
+  _decoratorDict:
+    _entries:
+    - Key: e58a83c1-e0f4-4600-9ace-499314bd81d2
+      Value:
+      - name: Succeeder
+        decorator: {fileID: 6832032503280376093}
+      - name: Succeeder
+        decorator: {fileID: 6832032503280376093}
+    - Key: 96e35096-96d1-4d7b-b846-6cb83120626c
+      Value:
+      - name: Succeeder
+        decorator: {fileID: 6832032503280376093}
   _blackboard:
     _map:
       _entries: []

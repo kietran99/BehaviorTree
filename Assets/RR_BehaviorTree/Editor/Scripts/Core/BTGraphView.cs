@@ -140,6 +140,11 @@ namespace RR.AI.BehaviorTree
             var nodeDataList = new BTValidator<BTSerializableNodeDataBase, BTGraphNodeBase>()
                 .OnObjectCreate((node, parentGuid) =>
                 {
+                    if (DesignContainer.TryGetDecorators(node.Guid, out List<BTSerializableDecoData> decorators))
+                    {
+                        node.InitDecorators(decorators);
+                    }
+
                     nodeDict.Add(node.Guid, node);
                 
                     if (!string.IsNullOrEmpty(parentGuid)) 
@@ -185,14 +190,15 @@ namespace RR.AI.BehaviorTree
             return wnd;
         }
 
-        private void OpenDecoSearchWnd(Vector2 pos, Action<string, Texture2D> onEntrySelectCb)
+        private void OpenDecoSearchWnd(string decorateeGuid, Vector2 pos, Action<string, Texture2D> onEntrySelectCb)
         {
             _decoSearchWnd.SetEntrySelectCallback(type =>
             {
-                var deco = BTGlobalSettings.Instance.PlaygroundMode 
+                BTBaseTask decoSO = BTGlobalSettings.Instance.PlaygroundMode 
                     ? DesignContainer.CreateDummyTask(type)
                     : DesignContainer.GetOrCreateTask(type);
-                onEntrySelectCb(deco.Name, BTGlobalSettings.Instance.GetIcon(type.Name));
+                onEntrySelectCb(decoSO.Name, BTGlobalSettings.Instance.GetIcon(type));
+                DesignContainer.AddDecorator(decorateeGuid, new BTSerializableDecoData(decoSO.Name, decoSO));
             });
             SearchWindow.Open(new SearchWindowContext(pos), _decoSearchWnd);
         }

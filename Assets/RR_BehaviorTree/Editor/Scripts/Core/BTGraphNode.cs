@@ -37,12 +37,30 @@ namespace RR.AI.BehaviorTree
         public int x { get; protected set; }
         public int y { get; protected set; }
 
-        protected Action<Vector2, Action<string, Texture2D>> OpenDecoSearchWnd;
+        protected Action<string, Vector2, Action<string, Texture2D>> OpenDecoSearchWnd;
 
         public abstract void OnConnect(BTDesignContainer designContainer, string parentGuid);
         public abstract void OnCreate(BTDesignContainer designContainer, Vector2 position);
         public abstract void OnDelete(BTDesignContainer designContainer);
         public abstract void OnMove(BTDesignContainer designContainer, Vector2 moveDelta);
+
+        public void InitDecorators(List<BTSerializableDecoData> serializedDecorators)
+        {
+            _decorators = new List<BTGraphNodeDecorator>(serializedDecorators.Count);
+
+            foreach (var serializedDeco in serializedDecorators)
+            {
+                var decoElement = CreateDecorator(serializedDeco);
+                _decorators.Add(decoElement);
+                AttachDecorator(decoElement);
+            }
+        }
+
+        private BTGraphNodeDecorator CreateDecorator(BTSerializableDecoData serializedDecorator)
+        {
+            var decoIcon = BTGlobalSettings.Instance.GetIcon(serializedDecorator.decorator.GetType());
+            return CreateDecorator(serializedDecorator.name, decoIcon);
+        }
 
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
@@ -52,21 +70,29 @@ namespace RR.AI.BehaviorTree
             {
                 var rect = GetPosition();
                 var mousePos = rect.position + new Vector2(rect.width, 0f);
-                OpenDecoSearchWnd(mousePos, CreateDecorator);
+                OpenDecoSearchWnd(_guid, mousePos, AttachDecorator);
             });
 
             evt.menu.InsertSeparator("/", 1);
         }
 
-        private void CreateDecorator(string decoName, Texture2D icon)
+        private void AttachDecorator(string decoName, Texture2D icon)
         {
-            var decorator = new BTGraphNodeDecorator(decoName, icon);
+            var decorator = CreateDecorator(decoName, icon);
+            AttachDecorator(decorator);
+        }
+
+        private void AttachDecorator(BTGraphNodeDecorator decorator)
+        {
             extensionContainer.style.backgroundColor = Utils.ColorExtension.Create(62f);
             extensionContainer.style.paddingTop = 3f;
             extensionContainer.Add(decorator);
             Decorators.Add(decorator);
             RefreshExpandedState();
         }
+
+        private BTGraphNodeDecorator CreateDecorator(string decoName, Texture2D icon)
+            => new BTGraphNodeDecorator(decoName, icon);
     }
 
     public class BTGraphNode<T> : BTGraphNodeBase where T : IBTGraphNodeInfo, new()
@@ -346,7 +372,7 @@ namespace RR.AI.BehaviorTree
             return InstantiatePort(Orientation.Horizontal, direction, capacity, typeof(float));
         }
     
-        public override void OnCreate(BTDesignContainer designContainer, UnityEngine.Vector2 position)
+        public override void OnCreate(BTDesignContainer designContainer, Vector2 position)
         {
             designContainer.NodeDataList.Add(
                 new BTSerializableNodeData(

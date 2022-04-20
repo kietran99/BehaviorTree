@@ -86,6 +86,8 @@ namespace RR.AI.BehaviorTree
             }
         }
 
+        public Texture2D GetIcon(System.Type type) => GetIcon(type.Name);
+
         public Texture2D GetIcon(string nodeTypeName)
         {
             if (_nodeIconSettingsManager == null)

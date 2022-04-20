@@ -4,6 +4,8 @@ using UnityEditor;
 using System.Linq;
 using System.Collections.Generic;
 
+using RR.Serialization;
+
 namespace RR.AI.BehaviorTree
 {
     [CreateAssetMenu(fileName = "BT_Design_Container", menuName = "Generator/AI/BT Design Container")]
@@ -16,10 +18,13 @@ namespace RR.AI.BehaviorTree
         private List<BTSerializableTaskData> _taskDataList = null;
 
         [SerializeField]
+        private SerializableDictionary<string, List<BTSerializableDecoData>> _decoratorDict = null;
+
+        [SerializeField]
         private Blackboard _blackboard = null;
 
         [SerializeField]
-        private Serialization.SerializableDictionary<int, BTBaseTask> _taskDict = null;
+        private SerializableDictionary<int, BTBaseTask> _taskDict = null;
 
         public List<BTSerializableNodeData> NodeDataList => _nodeDataList;
         public List<BTSerializableTaskData> TaskDataList => _taskDataList;
@@ -80,5 +85,32 @@ namespace RR.AI.BehaviorTree
 
         public BTBaseTask CreateDummyTask(System.Type taskType)
             => CreateInstance(taskType) as BTBaseTask;
+
+        public void ConnectNodes(string parentGuid, string childGuid)
+        {
+            _nodeDataList.Find(node => node.Guid == childGuid).ParentGuid = parentGuid;
+        }
+
+        public void DeleteNode(string guid)
+        {
+            BTSerializableNodeData nodeToDelete = _nodeDataList.Find(node => node.Guid == guid);
+            _nodeDataList.Remove(nodeToDelete);
+        }
+
+        public void AddDecorator(string decorateeGuid, BTSerializableDecoData decorator)
+        {
+            if (!_decoratorDict.TryGetValue(decorateeGuid, out List<BTSerializableDecoData> decorators))
+            {
+                _decoratorDict.Add(decorateeGuid, new List<BTSerializableDecoData>() { decorator });
+                return;
+            }
+
+            decorators.Add(decorator);
+        }
+
+        public bool TryGetDecorators(string decorateeGuid, out List<BTSerializableDecoData> decorators)
+        {
+            return _decoratorDict.TryGetValue(decorateeGuid, out decorators);
+        }
     }
 }

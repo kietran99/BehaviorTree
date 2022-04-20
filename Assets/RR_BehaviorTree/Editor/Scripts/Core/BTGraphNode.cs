@@ -44,6 +44,31 @@ namespace RR.AI.BehaviorTree
         public abstract void OnDelete(BTDesignContainer designContainer);
         public abstract void OnMove(BTDesignContainer designContainer, Vector2 moveDelta);
 
+        public int LabelPosX
+        {
+            get
+            {
+                const int maxCharForDefaultSize = 8;
+                int titleLen = TextContentLength;
+                var posX = 108 + (titleLen <= maxCharForDefaultSize ? 0 : (titleLen - maxCharForDefaultSize) * 17) - 14;
+                return posX;
+            }
+        }
+
+        private int TextContentLength
+        {
+            get
+            {
+                if (_decorators == null || _decorators.Count == 0)
+                {
+                    return Name.Length;
+                }
+
+                var longestDecorator = _decorators.Aggregate((longest, next) => next.Name.Length > longest.Name.Length ? next : longest);
+                return Mathf.Max(Name.Length, longestDecorator.Name.Length);
+            }
+        }
+
         public void InitDecorators(List<BTSerializableDecoData> serializedDecorators)
         {
             _decorators = new List<BTGraphNodeDecorator>(serializedDecorators.Count);
@@ -70,16 +95,17 @@ namespace RR.AI.BehaviorTree
             {
                 var rect = GetPosition();
                 var mousePos = rect.position + new Vector2(rect.width, 0f);
-                OpenDecoSearchWnd(_guid, mousePos, AttachDecorator);
+                OpenDecoSearchWnd(_guid, mousePos, AttachNewDecorator);
             });
 
             evt.menu.InsertSeparator("/", 1);
         }
 
-        private void AttachDecorator(string decoName, Texture2D icon)
+        private void AttachNewDecorator(string decoName, Texture2D icon)
         {
             var decorator = CreateDecorator(decoName, icon);
             AttachDecorator(decorator);
+            OrderLabel.SetRealPosition(new Vector2(x + LabelPosX, y));
         }
 
         private void AttachDecorator(BTGraphNodeDecorator decorator)

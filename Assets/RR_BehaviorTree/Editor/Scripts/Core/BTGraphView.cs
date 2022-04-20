@@ -156,10 +156,7 @@ namespace RR.AI.BehaviorTree
                 })
                 .OnObjectOrder((node, idx) =>
                 {
-                    const int maxCharForDefaultSize = 8;
-                    int titleLen = node.Name.Length;
-                    var xOffset = 108 + (titleLen <= maxCharForDefaultSize ? 0 : (titleLen - maxCharForDefaultSize) * 17) - 14;
-                    var pos = new Vector2(node.x + xOffset, node.y);
+                    var pos = new Vector2(node.x + node.LabelPosX, node.y);
                     var orderLb = new BTGraphOrderLabel(pos, idx);
                     AddElement(orderLb);
                     node.OrderLabel = orderLb;

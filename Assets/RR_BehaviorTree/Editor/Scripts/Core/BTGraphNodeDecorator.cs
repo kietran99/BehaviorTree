@@ -15,9 +15,12 @@ namespace RR.AI.BehaviorTree
         private bool _selected;
         private string _curBorderStyle;
 
+        public string Name { get; private set; }
+        
         public BTGraphNodeDecorator(string decoName, Texture2D icon)
         {
             _contentContainer = CreateTitleContent(decoName, icon);
+            Name = decoName;
             _contentContainer.styleSheets.Add(Resources.Load<StyleSheet>("Stylesheets/BTNodeDecorator"));
             _curBorderStyle = STYLE_IDLE_UNSELECTED_BORDER;
             _contentContainer.AddToClassList(_curBorderStyle);

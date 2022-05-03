@@ -3,23 +3,40 @@ using System;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTValidator<TIn, TOut> 
+    public class BTExecListBuilder<TIn, TOut> 
         where TIn : BTSerializableNodeDataBase
         where TOut : IBTIdentifiable, IBTOrderable
     {
-        private Action<TOut, string> _onObjCreateCb;
-        private Action<TOut, int> _onObjOrderCb;
+        private Dictionary<string, int> _guidToIdxDict;
 
-        public BTValidator<TIn, TOut> OnObjectCreate(Action<TOut, string> onObjCreateCb)
+        private Action<TOut, string> _onObjCreateCb;
+        private Action<TOut, int, string> _onObjOrderCb;
+
+        public BTExecListBuilder()
+        {
+            _guidToIdxDict = new Dictionary<string, int>();
+        }
+
+        public BTExecListBuilder<TIn, TOut> OnObjectCreate(Action<TOut, string> onObjCreateCb)
         {
             _onObjCreateCb = onObjCreateCb;
             return this;
         }
 
-        public BTValidator<TIn, TOut> OnObjectOrder(Action<TOut, int> onObjOrderCb)
+        public BTExecListBuilder<TIn, TOut> OnObjectOrder(Action<TOut, int, string> onObjOrderCb)
         {
             _onObjOrderCb = onObjOrderCb;
             return this;
+        }
+
+        public int GetNodeIndex(string guid, int defaultIdx = 0)
+        {
+            if (_guidToIdxDict.TryGetValue(guid, out int idx))
+            {
+                return idx;
+            }
+            
+            return defaultIdx;
         }
 
         public List<TOut> Execute(List<TIn> nodeDataList, Func<TIn, TOut> createObjCb)
@@ -31,18 +48,19 @@ namespace RR.AI.BehaviorTree
         {
             Dictionary<string, List<TOut>> adjacentDict = MakeAdjacentDict(nodeDataList, createObjCb);
             var orderedList = new List<TOut>(nodeDataList.Count);
-            var traverseStack = new Stack<TOut>();
+            var traverseStack = new Stack<(TOut node, string nextSiblingGuid)>();
             TOut root = adjacentDict[string.Empty][0];
-            traverseStack.Push(root);
-            int order = 0;
+            traverseStack.Push((root, string.Empty));
+            int curIdx = 0;
 
             while (traverseStack.Count > 0)
             {
-                TOut curNode = traverseStack.Pop();
+                (TOut curNode, string curNextSiblingGuid) = traverseStack.Pop();
 
                 orderedList.Add(curNode);
-                _onObjOrderCb?.Invoke(curNode, order);
-                ++order;
+                _onObjOrderCb?.Invoke(curNode, curIdx, curNextSiblingGuid);
+                _guidToIdxDict[curNode.Guid] = curIdx;
+                ++curIdx;
 
                 var isLeafNode = !adjacentDict.ContainsKey(curNode.Guid);
 
@@ -52,11 +70,13 @@ namespace RR.AI.BehaviorTree
                 }
 
                 List<TOut> children = adjacentDict[curNode.Guid];
-                children.Sort((thisObj, thatObj) => thatObj.y.CompareTo(thisObj.y));
+                children.Sort((thisObj, thatObj) => thisObj.y.CompareTo(thatObj.y));
 
-                foreach (var child in children)
+                int nChildren = children.Count;
+                for (int i = nChildren - 1; i >= 0; i--)
                 {
-                    traverseStack.Push(child);
+                    string nextSiblingGuid = i == nChildren - 1 ? string.Empty : children[i + 1].Guid;
+                    traverseStack.Push((children[i], nextSiblingGuid));
                 }
             }
 

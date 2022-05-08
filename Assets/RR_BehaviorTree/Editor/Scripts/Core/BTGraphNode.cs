@@ -169,18 +169,11 @@ namespace RR.AI.BehaviorTree
                 capabilities &= ~Capabilities.Deletable;
             }
 
-            BTBaseNode.OnRootTick += OnRootTick;
-            BTBaseNode.OnTick += OnNodeTick;
+            // BTBaseNode.OnRootTick += OnRootTick;
+            // BTBaseNode.OnTick += OnNodeTick;
 
             RegisterCallback<PointerDownEvent>(OnMouseDown);
             RegisterCallback<PointerMoveEvent>(OnMouseMove);
-            
-            // Debug.Log(_nodeAction.Name);
-
-            // if (_nodeAction.NodeType != BTNodeType.Leaf)
-            // {
-            //     (outputContainer[0] as Port).RegisterCallback<MouseUpEvent>(OnMouseUp);
-            // }
         }
 
         private void OnMouseMove(PointerMoveEvent evt) // No idea why this callback is invoked on mouse up
@@ -223,15 +216,8 @@ namespace RR.AI.BehaviorTree
                 capabilities &= ~Capabilities.Deletable;
             }
 
-            BTBaseNode.OnRootTick += OnRootTick;
-            BTBaseNode.OnTick += OnNodeTick;
-            
-            // Debug.Log(_nodeAction.Name);
-
-            // if (_nodeAction.NodeType != BTNodeType.Leaf)
-            // {
-            //     (outputContainer[0] as Port).RegisterCallback<UnityEngine.UIElements.MouseUpEvent>(OnMouseUp);
-            // }
+            // BTBaseNode.OnRootTick += OnRootTick;
+            // BTBaseNode.OnTick += OnNodeTick;
         }
 
         public override void OnSelected()
@@ -250,14 +236,6 @@ namespace RR.AI.BehaviorTree
             }
             base.OnUnselected();
         }
-
-        // private void OnMouseUp(MouseUpEvent evt)
-        // {
-            // Debug.Log((outputContainer[0] as Port).connected);
-            // Debug.Log((outputContainer[0] as Port).ContainsPoint(evt.localMousePosition));
-            // Debug.Log(evt.mousePosition);
-            // Debug.Log(evt.originalMousePosition);
-        // }
 
         private void OnRootTick(string _)
         {

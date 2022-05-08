@@ -137,7 +137,7 @@ namespace RR.AI.BehaviorTree
                 return node;
             };
 
-            var nodeDataList = new BTValidator<BTSerializableNodeDataBase, BTGraphNodeBase>()
+            var nodeDataList = new BTExecListBuilder<BTSerializableNodeDataBase, BTGraphNodeBase>()
                 .OnObjectCreate((node, parentGuid) =>
                 {
                     if (DesignContainer.TryGetDecorators(node.Guid, out List<BTSerializableDecoData> decorators))
@@ -154,7 +154,7 @@ namespace RR.AI.BehaviorTree
 
                     AddElement(node);
                 })
-                .OnObjectOrder((node, idx) =>
+                .OnObjectOrder((node, idx, parentIdx) =>
                 {
                     var pos = new Vector2(node.x + node.LabelPosX, node.y);
                     var orderLb = new BTGraphOrderLabel(pos, idx);

@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
+
+using System.Linq;
 
 namespace RR.AI.BehaviorTree
 {
@@ -11,10 +12,10 @@ namespace RR.AI.BehaviorTree
         [SerializeField]
         private BTDesignContainer _designContainer = null;
 
-        public BTDesignContainer DesignContainer => _designContainer;
-
-        private BTBaseNode _root;
+        private BTScheduler<BTRuntimeNodeBase> _scheduler;
         private RuntimeBlackboard _runtimeBlackboard;
+
+        public BTDesignContainer DesignContainer => _designContainer;
 
         private void Start()
         {
@@ -24,113 +25,86 @@ namespace RR.AI.BehaviorTree
                 gameObject.SetActive(false);
             }
 
-            var (root, nodeDataList) = Extract(_designContainer);
-            _root = root;
+            var execListBuilder = new BTExecListBuilder<BTSerializableNodeDataBase, RuntimeNodeSortWrapper>()
+                .OnObjectCreate((node, parentGuid) =>
+                {
+                    // if (DesignContainer.TryGetDecorators(node.guid, out List<BTSerializableDecoData> decorators))
+                    // {
+                    //     node.InitDecorators(decorators);
+                    // }
 
-            if (_root == null)
-            {
-                Debug.LogError("No Root node was found");
-                gameObject.SetActive(false);
-            }
-
-            InitTree(nodeDataList);
-        }
-
-        private (BTBaseNode root, BTNodeData[] nodeDataList) Extract(BTDesignContainer designContainer)
-        {
-            BTBaseNode root = null;
-            var nodeDict = new Dictionary<string, (BTBaseNode node, int yPos)>(designContainer.NodeDataList.Count);
-            var linkDataList = new List<BTLinkData>(designContainer.NodeDataList.Count);
-            var linkDict = new Dictionary<BTBaseNode, List<(BTBaseNode node, int yPos)>>(designContainer.NodeDataList.Count);
+                    node.ParentGuid = parentGuid;
+                })
+                .OnObjectOrder((node, idx, nextSiblingGuid) =>
+                {
+                    node.NextSiblingGuid = nextSiblingGuid;
+                });
             
-            designContainer.NodeDataList.ForEach(nodeData => 
+            System.Func<BTNodeType, int, int, (int successIdx, int failIdx)> CalcIdxPair = (nodeType, parentIdx, nextSiblingIdx) =>
             {
-                var node = BTNodeFactory.Create(nodeData.NodeType, nodeData.Guid);
-
-                if (nodeData.NodeType == BTNodeType.Root)
+                switch (nodeType)
                 {
-                    root = node;
-                }
-                
-                nodeDict.Add(nodeData.Guid, (node, Mathf.FloorToInt(nodeData.Position.y)));
-                linkDict.Add(node, new List<(BTBaseNode node, int yPos)>());
-                
-                if (!string.IsNullOrEmpty(nodeData.ParentGuid)) 
-                {
-                    linkDataList.Add(new BTLinkData() { startGuid = nodeData.ParentGuid, endGuid = nodeData.Guid });
-                }
-            });
-
-            designContainer.TaskDataList.ForEach(taskData => 
-            {
-                var node = BTNodeFactory.CreateLeaf(taskData.Task, taskData.Guid);
-
-                nodeDict.Add(taskData.Guid, (node, Mathf.FloorToInt(taskData.Position.y)));
-                linkDict.Add(node, new List<(BTBaseNode node, int yPos)>());
-                
-                if (!string.IsNullOrEmpty(taskData.ParentGuid)) 
-                {
-                    linkDataList.Add(new BTLinkData() { startGuid = taskData.ParentGuid, endGuid = taskData.Guid });
-                }
-            });
-
-            var nodePriorityComparer = new NodePriorityComparer();
-
-            linkDataList.ForEach(linkData =>
-            {
-                var (parent, child) = (nodeDict[linkData.startGuid], nodeDict[linkData.endGuid]);
-                var children = linkDict[parent.node];
-                children.Add(child);
-                children.Sort(nodePriorityComparer);
-            }); // Needs optimization
-
-            return (root, MapToNodeDataList(linkDict));
-        }
-
-        private class NodePriorityComparer : IComparer<(BTBaseNode node, int yPos)>
-        {
-            public int Compare((BTBaseNode node, int yPos) x, (BTBaseNode node, int yPos) y) => x.yPos.CompareTo(y.yPos);
-        }
-
-        private BTNodeData[] MapToNodeDataList(Dictionary<BTBaseNode, List<(BTBaseNode node, int yPos)>> linkDict)
-        {
-            var nodeDataList = new BTNodeData[linkDict.Count];
-            int idx = 0;
-
-            System.Func<List<(BTBaseNode node, int yPos)>, BTBaseNode[]> MapToBaseNodeList = childrenData =>
-            {
-                var childNodes = new BTBaseNode[childrenData.Count];
-
-                for (int i = 0; i < childrenData.Count; i++)
-                {
-                    childNodes[i] = childrenData[i].node;
+                    case BTNodeType.Selector:
+                        return (parentIdx, nextSiblingIdx);
+                    case BTNodeType.Sequencer:
+                        return (nextSiblingIdx, parentIdx);
+                    case BTNodeType.Leaf:
+                        return (parentIdx, parentIdx);
+                    default:
+                        break;
                 }
 
-                return childNodes;
+                return (0, 0);
             };
 
-            foreach (var entry in linkDict)
-            {
-                nodeDataList[idx++] = new BTNodeData(entry.Key, MapToBaseNodeList(entry.Value));
-            }
+            BTRuntimeNodeBase[] execList = execListBuilder
+                .Execute(
+                    _designContainer.AsNodeDataBaseList,
+                    data => 
+                    {
+                        bool isTaskNode = data.GetType().Equals(typeof(BTSerializableTaskData));
+                        BTNodeType nodeType = isTaskNode ? BTNodeType.Leaf : (data as BTSerializableNodeData).NodeType;
+                        BTBaseTask task = isTaskNode ? (data as BTSerializableTaskData).Task : null;
+                        return new RuntimeNodeSortWrapper(data.Guid, nodeType, (int)data.Position.x, (int)data.Position.y, task);
+                    }
+                )
+                .Select(nodeWrapper => 
+                {
+                    int parentIdx = execListBuilder.GetNodeIndex(nodeWrapper.ParentGuid);
+                    int nextSiblingIdx = execListBuilder.GetNodeIndex(nodeWrapper.NextSiblingGuid, parentIdx);
+                    (int successIdx, int failIdx) = CalcIdxPair(nodeWrapper.Type, parentIdx, nextSiblingIdx);
+                    return new BTRuntimeNodeBase(nodeWrapper.Guid, successIdx, failIdx, nodeWrapper.Type, nodeWrapper.Task);
+                })
+                .ToArray();
 
-            return nodeDataList;
+            _scheduler = new BTScheduler<BTRuntimeNodeBase>(execList, _actor, _runtimeBlackboard);
         }
 
-        private void InitTree(BTNodeData[] nodeDataList)
+        private class RuntimeNodeSortWrapper : IBTOrderable, IBTIdentifiable
         {
-            // Debug.Log(nodeDataList.Length);
-            foreach (var data in nodeDataList)
-            {
-                data.Node.Init(data.Children, _actor, null);
-            }
+            private readonly string _guid;
 
-            _runtimeBlackboard = _designContainer.Blackboard.RuntimeBlackboard;
+            public string Guid => _guid;
+            public string ParentGuid { get; set; }
+            public string NextSiblingGuid { get; set; }
+            public BTBaseTask Task { get; }
+            public BTNodeType Type { get; }
+            public int x { get; set; }
+            public int y { get; set; }
+
+            public RuntimeNodeSortWrapper(string guid, BTNodeType nodeType, int x, int y, BTBaseTask task = null)
+            {
+                _guid = guid;
+                Type = nodeType;
+                this.x = x;
+                this.y = y;
+                Task = task;
+            }
         }
 
         private void Update()
         {
-            _root.Update(_actor, _runtimeBlackboard);
+            _scheduler.Tick();
         }
     }
 }

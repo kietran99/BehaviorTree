@@ -10,6 +10,6 @@ namespace RR.AI.BehaviorTree
         public override void Init(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid)
         {}
 
-        public override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid) => BTNodeState.SUCCESS;
+        public override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid) => BTNodeState.Success;
     }
 }

@@ -20,10 +20,10 @@ namespace RR.AI.BehaviorTree
 			if (Vector3.SqrMagnitude(distVect) > Vector3.kEpsilonNormalSqrt)
 			{
 				actor.transform.Translate(distVect.normalized * Time.deltaTime * prop.Speed);
-				return BTNodeState.RUNNING;
+				return BTNodeState.Running;
 			}
 
-            return BTNodeState.SUCCESS;
+            return BTNodeState.Success;
         }
     }
 

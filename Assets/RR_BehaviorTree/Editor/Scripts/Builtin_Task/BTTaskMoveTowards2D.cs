@@ -21,11 +21,11 @@ namespace RR.AI.BehaviorTree
 			{
 				actor.transform.Translate(distVect.normalized * Time.deltaTime * prop.Speed);
                 blackboard.Update<Vector2>(prop.Velocity, new Vector2(distVect.x, distVect.y));
-				return BTNodeState.RUNNING;
+				return BTNodeState.Running;
 			}
 
             blackboard.Update<Vector2>(prop.Velocity, Vector2.zero);
-            return BTNodeState.SUCCESS;
+            return BTNodeState.Success;
         }
     }
 

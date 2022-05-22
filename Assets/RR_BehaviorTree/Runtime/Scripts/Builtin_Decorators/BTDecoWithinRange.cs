@@ -46,7 +46,6 @@ namespace RR.AI.BehaviorTree
 	public class BTDecoWithinRangeData
 	{
 		public float Range;
-        
         [TagField] public string TargetTag;
         [LayerMaskField] public int TargetLayers;
         [BlackboardValue(typeof(Vector3))] public string TargetPosition;

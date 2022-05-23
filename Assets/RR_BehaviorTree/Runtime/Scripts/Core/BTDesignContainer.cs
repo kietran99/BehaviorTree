@@ -56,7 +56,7 @@ namespace RR.AI.BehaviorTree
                 var taskId = Animator.StringToHash(taskData.Task.GetType().ToString());
                 allTaskIds.Add(taskId);
             }
-
+            // TODO decorators
             _taskDict.ForEach((id, taskSO) => 
             { 
                 if (!allTaskIds.Contains(id))  
@@ -85,6 +85,9 @@ namespace RR.AI.BehaviorTree
 
         public BTBaseTask CreateDummyTask(System.Type taskType)
             => CreateInstance(taskType) as BTBaseTask;
+
+        public BTNodeType FindParentType(string parentGuid)
+            => _nodeDataList.Find(node => node.Guid == parentGuid).NodeType;
 
         public void ConnectNodes(string parentGuid, string childGuid)
         {

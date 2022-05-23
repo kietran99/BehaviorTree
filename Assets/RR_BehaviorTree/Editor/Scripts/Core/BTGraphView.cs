@@ -195,7 +195,9 @@ namespace RR.AI.BehaviorTree
                     ? DesignContainer.CreateDummyTask(type)
                     : DesignContainer.GetOrCreateTask(type);
                 onEntrySelectCb(decoSO.Name, BTGlobalSettings.Instance.GetIcon(type));
-                DesignContainer.AddDecorator(decorateeGuid, new BTSerializableDecoData(decoSO.Name, decoSO));
+                string decoGuid = System.Guid.NewGuid().ToString();
+                decoSO.SavePropData(decoGuid, Activator.CreateInstance(decoSO.PropertyType));
+                DesignContainer.AddDecorator(decorateeGuid, new BTSerializableDecoData(decoGuid, decoSO.Name, decoSO));
             });
             SearchWindow.Open(new SearchWindowContext(pos), _decoSearchWnd);
         }
@@ -378,7 +380,13 @@ namespace RR.AI.BehaviorTree
         public void AddNode(Node node, Vector2 pos)
         {
             AddElement(node);
-            (node as IBTSerializableNode).OnCreate(DesignContainer, pos);
+            var convertedNode = node as BTGraphNodeBase;
+            var labelPos = new Vector2(pos.x + convertedNode.LabelPosX, pos.y);
+            var orderLb = new BTGraphOrderLabel(pos, 0);
+            AddElement(orderLb);
+            convertedNode.OrderLabel = orderLb;
+            convertedNode.OrderLabel.visible = false;
+            convertedNode.OnCreate(DesignContainer, pos);
         }
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)

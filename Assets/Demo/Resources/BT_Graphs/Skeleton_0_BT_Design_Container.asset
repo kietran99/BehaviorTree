@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6364332843865347907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bec416e8a6046043b640b2ffdda0a9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38,7 +51,14 @@ MonoBehaviour:
       _guid: e58a83c1-e0f4-4600-9ace-499314bd81d2
       _parentGuid: 49817220-3d5e-42b6-ab24-502076b72883
       _name: Selector
-      _position: {x: 930, y: 650}
+      _position: {x: 946, y: 763}
+      _description: 
+    _nodeType: 2
+  - _graphData:
+      _guid: 9fa50786-ee83-42a8-9e10-5d8425cf108c
+      _parentGuid: 96e35096-96d1-4d7b-b846-6cb83120626c
+      _name: Selector
+      _position: {x: 1266, y: 603}
       _description: 
     _nodeType: 2
   _taskDataList:
@@ -46,14 +66,14 @@ MonoBehaviour:
       _guid: 558dc300-5735-4762-989a-d5f70f5f99a6
       _parentGuid: e58a83c1-e0f4-4600-9ace-499314bd81d2
       _name: Log
-      _position: {x: 1262, y: 764}
+      _position: {x: 1264, y: 764}
       _description: 
     _task: {fileID: 17017294900977073}
   - _graphData:
       _guid: b1f4179b-8747-456b-8cb8-b31c96e3129e
-      _parentGuid: e58a83c1-e0f4-4600-9ace-499314bd81d2
+      _parentGuid: 96e35096-96d1-4d7b-b846-6cb83120626c
       _name: Log
-      _position: {x: 1261, y: 564}
+      _position: {x: 1266, y: 460}
       _description: 
     _task: {fileID: 17017294900977073}
   - _graphData:
@@ -63,20 +83,20 @@ MonoBehaviour:
       _position: {x: 1264, y: 318}
       _description: 
     _task: {fileID: 17017294900977073}
+  - _graphData:
+      _guid: fa69acd0-c851-49e8-a786-58ecdccf9c6e
+      _parentGuid: 9fa50786-ee83-42a8-9e10-5d8425cf108c
+      _name: Log
+      _position: {x: 1472, y: 605}
+      _description: 
+    _task: {fileID: 17017294900977073}
   _decoratorDict:
     _entries:
-    - Key: e58a83c1-e0f4-4600-9ace-499314bd81d2
-      Value:
-      - name: Succeeder
-        decorator: {fileID: 6832032503280376093}
-      - name: Succeeder
-        decorator: {fileID: 6832032503280376093}
     - Key: 96e35096-96d1-4d7b-b846-6cb83120626c
       Value:
-      - name: Succeeder
-        decorator: {fileID: 6832032503280376093}
-      - name: Within Range
-        decorator: {fileID: 4463132246560441734}
+      - guid: efaef816-ba10-48c3-8036-d6e648cd633c
+        name: Failer
+        decorator: {fileID: -6364332843865347907}
   _blackboard:
     _map:
       _entries: []
@@ -84,10 +104,8 @@ MonoBehaviour:
     _entries:
     - Key: 1983184568
       Value: {fileID: 17017294900977073}
-    - Key: -550586847
-      Value: {fileID: 6832032503280376093}
-    - Key: -101147164
-      Value: {fileID: 4463132246560441734}
+    - Key: 1946803220
+      Value: {fileID: -6364332843865347907}
 --- !u!114 &17017294900977073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,38 +123,13 @@ MonoBehaviour:
     _entries:
     - Key: 558dc300-5735-4762-989a-d5f70f5f99a6
       Value:
-        Message: 
+        Message: 8
     - Key: b1f4179b-8747-456b-8cb8-b31c96e3129e
       Value:
-        Message: 
+        Message: 4
     - Key: 85593e60-cfc6-4647-8559-b9ed4051de56
       Value:
-        Message: 
---- !u!114 &4463132246560441734
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13abcdc82e6386644bdf89365a1d118d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _icon: {fileID: 0}
-  _propMap:
-    _entries: []
---- !u!114 &6832032503280376093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b836410b7116d6419b08bdccef5a2f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _icon: {fileID: 0}
+        Message: 3
+    - Key: fa69acd0-c851-49e8-a786-58ecdccf9c6e
+      Value:
+        Message: 6

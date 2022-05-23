@@ -13,7 +13,7 @@ namespace RR.AI.BehaviorTree
 
         public override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, BTTaskTestProp prop)
         {
-            return BTNodeState.FAILURE;
+            return BTNodeState.Failure;
         }
     }
 

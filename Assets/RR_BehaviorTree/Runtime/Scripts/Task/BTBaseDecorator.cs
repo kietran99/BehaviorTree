@@ -2,8 +2,9 @@ using UnityEngine;
 
 namespace RR.AI.BehaviorTree
 {
-    public abstract class BTBaseDecorator<T> : BTBaseTask<T>, IBTBaseDecorator where T : class, new()
+    public abstract class BTBaseDecorator<T> : BTBaseTask<T>, IBTDecorator where T : class, new()
     {
+
         protected abstract void OnStart(GameObject actor, RuntimeBlackboard blackboard, T prop);
 
         protected abstract BTDecoState OnUpdate(GameObject actor, RuntimeBlackboard blackboard, T prop);
@@ -15,7 +16,7 @@ namespace RR.AI.BehaviorTree
             => OnUpdate(actor, blackboard, prop).ToBTNodeState();
     }
 
-    public abstract class BTBaseDecorator : BTBaseTask, IBTBaseDecorator
+    public abstract class BTBaseDecorator : BTBaseTask, IBTDecorator
     {
         protected abstract void OnStart(GameObject actor, RuntimeBlackboard blackboard);
 
@@ -27,6 +28,4 @@ namespace RR.AI.BehaviorTree
         public sealed override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid)
             => OnUpdate(actor, blackboard).ToBTNodeState();
     }
-
-    public interface IBTBaseDecorator {}
 }

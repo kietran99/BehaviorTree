@@ -2,13 +2,15 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 
+using System;
+
 namespace RR.AI.BehaviorTree
 {
     public class BTGraphNodeLeaf<T> : BTGraphNode<BTGraphLeaf<T>> where T : BTBaseTask
     {
         protected override BTBaseTask Task => _nodeAction.Task;
 
-        private System.Func<object> TaskPropConstructFn;
+        private Func<object> TaskPropConstructFn;
 
         // Invoked by BTGraphNodeFactory using Reflection
         public BTGraphNodeLeaf(BTGraphInitParamsNodeLeaf initParams) : base(initParams)
@@ -24,9 +26,9 @@ namespace RR.AI.BehaviorTree
             DrawTaskProperties(_nodeAction.Task.PropertyType, blackboard);
         }
 
-        private void DrawTaskProperties(System.Type propType, GraphBlackboard blackboard)
+        private void DrawTaskProperties(Type propType, GraphBlackboard blackboard)
         {
-            var serializableAttribs = propType.GetCustomAttributes(typeof(System.SerializableAttribute), true);
+            var serializableAttribs = propType.GetCustomAttributes(typeof(SerializableAttribute), true);
             
             if (serializableAttribs.Length == 0)
             {
@@ -39,7 +41,7 @@ namespace RR.AI.BehaviorTree
             var container = new VisualElement();
             var fieldInfoList = propType.GetFields();
 
-            System.Action<object> bindPropDataFn = null;
+            Action<object> bindPropDataFn = null;
 
             foreach (var fieldInfo in fieldInfoList)
             {
@@ -58,7 +60,7 @@ namespace RR.AI.BehaviorTree
             
             TaskPropConstructFn = () => 
             {
-                var prop = System.Activator.CreateInstance(propType);
+                var prop = Activator.CreateInstance(propType);
                 bindPropDataFn?.Invoke(prop);
                 return prop;
             };
@@ -90,7 +92,7 @@ namespace RR.AI.BehaviorTree
             return label;
         }
 
-        private (VisualElement field, System.Action<object> bindPropFieldFn) DrawPropField(
+        private (VisualElement field, Action<object> bindPropFieldFn) DrawPropField(
             System.Reflection.FieldInfo fieldInfo, 
             object propFieldData, 
             GraphBlackboard blackboard)
@@ -99,7 +101,7 @@ namespace RR.AI.BehaviorTree
 
             if (type == typeof(string))
             {
-                var BBValueAttribs = fieldInfo.GetCustomAttributes(typeof(RR.AI.BlackboardValueAttribute), true);
+                var BBValueAttribs = fieldInfo.GetCustomAttributes(typeof(BlackboardValueAttribute), true);
                 if (BBValueAttribs.Length > 0)
                 {
                     var valType = (BBValueAttribs[0] as BlackboardValueAttribute).ValueType;
@@ -118,7 +120,7 @@ namespace RR.AI.BehaviorTree
                     return (StylizePropField(field), prop => fieldInfo.SetValue(prop, field.value));
                 }
 
-                var tagFieldAttribs = fieldInfo.GetCustomAttributes(typeof(RR.Serialization.TagFieldAttribute), true);
+                var tagFieldAttribs = fieldInfo.GetCustomAttributes(typeof(Serialization.TagFieldAttribute), true);
                 
                 if (tagFieldAttribs.Length > 0)
                 {
@@ -130,7 +132,7 @@ namespace RR.AI.BehaviorTree
 
             if (type == typeof(int))
             {
-                var layerMaskFieldAttribs = fieldInfo.GetCustomAttributes(typeof(RR.Serialization.LayerMaskFieldAttribute), true);
+                var layerMaskFieldAttribs = fieldInfo.GetCustomAttributes(typeof(Serialization.LayerMaskFieldAttribute), true);
                 
                 if (layerMaskFieldAttribs.Length > 0)
                 {
@@ -169,7 +171,7 @@ namespace RR.AI.BehaviorTree
             return (new Label($"Unsupported type\n {type}"), _ => {});
         }
 
-        private (VisualElement field, System.Action<object> bindPropFieldFn) CreatePropField<TProp>(
+        private (VisualElement field, Action<object> bindPropFieldFn) CreatePropField<TProp>(
             BaseField<TProp> baseField, 
             System.Reflection.FieldInfo fieldInfo, 
             object propFieldData)
@@ -187,7 +189,7 @@ namespace RR.AI.BehaviorTree
 
         protected override Texture2D GetIcon(BTNodeType _) => _nodeAction.Task == null ? null : _nodeAction.Task.Icon;
 
-        public override void OnCreate(BTDesignContainer designContainer, UnityEngine.Vector2 position)
+        public override void OnCreate(BTDesignContainer designContainer, Vector2 position)
         {   
             designContainer.TaskDataList.Add(
                 new BTSerializableTaskData(position, 
@@ -197,7 +199,7 @@ namespace RR.AI.BehaviorTree
                 GetParentGuid(inputContainer), 
                 _nodeAction.Task));
                 
-            _nodeAction.Task.SavePropData(_guid, System.Activator.CreateInstance(_nodeAction.Task.PropertyType));        
+            _nodeAction.Task.SavePropData(_guid, Activator.CreateInstance(_nodeAction.Task.PropertyType));        
         }
 
         public override void OnDelete(BTDesignContainer designContainer)

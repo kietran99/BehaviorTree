@@ -1,6 +1,6 @@
 using UnityEngine;
 
-using System.Collections.Generic;
+using ChoiceStack = System.Collections.Generic.Stack<(int successIdx, int failIdx)>;
 
 namespace RR.AI.BehaviorTree
 {
@@ -9,7 +9,7 @@ namespace RR.AI.BehaviorTree
         private T[] _orderedNodes;
         private GameObject _actor;
         private RuntimeBlackboard _blackboard;
-        private Stack<(int successIdx, int failIdx)> _choiceStack;
+        private ChoiceStack _choiceStack;
         private bool shouldTickOnce;
         private bool hasTicked;
 
@@ -18,7 +18,7 @@ namespace RR.AI.BehaviorTree
             _orderedNodes = orderedNodes;
             _actor = actor;
             _blackboard = blackboard;
-            _choiceStack = new Stack<(int successIdx, int failIdx)>(_orderedNodes.Length);
+            _choiceStack = new ChoiceStack(_orderedNodes.Length);
 
             Init(actor, blackboard);
 
@@ -27,7 +27,7 @@ namespace RR.AI.BehaviorTree
             //     Debug.Log($"{node.Guid} {node.Type} {node.SuccessIdx} {node.FailIdx}");
             // }
 
-            shouldTickOnce = true;
+            shouldTickOnce = false;
             hasTicked = false;
         }
 
@@ -53,14 +53,22 @@ namespace RR.AI.BehaviorTree
         public void Tick()
         {
             _choiceStack.Clear();
-            if (shouldTickOnce && !hasTicked)
+            
+            if (shouldTickOnce)
             {
-                InternalTick(1, _choiceStack);
-                hasTicked = true;
+                if (!hasTicked)
+                {
+                    hasTicked = true;
+                    InternalTick(1, _choiceStack);
+                }
+
+                return;
             }
+
+            InternalTick(1, _choiceStack);
         }
 
-        private BTNodeState InternalTick(int curIdx, Stack<(int successIdx, int failIdx)> choiceStack)
+        private BTNodeState InternalTick(int curIdx, ChoiceStack choiceStack)
         {
             if (curIdx == _orderedNodes.Length)
             {
@@ -69,7 +77,7 @@ namespace RR.AI.BehaviorTree
             }
 
             T curNode = _orderedNodes[curIdx];
-            Debug.Log($"Ticking node {curIdx}");
+            // Debug.Log($"Ticking node {curIdx}");
 
             BTRuntimeDecorator[] decorators = curNode.Decorators;
 
@@ -77,30 +85,40 @@ namespace RR.AI.BehaviorTree
             {
                 foreach (var deco in decorators)
                 {
-                    Debug.Log($"Ticking decorator {deco.Task.Name}");
                     BTNodeState decoState = deco.Tick(_actor, _blackboard);
+                    // Debug.Log($"Ticking decorator {deco.Task.Name}: {decoState}");
 
                     if (decoState == BTNodeState.Success)
                     {
                         continue;
                     }
 
-                    // return InternalTick();
+                    bool isLowestPriorityNode = HasLowerSibling(curNode, curIdx);
+                    return isLowestPriorityNode
+                        ? BTNodeState.Failure
+                        : InternalTick(curNode.FailIdx, choiceStack);
                 }
             }
 
-            if (curNode.Type != BTNodeType.Leaf)
+            return curNode.Type == BTNodeType.Leaf
+                ? OnTickTask(curNode, curIdx, choiceStack)
+                : OnTickComposite(curNode, curIdx, choiceStack);
+        }
+
+        private BTNodeState OnTickComposite(T curNode, int curIdx, ChoiceStack choiceStack)
+        {
+            bool hasLowerSibling = HasLowerSibling(curNode, curIdx);
+            if (hasLowerSibling)
             {
-                bool hasLowerSibling = curNode.SuccessIdx > curIdx || curNode.FailIdx > curIdx;
-                if (hasLowerSibling)
-                {
-                    choiceStack.Push((curNode.SuccessIdx, curNode.FailIdx));
-                    // Debug.Log($"Choice stack push ({curNode.SuccessIdx}, {curNode.FailIdx})");
-                }
-
-                return InternalTick(curIdx + 1, choiceStack);
+                choiceStack.Push((curNode.SuccessIdx, curNode.FailIdx));
+                // Debug.Log($"Choice stack push ({curNode.SuccessIdx}, {curNode.FailIdx})");
             }
 
+            return InternalTick(curIdx + 1, choiceStack);
+        }
+
+        private BTNodeState OnTickTask(T curNode, int curIdx, ChoiceStack choiceStack)
+        {
             BTNodeState taskState = curNode.Task.Tick(_actor, _blackboard, curNode.Guid);
 
             if (taskState == BTNodeState.Running)
@@ -133,5 +151,7 @@ namespace RR.AI.BehaviorTree
 
             return InternalTick(nextIdx, choiceStack);
         }
+    
+        private bool HasLowerSibling(T node, int curIdx) => node.SuccessIdx > curIdx || node.FailIdx > curIdx;
     }
 }

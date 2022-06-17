@@ -187,8 +187,6 @@ namespace RR.AI.BehaviorTree
             return field;
         }
 
-        protected override Texture2D GetIcon(BTNodeType _) => _nodeAction.Task == null ? null : _nodeAction.Task.Icon;
-
         public override void OnCreate(BTDesignContainer designContainer, Vector2 position)
         {   
             designContainer.TaskDataList.Add(

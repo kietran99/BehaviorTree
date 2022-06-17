@@ -25,7 +25,7 @@ namespace RR.AI.BehaviorTree
             }
         }
 
-        public  string Guid => _guid;
+        public string Guid => _guid;
         public abstract string Name { get; }
         public BTGraphOrderLabel OrderLabel { get; set; }
         public int OrderValue
@@ -309,26 +309,6 @@ namespace RR.AI.BehaviorTree
             container.Add(titleLabel);
 
             return container;
-        }
-
-        protected virtual Texture2D GetIcon(BTNodeType type)
-        {
-            return Resources.Load<Texture2D>($"Icons/{GetIconFileName(type)}");
-        }
-
-        private string GetIconFileName(BTNodeType type)
-        {
-            switch (type)
-            {
-                case BTNodeType.Root:
-                    return "root";
-                case BTNodeType.Sequencer:
-                    return "sequencer";
-                case BTNodeType.Selector:
-                    return "selector";
-                default:
-                    return string.Empty;
-            }
         }
 
         private void CreatePorts(

@@ -307,14 +307,14 @@ namespace RR.AI.BehaviorTree
 
         private GraphBlackboard CreateBlackboard(
             BTGraphView graphView, 
-            Blackboard runtimeBlackboard, 
+            Blackboard blackboard, 
             ScriptableObject BBContainer,
             string title, 
             Rect rect)
         {
-            var blackboard = new GraphBlackboard(runtimeBlackboard, BBContainer, graphView) { title = title, scrollable = true };
-            blackboard.SetPosition(rect);      
-            return blackboard;
+            var graphBlackboard = new GraphBlackboard(blackboard, BBContainer, graphView) { title = title, scrollable = true };
+            graphBlackboard.SetPosition(rect);      
+            return graphBlackboard;
         }
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange)

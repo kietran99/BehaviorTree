@@ -97,15 +97,18 @@ MonoBehaviour:
       - guid: efaef816-ba10-48c3-8036-d6e648cd633c
         name: Failer
         decorator: {fileID: -6364332843865347907}
-  _blackboard:
-    _map:
-      _entries: []
+      - guid: 13e5b1ce-68c5-4754-8881-6950e29b1932
+        name: Within Range
+        decorator: {fileID: 1491455967034766005}
+  _blackboard: {fileID: 11400000, guid: 2345e13fa50406e48a13f6b7ef950fde, type: 2}
   _taskDict:
     _entries:
     - Key: 1983184568
       Value: {fileID: 17017294900977073}
     - Key: 1946803220
       Value: {fileID: -6364332843865347907}
+    - Key: -101147164
+      Value: {fileID: 1491455967034766005}
 --- !u!114 &17017294900977073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,3 +136,24 @@ MonoBehaviour:
     - Key: fa69acd0-c851-49e8-a786-58ecdccf9c6e
       Value:
         Message: 6
+--- !u!114 &1491455967034766005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13abcdc82e6386644bdf89365a1d118d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 0}
+  _propMap:
+    _entries:
+    - Key: 13e5b1ce-68c5-4754-8881-6950e29b1932
+      Value:
+        Range: 2
+        TargetTag: Player
+        TargetLayers: -1
+        TargetPosition: 

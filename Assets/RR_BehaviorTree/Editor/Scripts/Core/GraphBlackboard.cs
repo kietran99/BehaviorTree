@@ -7,24 +7,24 @@ namespace RR.AI
 {
 	public class GraphBlackboard : UnityEditor.Experimental.GraphView.Blackboard
 	{
-		private Blackboard _runtimeBB;
+		private Blackboard _blackboard;
 		private ScriptableObject _BBcontainer;
 		private Dictionary<System.Type, List<string>> _typeToKeysMap;
 		private Dictionary<GraphElement, VisualElement> _BBFieldToRowMap;
 
         public GraphBlackboard(
-			Blackboard runtimeBlackboard,
+			Blackboard blackboard,
 			ScriptableObject BBContainer,
 			AbstractGraphView graphView) : base(graphView)
 		{
-			_runtimeBB = runtimeBlackboard;
+			_blackboard = blackboard;
 			_BBcontainer = BBContainer;
-			_typeToKeysMap = runtimeBlackboard.TypeToKeysMap;
+			_typeToKeysMap = blackboard.TypeToKeysMap;
 
 			addItemRequested = OnAddItemRequested;
 			editTextRequested += OnKeyEdited;
 			
-			_BBFieldToRowMap = DisplayFields(runtimeBlackboard);
+			_BBFieldToRowMap = DisplayFields(blackboard);
 			graphView.OnElementDeleted += OnElementDeleted;
 
 			style.backgroundColor = new StyleColor(Utils.ColorExtension.Create(50f));
@@ -52,7 +52,7 @@ namespace RR.AI
 
 		private void OnKeyEdited(UnityEditor.Experimental.GraphView.Blackboard _, VisualElement BBField, string newKey)
 		{
-			if (_runtimeBB.TryGetValue(newKey, out var _))
+			if (_blackboard.TryGetValue(newKey, out var _))
 			{
 				Debug.LogError($"Key {newKey} already exists");
 				return;
@@ -64,16 +64,16 @@ namespace RR.AI
 			UpdateKeyOnDisk(oldKey, newKey);
 		}
 
-		private Dictionary<GraphElement, VisualElement> DisplayFields(Blackboard runtimeBB)
+		private Dictionary<GraphElement, VisualElement> DisplayFields(Blackboard blackboard)
 		{
-			if (runtimeBB == null)
+			if (blackboard == null)
 			{
 				return null;
 			}
 
 			var BBFieldToRowMap = new Dictionary<GraphElement, VisualElement>();
 
-			var resultList = runtimeBB.Map<(VisualElement entry, KeyValuePair<GraphElement, VisualElement> BBfieldRowPair)>((key, val) => 
+			var resultList = blackboard.Map<(VisualElement entry, KeyValuePair<GraphElement, VisualElement> BBfieldRowPair)>((key, val) => 
 			{
 				var BBVal = val as IBBValue;
 
@@ -132,7 +132,7 @@ namespace RR.AI
 				return;
 			}
 
-			_runtimeBB = runtimeBlackboard;
+			_blackboard = runtimeBlackboard;
 			_BBcontainer = BBContainer;
 			_typeToKeysMap = runtimeBlackboard.TypeToKeysMap;
 			_BBFieldToRowMap = DisplayFields(runtimeBlackboard);
@@ -157,7 +157,7 @@ namespace RR.AI
 				return false;
 			}
 
-			if (_runtimeBB.TryGetValue(key, out T _))
+			if (_blackboard.TryGetValue(key, out T _))
 			{
 				BBVal = null;
 				return false;
@@ -171,7 +171,7 @@ namespace RR.AI
 				return false;
 			}
 
-			_runtimeBB.Add(key, newEntry);
+			_blackboard.Add(key, newEntry);
 
 			var valType = typeof(T);
 
@@ -189,7 +189,7 @@ namespace RR.AI
 
 		public bool UpdateKeyOnDisk(string oldKey, string newKey) 
 		{
-			if (!_runtimeBB.TryGetValue(oldKey, out var valueSO))
+			if (!_blackboard.TryGetValue(oldKey, out var valueSO))
 			{
 				return false;
 			}
@@ -205,7 +205,7 @@ namespace RR.AI
 				}
 			}
 
-			return _runtimeBB.Update(oldKey, newKey);
+			return _blackboard.UpdateKey(oldKey, newKey);
 		}
 
 		private bool RemoveEntryOnDisk(string key, ScriptableObject BBContainer)
@@ -216,13 +216,13 @@ namespace RR.AI
 				return false;
 			}
 
-			if (!_runtimeBB.TryGetValue(key, out var valSO))
+			if (!_blackboard.TryGetValue(key, out var valSO))
 			{
 				Debug.Log($"Invalid key {key}");
 				return false;
 			}
 
-			_runtimeBB.Remove(key);
+			_blackboard.Remove(key);
 			UnityEditor.AssetDatabase.RemoveObjectFromAsset(valSO);
 			UnityEditor.AssetDatabase.SaveAssets();
 

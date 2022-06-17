@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace RR.AI
 {
-	[System.Serializable]
-	public class Blackboard
+	[CreateAssetMenu(fileName = "Blackboard", menuName = "Generator/AI/Blackboard")]
+	public class Blackboard : ScriptableObject
 	{
 		[SerializeField]
-		private RR.Serialization.SerializableDictionary<string, ScriptableObject> _map;
+		private RR.Serialization.SerializableDictionary<string, ScriptableObject> _map = new Serialization.SerializableDictionary<string, ScriptableObject>();
 
 		public bool TryGetValue<T>(string key, out T value)
 		{
@@ -69,9 +69,9 @@ namespace RR.AI
 			return true;
 		}
 
-		public bool Update(string oldKey, string newKey) => _map.Update(oldKey, newKey);
+		public bool UpdateKey(string oldKey, string newKey) => _map.Update(oldKey, newKey);
 
-		public bool Update<T>(string key, T value)
+		public bool UpdateVal<T>(string key, T value)
 		{
 			// if (!_map.TryGetValue(key, out var SO))
 			// {

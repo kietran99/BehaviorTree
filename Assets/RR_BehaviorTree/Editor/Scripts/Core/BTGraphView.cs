@@ -53,7 +53,7 @@ namespace RR.AI.BehaviorTree
 
         public BTGraphView(BTDesignContainer designContainer) : base()
         {
-            _blackboard = CreateBlackboard(this, designContainer.Blackboard, designContainer, "Shared Variables", BB_RECT);
+            _blackboard = CreateBlackboard(this, designContainer.Blackboard, designContainer.Blackboard, "Shared Variables", BB_RECT);
             Add(_blackboard);
             _nodeDetails = new BTSubWndGraphDetails(NODE_INFO_RECT);
             Add(_nodeDetails);

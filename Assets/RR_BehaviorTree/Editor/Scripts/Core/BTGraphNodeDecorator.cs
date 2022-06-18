@@ -10,7 +10,8 @@ namespace RR.AI.BehaviorTree
         private const string STYLE_HOVER_UNSELECTED_BORDER = "hover-unselected-border";
         private const string STYLE_HOVER_SELECTED_BORDER = "hover-selected-border";
 
-        private string _nodeID;
+        private string _guid, _nodeID;
+        private BTBaseTask _task;
 
         private VisualElement _contentContainer;
         private bool _selected;
@@ -20,10 +21,10 @@ namespace RR.AI.BehaviorTree
 
         private static BTGraphNodeDecorator _curSelected = null;
 
-        public BTGraphNodeDecorator(string decoName, Texture2D icon, string nodeID)
+        public BTGraphNodeDecorator(BTGraphInitParamsDeco initParams)
         {
-            _contentContainer = CreateTitleContent(decoName, icon);
-            Name = decoName;
+            _contentContainer = CreateTitleContent(initParams.decoName, initParams.icon);
+            Name = initParams.decoName;
             _contentContainer.styleSheets.Add(Resources.Load<StyleSheet>("Stylesheets/BTNodeDecorator"));
             _curBorderStyle = STYLE_IDLE_UNSELECTED_BORDER;
             _contentContainer.AddToClassList(_curBorderStyle);
@@ -35,7 +36,9 @@ namespace RR.AI.BehaviorTree
             RegisterCallback<MouseEnterEvent>(OnMouseEnter);
             RegisterCallback<MouseLeaveEvent>(OnMouseExit);
 
-            _nodeID = nodeID;
+            _nodeID = initParams.nodeID;
+            _guid = initParams.guid;
+            _task = initParams.task;
         }
 
         public VisualElement CreateTitleContent(string title, Texture2D nodeIcon)
@@ -68,6 +71,8 @@ namespace RR.AI.BehaviorTree
             _curSelected = this;
             _selected = true;
             SwapBorderStyle(STYLE_HOVER_SELECTED_BORDER);
+            BTGraphView.OnNewNodeSelected?.Invoke(_guid, Name, string.Empty, _task);
+            evt.StopPropagation();
         }
 
         public void OnUnselected()

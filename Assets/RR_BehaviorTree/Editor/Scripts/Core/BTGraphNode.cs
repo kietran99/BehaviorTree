@@ -37,7 +37,7 @@ namespace RR.AI.BehaviorTree
         public int x { get; protected set; }
         public int y { get; protected set; }
 
-        protected Action<string, Vector2, Action<string, Texture2D>> OpenDecoSearchWnd;
+        protected Action<string, Vector2, Action<BTGraphInitParamsDeco>> OpenDecoSearchWnd;
 
         public abstract void OnConnect(BTDesignContainer designContainer, string parentGuid);
         public abstract void OnCreate(BTDesignContainer designContainer, Vector2 position);
@@ -84,7 +84,15 @@ namespace RR.AI.BehaviorTree
         private BTGraphNodeDecorator CreateDecorator(BTSerializableDecoData serializedDecorator)
         {
             var decoIcon = BTGlobalSettings.Instance.GetIcon(serializedDecorator.decorator.GetType());
-            return CreateDecorator(serializedDecorator.name, decoIcon);
+            var initParams = new BTGraphInitParamsDeco()
+            {
+                guid = serializedDecorator.guid,
+                nodeID = _guid,
+                decoName = serializedDecorator.name,
+                icon = decoIcon,
+                task = serializedDecorator.decorator
+            };
+            return CreateDecorator(initParams);
         }
 
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
@@ -101,9 +109,9 @@ namespace RR.AI.BehaviorTree
             evt.menu.InsertSeparator("/", 1);
         }
 
-        private void AttachNewDecorator(string decoName, Texture2D icon)
+        private void AttachNewDecorator(BTGraphInitParamsDeco initParams)
         {
-            var decorator = CreateDecorator(decoName, icon);
+            var decorator = CreateDecorator(initParams);
             AttachDecorator(decorator);
             OrderLabel.SetRealPosition(new Vector2(x + LabelPosX, y));
         }
@@ -117,8 +125,8 @@ namespace RR.AI.BehaviorTree
             RefreshExpandedState();
         }
 
-        private BTGraphNodeDecorator CreateDecorator(string decoName, Texture2D icon)
-            => new BTGraphNodeDecorator(decoName, icon, _guid);
+        private BTGraphNodeDecorator CreateDecorator(BTGraphInitParamsDeco initParams)
+            => new BTGraphNodeDecorator(initParams);
     }
 
     public class BTGraphNode<T> : BTGraphNodeBase where T : IBTGraphNodeInfo, new()

@@ -118,7 +118,7 @@ namespace RR.AI.BehaviorTree
         }
 
         private BTGraphNodeDecorator CreateDecorator(string decoName, Texture2D icon)
-            => new BTGraphNodeDecorator(decoName, icon);
+            => new BTGraphNodeDecorator(decoName, icon, _guid);
     }
 
     public class BTGraphNode<T> : BTGraphNodeBase where T : IBTGraphNodeInfo, new()
@@ -230,10 +230,7 @@ namespace RR.AI.BehaviorTree
 
         public override void OnUnselected()
         {
-            foreach (var decorator in Decorators)
-            {
-                decorator.OnUnselected();
-            }
+            BTGraphNodeDecorator.OnNodeUnselected(_guid);
             base.OnUnselected();
         }
 

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,13 +10,17 @@ namespace RR.AI.BehaviorTree
         private const string STYLE_HOVER_UNSELECTED_BORDER = "hover-unselected-border";
         private const string STYLE_HOVER_SELECTED_BORDER = "hover-selected-border";
 
+        private string _nodeID;
+
         private VisualElement _contentContainer;
         private bool _selected;
         private string _curBorderStyle;
 
         public string Name { get; private set; }
-        
-        public BTGraphNodeDecorator(string decoName, Texture2D icon)
+
+        private static BTGraphNodeDecorator _curSelected = null;
+
+        public BTGraphNodeDecorator(string decoName, Texture2D icon, string nodeID)
         {
             _contentContainer = CreateTitleContent(decoName, icon);
             Name = decoName;
@@ -31,9 +34,11 @@ namespace RR.AI.BehaviorTree
             RegisterCallback<MouseDownEvent>(OnSelected);
             RegisterCallback<MouseEnterEvent>(OnMouseEnter);
             RegisterCallback<MouseLeaveEvent>(OnMouseExit);
+
+            _nodeID = nodeID;
         }
 
-        private VisualElement CreateTitleContent(string title, Texture2D nodeIcon)
+        public VisualElement CreateTitleContent(string title, Texture2D nodeIcon)
         {
             var container = new VisualElement();
             container.style.flexDirection = FlexDirection.Row;
@@ -55,6 +60,12 @@ namespace RR.AI.BehaviorTree
 
         private void OnSelected(MouseDownEvent evt)
         {
+            if (_curSelected != null)
+            {
+                _curSelected.OnUnselected();
+            }
+
+            _curSelected = this;
             _selected = true;
             SwapBorderStyle(STYLE_HOVER_SELECTED_BORDER);
         }
@@ -73,6 +84,17 @@ namespace RR.AI.BehaviorTree
         private void OnMouseExit(MouseLeaveEvent evt)
         {
             SwapBorderStyle(_selected ? STYLE_IDLE_SELECTED_BORDER : STYLE_IDLE_UNSELECTED_BORDER);
+        }
+
+        public static void OnNodeUnselected(string nodeID)
+        {
+            if (_curSelected == null || nodeID != _curSelected._nodeID)
+            {
+                return;
+            }
+
+            _curSelected.OnUnselected();
+            _curSelected = null;
         }
 
         private void SwapBorderStyle(string newStyle)

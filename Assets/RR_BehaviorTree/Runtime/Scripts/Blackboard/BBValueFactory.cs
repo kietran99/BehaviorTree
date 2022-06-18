@@ -13,11 +13,12 @@ namespace RR.AI
 			{ typeof(bool), typeof(BBBool) },
 			{ typeof(string), typeof(BBString) },
 			{ typeof(Vector2), typeof(BBVector2) },
-			{ typeof(Vector3), typeof(BBVector3) }
+			{ typeof(Vector3), typeof(BBVector3) },
+			{ typeof(Object), typeof(BBObject) }
 		};
 
 		/// <summary>
-		///  Create a ScriptableObject that holds a value on disk
+		///  Create a ScriptableObject that holds a value
 		/// </summary>
 		public static ScriptableObject New<T>(ScriptableObject assetObj, object value)
 		{
@@ -40,7 +41,7 @@ namespace RR.AI
 
 		private static ScriptableObject CreateValueObject(ScriptableObject assetObj, System.Type BBValType)
 		{
-			if (!typeof(IBBValue).IsAssignableFrom(BBValType) || !typeof(IBBValue).IsAssignableFrom(BBValType))
+			if (!typeof(IBBValue).IsAssignableFrom(BBValType))
 			{
 				Debug.LogError($"{BBValType} must derived from ScriptableObject and IBBValue");
 				return null;

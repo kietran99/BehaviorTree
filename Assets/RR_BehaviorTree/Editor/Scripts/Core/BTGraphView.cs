@@ -26,31 +26,6 @@ namespace RR.AI.BehaviorTree
 
         public BTDesignContainer DesignContainer => _serializedDesContainer.targetObject as BTDesignContainer;
 
-        public BTGraphView() : base()
-        {
-            _blackboard = CreateBlackboard(this, null, null, "Shared Variables", BB_RECT);
-            Add(_blackboard);
-            _nodeDetails = new BTSubWndGraphDetails(NODE_INFO_RECT);
-            AddElement(_nodeDetails);
-
-            graphViewChanged += OnGraphViewChanged;
-
-            // OnNodeSelected += HandleNodeSelected;
-            OnNewNodeSelected += HandleNewNodeSelected;
-
-            BTEditorWindow.OnClose += () =>
-            {
-                // foreach (var listener in OnNodeSelected.GetInvocationList())
-                // {
-                //     OnNodeSelected -= (Action<string>) listener;
-                // }
-                foreach (var listener in OnNewNodeSelected.GetInvocationList())
-                {
-                    OnNewNodeSelected -= (Action<string, string, string, BTBaseTask>) listener;
-                }
-            };
-        }
-
         public BTGraphView(BTDesignContainer designContainer) : base()
         {
             _blackboard = CreateBlackboard(this, designContainer.Blackboard, designContainer.Blackboard, "Shared Variables", BB_RECT);

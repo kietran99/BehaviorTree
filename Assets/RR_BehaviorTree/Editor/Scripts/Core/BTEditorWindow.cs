@@ -32,13 +32,6 @@ namespace RR.AI.BehaviorTree
             return graphView;
         }
 
-        private BTGraphView CreateGraphView()
-        {
-            var graphView = new BTGraphView();
-            graphView.StretchToParentSize();
-            return graphView;
-        }
-
         private Toolbar CreateToolbar()
         {
             var toolbar = new Toolbar();          

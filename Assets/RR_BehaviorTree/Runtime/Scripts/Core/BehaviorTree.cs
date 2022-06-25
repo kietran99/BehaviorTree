@@ -13,7 +13,7 @@ namespace RR.AI.BehaviorTree
         [SerializeField]
         private BTDesignContainer _designContainer = null;
 
-        private BTScheduler<BTRuntimeNodeBase> _scheduler;
+        private BTScheduler _scheduler;
         private RuntimeBlackboard _runtimeBlackboard;
 
         public BTDesignContainer DesignContainer => _designContainer;
@@ -135,7 +135,7 @@ namespace RR.AI.BehaviorTree
                 })
                 .ToArray();
 
-            _scheduler = new BTScheduler<BTRuntimeNodeBase>(execList, _actor, _runtimeBlackboard);
+            _scheduler = new BTScheduler(execList, _actor, _runtimeBlackboard);
         }
 
         private class RuntimeNodeSortWrapper : IBTOrderable, IBTIdentifiable

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace RR.AI.BehaviorTree
 {
     public class BTRuntimeNodeBase

@@ -1,19 +1,25 @@
 using UnityEngine;
 
+using System;
+
 using ChoiceStack = System.Collections.Generic.Stack<(int successIdx, int failIdx)>;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTScheduler<T> where T : BTRuntimeNodeBase
+    public class BTScheduler
     {
-        private T[] _orderedNodes;
+        private BTRuntimeNodeBase[] _orderedNodes;
         private GameObject _actor;
         private RuntimeBlackboard _blackboard;
         private ChoiceStack _choiceStack;
         private bool shouldTickOnce;
         private bool hasTicked;
 
-        public BTScheduler(T[] orderedNodes, GameObject actor, RuntimeBlackboard blackboard)
+        public static Action TreeEval;
+        public static Action<string, string> NodeTick;
+        public static Action<string> NodeReturn;
+
+        public BTScheduler(BTRuntimeNodeBase[] orderedNodes, GameObject actor, RuntimeBlackboard blackboard)
         {
             _orderedNodes = orderedNodes;
             _actor = actor;
@@ -76,7 +82,7 @@ namespace RR.AI.BehaviorTree
                 return BTNodeState.Failure;
             }
 
-            T curNode = _orderedNodes[curIdx];
+            BTRuntimeNodeBase curNode = _orderedNodes[curIdx];
             // Debug.Log($"Ticking node {curIdx}");
 
             BTRuntimeDecorator[] decorators = curNode.Decorators;
@@ -105,7 +111,7 @@ namespace RR.AI.BehaviorTree
                 : OnTickComposite(curNode, curIdx, choiceStack);
         }
 
-        private BTNodeState OnTickComposite(T curNode, int curIdx, ChoiceStack choiceStack)
+        private BTNodeState OnTickComposite(BTRuntimeNodeBase curNode, int curIdx, ChoiceStack choiceStack)
         {
             bool hasLowerSibling = HasLowerSibling(curNode, curIdx);
             if (hasLowerSibling)
@@ -117,7 +123,7 @@ namespace RR.AI.BehaviorTree
             return InternalTick(curIdx + 1, choiceStack);
         }
 
-        private BTNodeState OnTickTask(T curNode, int curIdx, ChoiceStack choiceStack)
+        private BTNodeState OnTickTask(BTRuntimeNodeBase curNode, int curIdx, ChoiceStack choiceStack)
         {
             BTNodeState taskState = curNode.Task.Tick(_actor, _blackboard, curNode.Guid);
 
@@ -152,6 +158,6 @@ namespace RR.AI.BehaviorTree
             return InternalTick(nextIdx, choiceStack);
         }
     
-        private bool HasLowerSibling(T node, int curIdx) => node.SuccessIdx > curIdx || node.FailIdx > curIdx;
+        private bool HasLowerSibling(BTRuntimeNodeBase node, int curIdx) => node.SuccessIdx > curIdx || node.FailIdx > curIdx;
     }
 }

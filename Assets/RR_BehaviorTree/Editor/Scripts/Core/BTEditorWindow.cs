@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
@@ -7,8 +8,10 @@ namespace RR.AI.BehaviorTree
 {
     public class BTEditorWindow : GraphViewEditorWindow
     {
-        private BTGraphView _graphView;
+        [SerializeField]
+        private GameObject _BTGameObj = null;
         private BehaviorTree _inspectedBT;
+        private BTGraphView _graphView;
         private BTNodeSearchWindow _searchWindow;
         private Toolbar _toolbar;
 
@@ -17,17 +20,40 @@ namespace RR.AI.BehaviorTree
         public static void Init(BehaviorTree behaviorTree)
         {
             var window = GetWindow<BTEditorWindow>("Behavior Tree");
-            window._inspectedBT = behaviorTree;
-            window._graphView = window.CreateGraphView(behaviorTree.DesignContainer);
-            window._searchWindow = window.CreateNodeSearchWindow(window._graphView);
-            window._toolbar = window.CreateToolbar();
-            window.rootVisualElement.Add(window._graphView);
-            window.rootVisualElement.Add(window._toolbar);
+            window._BTGameObj = behaviorTree.gameObject;
+            window.CreateGUI();
         }
 
-        private BTGraphView CreateGraphView(BTDesignContainer designContainer)
+        private void CreateGUI()
+        {
+            if (_BTGameObj == null)
+            {
+                return;
+            }
+            
+            if (!_BTGameObj.TryGetComponent<BehaviorTree>(out _inspectedBT))
+            {
+                Debug.LogError($"No BehaviorTree script attached on GameObject {_BTGameObj.name}");
+                return;
+            }
+
+            _graphView = CreateGraphView(_inspectedBT.DesignContainer, _inspectedBT.Scheduler);
+            _searchWindow = CreateNodeSearchWindow(_graphView);
+            _toolbar = CreateToolbar();
+
+            rootVisualElement.Add(_graphView);
+            rootVisualElement.Add(_toolbar);
+        }
+
+        private BTGraphView CreateGraphView(BTDesignContainer designContainer, BTScheduler scheduler)
         {
             var graphView = new BTGraphView(designContainer);
+
+            if (EditorApplication.isPlaying && !EditorApplication.isPaused)
+            {
+                graphView.AttachVisualDebugger(scheduler);
+            }
+
             graphView.StretchToParentSize();
             return graphView;
         }

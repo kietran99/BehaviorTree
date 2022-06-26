@@ -17,6 +17,7 @@ namespace RR.AI.BehaviorTree
         private RuntimeBlackboard _runtimeBlackboard;
 
         public BTDesignContainer DesignContainer => _designContainer;
+        public BTScheduler Scheduler => _scheduler;
 
         private void Start()
         {

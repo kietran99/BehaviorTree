@@ -15,9 +15,9 @@ namespace RR.AI.BehaviorTree
         private bool shouldTickOnce;
         private bool hasTicked;
 
-        public static Action TreeEval;
-        public static Action<string, string> NodeTick;
-        public static Action<string> NodeReturn;
+        public Action TreeEval;
+        public Action<int> NodeTick;
+        public Action<int> NodeReturn;
 
         public BTScheduler(BTRuntimeNodeBase[] orderedNodes, GameObject actor, RuntimeBlackboard blackboard)
         {
@@ -65,12 +65,14 @@ namespace RR.AI.BehaviorTree
                 if (!hasTicked)
                 {
                     hasTicked = true;
+                    TreeEval?.Invoke();
                     InternalTick(1, _choiceStack);
                 }
 
                 return;
             }
 
+            TreeEval?.Invoke();
             InternalTick(1, _choiceStack);
         }
 
@@ -84,6 +86,7 @@ namespace RR.AI.BehaviorTree
 
             BTRuntimeNodeBase curNode = _orderedNodes[curIdx];
             // Debug.Log($"Ticking node {curIdx}");
+            NodeTick?.Invoke(curIdx);
 
             BTRuntimeDecorator[] decorators = curNode.Decorators;
 
@@ -129,17 +132,28 @@ namespace RR.AI.BehaviorTree
 
             if (taskState == BTNodeState.Running)
             {
+                NodeReturn?.Invoke(curIdx);
                 return BTNodeState.Running;
             }
 
             bool isLowestPriorityNode = (choiceStack.Count == 0) && (curIdx == _orderedNodes.Length - 1);
             if (isLowestPriorityNode)
             {
+                NodeReturn?.Invoke(curIdx);
                 return taskState;
             }
 
             int contIdx = taskState == BTNodeState.Success ? curNode.SuccessIdx : curNode.FailIdx;
             bool isContIdxNextSibling = contIdx > curIdx;
+            int parentIdx = isContIdxNextSibling ? curIdx : contIdx;
+            
+            bool isSingleChildNode = curNode.SuccessIdx == curNode.FailIdx;
+            if (isSingleChildNode)
+            {
+                NodeReturn?.Invoke(curIdx);
+            }
+
+            NodeReturn?.Invoke(parentIdx);
 
             if (isContIdxNextSibling)
             {
@@ -152,6 +166,7 @@ namespace RR.AI.BehaviorTree
 
             if (nextIdx == 1)
             {
+                NodeReturn?.Invoke(curIdx);
                 return taskState;
             }
 

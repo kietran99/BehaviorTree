@@ -19,6 +19,7 @@ namespace RR.AI.BehaviorTree
         private BTSubWndGraphDetails _nodeDetails;
         private BTSubWndGraphSettings _graphSettingsWnd;
         private BTDecoratorSearchWindow _decoSearchWnd;
+        private Debugger.BTVisualDebugger _debugger;
 
         // public static Action<string> OnNodeSelected { get; set; }
         public static Action<string, string, string, BTBaseTask> OnNewNodeSelected { get; set; }
@@ -40,6 +41,11 @@ namespace RR.AI.BehaviorTree
 
             BTEditorWindow.OnClose += () =>
             {
+                if (OnNewNodeSelected == null)
+                {
+                    return;
+                }
+
                 foreach (var listener in OnNewNodeSelected.GetInvocationList())
                 {
                     OnNewNodeSelected -= (Action<string, string, string, BTBaseTask>) listener;
@@ -183,6 +189,11 @@ namespace RR.AI.BehaviorTree
                 DesignContainer.AddDecorator(decorateeGuid, new BTSerializableDecoData(decoGuid, decoSO.Name, decoSO));
             });
             SearchWindow.Open(new SearchWindowContext(pos), _decoSearchWnd);
+        }
+
+        public void AttachVisualDebugger(BTScheduler scheduler)
+        {
+            _debugger = new Debugger.BTVisualDebugger(scheduler);
         }
 
         private void HandleNewNodeSelected(string guid, string name, string desc, BTBaseTask task)

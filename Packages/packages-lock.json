@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.coffee.upm-git-extension": {
+      "version": "https://github.com/mob-sakai/UpmGitExtension.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "b2e04e2c0bd52384c8af17c54e160193a9e63111"
+    },
     "com.rraptor.serialization": {
       "version": "https://github.com/kietran99/RR_Serialization.git#main",
       "depth": 0,
@@ -112,17 +119,8 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
-    "com.unity.ide.rider": {
-      "version": "3.0.13",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.ext.nunit": "1.0.6"
-      },
-      "url": "https://packages.unity.com"
-    },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.14",
+      "version": "2.0.16",
       "depth": 0,
       "source": "registry",
       "dependencies": {

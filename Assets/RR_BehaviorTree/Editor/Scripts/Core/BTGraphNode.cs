@@ -242,53 +242,6 @@ namespace RR.AI.BehaviorTree
             base.OnUnselected();
         }
 
-        private void OnRootTick(string _)
-        {
-            if (inputContainer.childCount == 0)
-            {
-                return;
-            }
-
-            var color = DEBUG_INACTIVE_EDGE_COLOR;
-            var port = (inputContainer[0] as Port);
-            port.portColor = DEFAULT_EDGE_COLOR;
-
-            foreach (var edge in port.connections)
-            {
-                edge.edgeControl.edgeWidth = 3;
-                edge.edgeControl.inputColor = color;
-                edge.edgeControl.outputColor = color;
-                edge.edgeControl.fromCapColor = edge.edgeControl.inputColor;
-                edge.edgeControl.toCapColor = edge.edgeControl.outputColor;
-            }
-        }
-
-        private void OnNodeTick(string guid)
-        {
-            if (_guid != guid)
-            {
-                return;
-            }
-            
-            if (inputContainer.childCount == 0)
-            {
-                return;
-            }
-
-            var port = (inputContainer[0] as Port);
-            var color = DEBUG_ACTIVE_EDGE_COLOR;
-            port.portColor = color;
-            
-            foreach (var edge in port.connections)
-            {
-                edge.edgeControl.edgeWidth = 5;
-                edge.edgeControl.inputColor = color;
-                edge.edgeControl.outputColor = color;
-                edge.edgeControl.fromCapColor = edge.edgeControl.inputColor;
-                edge.edgeControl.toCapColor = edge.edgeControl.outputColor;
-            }
-        }
-
         private void StylizeTitleContainer(VisualElement container)
         {
             container.style.justifyContent = Justify.Center;

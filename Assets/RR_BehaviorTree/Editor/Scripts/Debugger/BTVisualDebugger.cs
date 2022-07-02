@@ -1,16 +1,22 @@
 using UnityEngine;
 
+using System.Collections.Generic;
+
 namespace RR.AI.BehaviorTree.Debugger
 {
     public class BTVisualDebugger
     {
         private BTScheduler _scheduler;
-        private bool _shouldOnlyCaptureOneFrame = true;
+        private List<BTGraphDebugNode> _debugNodes;
+        
+        private bool _shouldOnlyCaptureOneFrame = false;
         private bool _hasCaptured;
 
-        public BTVisualDebugger(BTScheduler scheduler)
+        public BTVisualDebugger(BTScheduler scheduler, List<BTGraphNodeBase> graphNodes)
         {
             _scheduler = scheduler;
+            _debugNodes = graphNodes.ConvertAll(node => new BTGraphDebugNode(node));
+            _debugNodes.ForEach(node => node.Reset());
             _hasCaptured = false;
             RegisterCallbacks();
         }
@@ -43,16 +49,22 @@ namespace RR.AI.BehaviorTree.Debugger
 
                 UnregisterCallbacks();
             }
+
+            _debugNodes.ForEach(node => node.Reset());
         }
 
         private void OnNodeTick(int nodeIdx)
         {
             Debug.Log($"OnNodeTick: {nodeIdx}");
+
+            _debugNodes[nodeIdx].Tick();
         }
 
         private void OnNodeReturn(int nodeIdx)
         {
             Debug.Log($"OnNodeReturn: {nodeIdx}");
+            
+            _debugNodes[nodeIdx].Reset();
         }
     }
 }

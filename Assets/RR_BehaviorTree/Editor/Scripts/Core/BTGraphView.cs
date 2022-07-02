@@ -20,6 +20,7 @@ namespace RR.AI.BehaviorTree
         private BTSubWndGraphSettings _graphSettingsWnd;
         private BTDecoratorSearchWindow _decoSearchWnd;
         private Debugger.BTVisualDebugger _debugger;
+        private List<BTGraphNodeBase> _graphNodes;
 
         // public static Action<string> OnNodeSelected { get; set; }
         public static Action<string, string, string, BTBaseTask> OnNewNodeSelected { get; set; }
@@ -118,7 +119,7 @@ namespace RR.AI.BehaviorTree
                 return node;
             };
 
-            var nodeDataList = new BTExecListBuilder<BTSerializableNodeDataBase, BTGraphNodeBase>()
+            _graphNodes = new BTExecListBuilder<BTSerializableNodeDataBase, BTGraphNodeBase>()
                 .OnObjectCreate((node, parentGuid) =>
                 {
                     if (DesignContainer.TryGetDecorators(node.Guid, out List<BTSerializableDecoData> decorators))
@@ -193,7 +194,7 @@ namespace RR.AI.BehaviorTree
 
         public void AttachVisualDebugger(BTScheduler scheduler)
         {
-            _debugger = new Debugger.BTVisualDebugger(scheduler);
+            _debugger = new Debugger.BTVisualDebugger(scheduler, _graphNodes);
         }
 
         private void HandleNewNodeSelected(string guid, string name, string desc, BTBaseTask task)

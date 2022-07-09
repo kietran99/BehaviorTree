@@ -9,7 +9,7 @@ namespace RR.AI.BehaviorTree.Debugger
         private List<BTGraphDebugNode> _debugNodes;
         
         private int _lastIdx, _returnIdx;
-        private bool _isFirstCapturedTick;
+        private bool _isFirstCapturedTick, _isInitFrame; // Starts exec logic on the 2nd frame
 
         private bool _shouldOnlyCaptureOneFrame = false;
         private bool _hasCaptured;
@@ -20,6 +20,7 @@ namespace RR.AI.BehaviorTree.Debugger
             _debugNodes = graphNodes.ConvertAll(node => new BTGraphDebugNode(node));
             _lastIdx = 0;
             _returnIdx = -1;
+            _isInitFrame = true;
             _isFirstCapturedTick = true;
             _hasCaptured = false;
             RegisterCallbacks();
@@ -70,6 +71,26 @@ namespace RR.AI.BehaviorTree.Debugger
         {
             // Debug.Log($"OnNodeTick: {nodeIdx}");
 
+            if (_isInitFrame || _isFirstCapturedTick)
+            {
+                if (_isInitFrame)
+                {
+                    _isInitFrame = false;
+                    return;
+                }
+
+                int parentIdx = _debugNodes[nodeIdx].ParentIdx;
+
+                while (parentIdx > 0)
+                {
+                    _debugNodes[parentIdx].Tick();
+                    parentIdx = _debugNodes[parentIdx].ParentIdx;
+                }
+
+                _debugNodes[nodeIdx].Tick();
+                _isFirstCapturedTick = false;
+            }
+
             if (_lastIdx == nodeIdx)
             {
                 return;
@@ -77,44 +98,35 @@ namespace RR.AI.BehaviorTree.Debugger
 
             if (_lastIdx != 0 && _returnIdx != -1)
             {
-                bool found = false;
-                int curIdx = _lastIdx;
-
-                do
-                {
-                    var curNode = _debugNodes[curIdx];
-                    curNode.Reset();
-                    int parentIdx = _debugNodes[curIdx].ParentIdx;
-
-                    if (parentIdx == 0)
-                    {
-                        break;
-                    }
-
-                    var parentNode = _debugNodes[parentIdx];
-                    found = parentNode.IsChildIdx(nodeIdx);
-                    curIdx = parentIdx;
-                } while (!found);
-
+                ResetInactiveNodes(nodeIdx);
                 _returnIdx = -1;
             }
 
             _lastIdx = nodeIdx;
 
-            // if (_isFirstCapturedTick)
-            // {
-            //     int parentIdx = _debugNodes[nodeIdx].ParentIdx;
-            //     while (parentIdx > 0)
-            //     {
-            //         // Debug.Log($"Parent {parentIdx}");
-            //         _debugNodes[parentIdx].Tick();
-            //         parentIdx = _debugNodes[parentIdx].ParentIdx;
-            //     } 
-
-            //     _isFirstCapturedTick = false;
-            // }
-
             _debugNodes[nodeIdx].Tick();
+        }
+
+        private void ResetInactiveNodes(int activeNodeIdx)
+        {
+            bool found = false;
+            int curIdx = _lastIdx;
+
+            do
+            {
+                var curNode = _debugNodes[curIdx];
+                curNode.Reset();
+                int parentIdx = _debugNodes[curIdx].ParentIdx;
+
+                if (parentIdx == 0)
+                {
+                    break;
+                }
+
+                var parentNode = _debugNodes[parentIdx];
+                found = parentNode.IsChildIdx(activeNodeIdx);
+                curIdx = parentIdx;
+            } while (!found);
         }
 
         private void OnNodeReturn(int nodeIdx)

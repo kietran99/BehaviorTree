@@ -132,9 +132,6 @@ namespace RR.AI.BehaviorTree
     public class BTGraphNode<T> : BTGraphNodeBase where T : IBTGraphNodeInfo, new()
     {
         private static Vector2 DEFAULT_NODE_SIZE = new Vector2(800f, 400f);
-        private static Color DEFAULT_EDGE_COLOR = new Color(146f / 255f, 146f/ 255f, 146f / 255f);
-        private static Color DEBUG_ACTIVE_EDGE_COLOR = new Color(222f / 255f, 240f/ 255f, 61f / 255f);
-        private static Color DEBUG_INACTIVE_EDGE_COLOR = new Color(158f / 255f, 202f/ 255f, 255f / 255f, .2f);
 
         // public static OnEdgeDrag
 
@@ -170,6 +167,17 @@ namespace RR.AI.BehaviorTree
             y = Mathf.FloorToInt(pos.y);
 
             OpenDecoSearchWnd = initParams.OpenDecoSearchWindow;
+
+            if (inputContainer.childCount != 0)
+            {
+                var port = (inputContainer[0] as Port);
+                foreach (var edge in port.connections)
+                {
+                    edge.capabilities &= ~Capabilities.Selectable;
+                    edge.capabilities &= ~Capabilities.Droppable;
+                    edge.capabilities &= ~Capabilities.Movable;
+                }
+            }
 
             if (_nodeAction.NodeType == BTNodeType.Root)
             {

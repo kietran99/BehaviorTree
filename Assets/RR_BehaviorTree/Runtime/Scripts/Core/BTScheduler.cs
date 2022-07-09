@@ -12,12 +12,14 @@ namespace RR.AI.BehaviorTree
         private GameObject _actor;
         private RuntimeBlackboard _blackboard;
         private ChoiceStack _choiceStack;
-        private bool shouldTickOnce;
-        private bool hasTicked;
+        private int _runningIdx;
 
         public Action TreeEval;
         public Action<int> NodeTick;
         public Action<int> NodeReturn;
+
+        private bool shouldTickOnce;
+        private bool hasTicked;
 
         public BTScheduler(BTRuntimeNodeBase[] orderedNodes, GameObject actor, RuntimeBlackboard blackboard)
         {
@@ -25,12 +27,14 @@ namespace RR.AI.BehaviorTree
             _actor = actor;
             _blackboard = blackboard;
             _choiceStack = new ChoiceStack(_orderedNodes.Length);
+            _runningIdx = -1;
 
             Init(actor, blackboard);
 
-            // foreach (var node in orderedNodes)
+            // for (int i = 0; i < _orderedNodes.Length; i++)
             // {
-            //     Debug.Log($"{node.Guid} {node.Type} {node.SuccessIdx} {node.FailIdx}");
+            //     var node = _orderedNodes[i];
+            //     Debug.Log($"{i} ({node.SuccessIdx} {node.FailIdx})");
             // }
 
             shouldTickOnce = false;
@@ -58,7 +62,11 @@ namespace RR.AI.BehaviorTree
 
         public void Tick()
         {
-            _choiceStack.Clear();
+            if (_runningIdx == -1)
+            {
+                // Debug.Log("Clear Stack");
+                _choiceStack.Clear();
+            }
             
             if (shouldTickOnce)
             {
@@ -72,8 +80,12 @@ namespace RR.AI.BehaviorTree
                 return;
             }
 
-            TreeEval?.Invoke();
-            InternalTick(1, _choiceStack);
+            if (_runningIdx == -1)
+            {
+                TreeEval?.Invoke();
+            }
+
+            InternalTick(_runningIdx == -1 ? 1 : _runningIdx, _choiceStack);
         }
 
         private BTNodeState InternalTick(int curIdx, ChoiceStack choiceStack)
@@ -129,36 +141,33 @@ namespace RR.AI.BehaviorTree
         private BTNodeState OnTickTask(BTRuntimeNodeBase curNode, int curIdx, ChoiceStack choiceStack)
         {
             BTNodeState taskState = curNode.Task.Tick(_actor, _blackboard, curNode.Guid);
+            _runningIdx = -1;
 
             if (taskState == BTNodeState.Running)
             {
-                NodeReturn?.Invoke(curIdx);
+                // NodeReturn?.Invoke(curIdx); // May add a RunningNodeReturn event in the future
+                _runningIdx = curIdx;
                 return BTNodeState.Running;
             }
 
-            bool isLowestPriorityNode = (choiceStack.Count == 0) && (curIdx == _orderedNodes.Length - 1);
-            if (isLowestPriorityNode)
-            {
-                NodeReturn?.Invoke(curIdx);
-                return taskState;
-            }
+            NodeReturn?.Invoke(curIdx);
 
             int contIdx = taskState == BTNodeState.Success ? curNode.SuccessIdx : curNode.FailIdx;
             bool isContIdxNextSibling = contIdx > curIdx;
-            int parentIdx = isContIdxNextSibling ? curIdx : contIdx;
-            
-            bool isSingleChildNode = curNode.SuccessIdx == curNode.FailIdx;
-            if (isSingleChildNode)
-            {
-                NodeReturn?.Invoke(curIdx);
-            }
-
-            NodeReturn?.Invoke(parentIdx);
 
             if (isContIdxNextSibling)
             {
                 return InternalTick(contIdx, choiceStack);
             }
+
+            bool isLowestPriorityNode = choiceStack.Count == 0;
+            if (isLowestPriorityNode)
+            {
+                return taskState;
+            }
+
+            int parentIdx = isContIdxNextSibling ? curIdx : contIdx;
+            NodeReturn?.Invoke(parentIdx);
 
             (int parentSuccessIdx, int parentFailIdx) = choiceStack.Pop();
             // Debug.Log($"Choice stack pop ({parentSuccessIdx}, {parentFailIdx})");
@@ -166,7 +175,6 @@ namespace RR.AI.BehaviorTree
 
             if (nextIdx == 1)
             {
-                NodeReturn?.Invoke(curIdx);
                 return taskState;
             }
 

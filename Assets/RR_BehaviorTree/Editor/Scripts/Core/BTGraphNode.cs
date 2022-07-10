@@ -168,17 +168,6 @@ namespace RR.AI.BehaviorTree
 
             OpenDecoSearchWnd = initParams.OpenDecoSearchWindow;
 
-            if (inputContainer.childCount != 0)
-            {
-                var port = (inputContainer[0] as Port);
-                foreach (var edge in port.connections)
-                {
-                    edge.capabilities &= ~Capabilities.Selectable;
-                    edge.capabilities &= ~Capabilities.Droppable;
-                    edge.capabilities &= ~Capabilities.Movable;
-                }
-            }
-
             if (_nodeAction.NodeType == BTNodeType.Root)
             {
                 capabilities &= ~Capabilities.Movable;

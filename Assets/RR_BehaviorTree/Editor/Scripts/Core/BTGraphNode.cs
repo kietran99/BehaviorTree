@@ -174,9 +174,6 @@ namespace RR.AI.BehaviorTree
                 capabilities &= ~Capabilities.Deletable;
             }
 
-            // BTBaseNode.OnRootTick += OnRootTick;
-            // BTBaseNode.OnTick += OnNodeTick;
-
             RegisterCallback<PointerDownEvent>(OnMouseDown);
             RegisterCallback<PointerMoveEvent>(OnMouseMove);
         }

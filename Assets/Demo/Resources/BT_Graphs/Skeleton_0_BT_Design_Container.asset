@@ -51,14 +51,14 @@ MonoBehaviour:
       _guid: e58a83c1-e0f4-4600-9ace-499314bd81d2
       _parentGuid: 49817220-3d5e-42b6-ab24-502076b72883
       _name: Selector
-      _position: {x: 946, y: 763}
+      _position: {x: 943, y: 778}
       _description: 
     _nodeType: 2
   - _graphData:
       _guid: 9fa50786-ee83-42a8-9e10-5d8425cf108c
       _parentGuid: 96e35096-96d1-4d7b-b846-6cb83120626c
       _name: Selector
-      _position: {x: 1266, y: 603}
+      _position: {x: 1256, y: 534}
       _description: 
     _nodeType: 2
   _taskDataList:
@@ -66,30 +66,51 @@ MonoBehaviour:
       _guid: 558dc300-5735-4762-989a-d5f70f5f99a6
       _parentGuid: e58a83c1-e0f4-4600-9ace-499314bd81d2
       _name: Log
-      _position: {x: 1264, y: 764}
+      _position: {x: 1261, y: 964}
       _description: 
     _task: {fileID: 17017294900977073}
   - _graphData:
       _guid: b1f4179b-8747-456b-8cb8-b31c96e3129e
       _parentGuid: 96e35096-96d1-4d7b-b846-6cb83120626c
       _name: Log
-      _position: {x: 1266, y: 460}
+      _position: {x: 1258, y: 430}
       _description: 
     _task: {fileID: 17017294900977073}
   - _graphData:
       _guid: 85593e60-cfc6-4647-8559-b9ed4051de56
       _parentGuid: 96e35096-96d1-4d7b-b846-6cb83120626c
       _name: Log
-      _position: {x: 1264, y: 318}
+      _position: {x: 1258, y: 320}
       _description: 
     _task: {fileID: 17017294900977073}
   - _graphData:
       _guid: fa69acd0-c851-49e8-a786-58ecdccf9c6e
       _parentGuid: 9fa50786-ee83-42a8-9e10-5d8425cf108c
       _name: Log
-      _position: {x: 1472, y: 605}
+      _position: {x: 1473, y: 666}
       _description: 
     _task: {fileID: 17017294900977073}
+  - _graphData:
+      _guid: 4f48caac-acb8-43ae-90a5-cf780d344fa0
+      _parentGuid: 96e35096-96d1-4d7b-b846-6cb83120626c
+      _name: Wait
+      _position: {x: 1259, y: 216}
+      _description: 
+    _task: {fileID: 6217356747888079119}
+  - _graphData:
+      _guid: f59becb1-6d16-45a5-a854-ee2898db37be
+      _parentGuid: e58a83c1-e0f4-4600-9ace-499314bd81d2
+      _name: Wait
+      _position: {x: 1261, y: 779}
+      _description: 
+    _task: {fileID: 6217356747888079119}
+  - _graphData:
+      _guid: 5a6f47d7-9b56-4af3-a380-bd445b91d1a7
+      _parentGuid: 9fa50786-ee83-42a8-9e10-5d8425cf108c
+      _name: Wait
+      _position: {x: 1474, y: 536}
+      _description: 
+    _task: {fileID: 6217356747888079119}
   _decoratorDict:
     _entries:
     - Key: 96e35096-96d1-4d7b-b846-6cb83120626c
@@ -106,6 +127,8 @@ MonoBehaviour:
       Value: {fileID: -6364332843865347907}
     - Key: -101147164
       Value: {fileID: 1491455967034766005}
+    - Key: 1403225586
+      Value: {fileID: 6217356747888079119}
 --- !u!114 &17017294900977073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,16 +146,16 @@ MonoBehaviour:
     _entries:
     - Key: 558dc300-5735-4762-989a-d5f70f5f99a6
       Value:
-        Message: 8
+        Message: 11
     - Key: b1f4179b-8747-456b-8cb8-b31c96e3129e
       Value:
-        Message: 4
+        Message: 6
     - Key: 85593e60-cfc6-4647-8559-b9ed4051de56
       Value:
-        Message: 3
+        Message: 4
     - Key: fa69acd0-c851-49e8-a786-58ecdccf9c6e
       Value:
-        Message: 6
+        Message: 8
 --- !u!114 &1491455967034766005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,3 +177,27 @@ MonoBehaviour:
         TargetTag: Player
         TargetLayers: -1
         TargetPosition: 
+--- !u!114 &6217356747888079119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e613760862f2bc49bf04148892a6917, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 0}
+  _propMap:
+    _entries:
+    - Key: 4f48caac-acb8-43ae-90a5-cf780d344fa0
+      Value:
+        Duration: 3
+    - Key: f59becb1-6d16-45a5-a854-ee2898db37be
+      Value:
+        Duration: 2
+    - Key: 5a6f47d7-9b56-4af3-a380-bd445b91d1a7
+      Value:
+        Duration: 2

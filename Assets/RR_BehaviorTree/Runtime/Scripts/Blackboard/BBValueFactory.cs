@@ -1,12 +1,14 @@
 using UnityEditor;
 using UnityEngine;
 
+using System;
+using System.Collections.Generic;
+
 namespace RR.AI
 {
 	public static class BBValueFactory
 	{
-		private static System.Collections.Generic.Dictionary<System.Type, System.Type> _typeToValSODict = 
-		new System.Collections.Generic.Dictionary<System.Type, System.Type>()
+		private static Dictionary<Type, Type> _typeToValSODict = new Dictionary<Type, Type>()
 		{
 			{ typeof(int), typeof(BBInt) },
 			{ typeof(float), typeof(BBFloat) },
@@ -14,11 +16,11 @@ namespace RR.AI
 			{ typeof(string), typeof(BBString) },
 			{ typeof(Vector2), typeof(BBVector2) },
 			{ typeof(Vector3), typeof(BBVector3) },
-			{ typeof(Object), typeof(BBObject) }
+			{ typeof(UnityEngine.Object), typeof(BBObject) }
 		};
 
 		/// <summary>
-		///  Create a ScriptableObject that holds a value
+		///  Create a generic ScriptableObject that holds any type of value
 		/// </summary>
 		public static ScriptableObject New<T>(ScriptableObject assetObj, object value)
 		{

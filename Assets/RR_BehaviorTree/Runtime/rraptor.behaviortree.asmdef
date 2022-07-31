@@ -2,7 +2,8 @@
     "name": "rraptor.behaviortree",
     "rootNamespace": "",
     "references": [
-        "GUID:c9755217f2ea1ec4cafe43190d2705c8"
+        "GUID:c9755217f2ea1ec4cafe43190d2705c8",
+        "GUID:050813e3fa798e845ad4b36c26eb27a3"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

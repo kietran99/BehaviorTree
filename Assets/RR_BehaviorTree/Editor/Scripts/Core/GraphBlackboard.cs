@@ -1,6 +1,7 @@
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+
 using System.Collections.Generic;
 
 namespace RR.AI
@@ -44,7 +45,7 @@ namespace RR.AI
 					}			
 
 					var BBField = CreateBBField(BBvalueInfo.TypeText, key);
-					var (BBEntry, fieldRowPair) = CreateBBEntry(BBValue.CreatePropView(), BBField);
+					var (BBEntry, fieldRowPair) = CreateBBEntry(BBPropFieldFactory.Create(BBValue), BBField);
 					Add(BBEntry);
 					_BBFieldToRowMap.Add(fieldRowPair.Key, fieldRowPair.Value);
 				}));
@@ -83,8 +84,9 @@ namespace RR.AI
 					return (null, new KeyValuePair<GraphElement, VisualElement>(null, null));
 				}
 
-				var BBField = CreateBBField(BBVal.ValueTypeString, key);
-				return CreateBBEntry(BBVal.CreatePropView(), BBField);
+				BlackboardField BBField = CreateBBField(BBVal.ValueTypeString, key);
+				VisualElement propField = BBPropFieldFactory.Create(BBVal);
+				return CreateBBEntry(propField, BBField);
 			});
 			
 			foreach(var result in resultList)

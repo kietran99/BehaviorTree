@@ -1,3 +1,5 @@
+using UnityEngine;
+
 using System;
 using System.Collections.Generic;
 
@@ -17,6 +19,7 @@ namespace RR.AI
             public static implicit operator T(BBRTValueGeneric<T> val) => val.Value;
             public static implicit operator BBRTValueGeneric<T>(T val) => new BBRTValueGeneric<T>(val);
 
+            public object ValueAsObject => _value as object;
             public Type ValueType => typeof(T);
 
             public T Value { get => _value; set => _value = value; }
@@ -37,13 +40,13 @@ namespace RR.AI
 		{
 			if (!_map.TryGetValue(key, out var val))
 			{	
-                UnityEngine.Debug.LogWarning($"No key {key} was found, returning default value");			
+                Debug.LogWarning($"No key {key} was found, returning default value");			
 			    return defaultValue;
 			}
 
             if (!typeof(T).Equals(val.ValueType))
             {
-                UnityEngine.Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {val.ValueType}");
+                Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {val.ValueType}");
                 return defaultValue;
             }
      
@@ -54,7 +57,7 @@ namespace RR.AI
 		{
 			if (_map.TryGetValue(key, out var _))
 			{
-				UnityEngine.Debug.LogWarning($"Key {key} already exists");
+				Debug.LogWarning($"Key {key} already exists");
 				return false;
 			}
 
@@ -66,13 +69,13 @@ namespace RR.AI
 		{
 			if (!_map.TryGetValue(key, out var val))
 			{
-				UnityEngine.Debug.LogWarning($"Key {key} does not exist");
+				Debug.LogWarning($"Key {key} does not exist");
 				return false;
 			}
 
             if (!typeof(T).Equals(val.ValueType))
             {
-                UnityEngine.Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {val.ValueType}");
+                Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {val.ValueType}");
                 return false;
             }
 
@@ -86,7 +89,7 @@ namespace RR.AI
         {
             foreach (var entry in _map)
             {
-                UnityEngine.Debug.Log($"{entry.Key}: {entry.Value.ToString()}");
+                Debug.Log($"{entry.Key}: {entry.Value.ToString()}");
             }
         }
     }

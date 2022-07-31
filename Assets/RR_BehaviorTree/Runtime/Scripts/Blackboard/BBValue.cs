@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace RR.AI
 {  
@@ -8,7 +7,6 @@ namespace RR.AI
         string ValueTypeString { get; }
 
         bool SetValue(object value);
-        UnityEngine.UIElements.VisualElement CreatePropView();
         bool AddToRuntimeBlackboard(RuntimeBlackboard runtimeBB, string key);
     }
 
@@ -18,6 +16,7 @@ namespace RR.AI
         private T _value;
 
         public T Value { get => _value; set => _value = value; }
+        public object ValueAsObject => _value as object;
         public System.Type ValueType => typeof(T);
 
         public abstract string ValueTypeString { get; }
@@ -33,16 +32,6 @@ namespace RR.AI
             return true;
         }
 
-        public virtual VisualElement CreatePropView()
-        {
-            var field = PrimitivePropView;
-            field.value = Value;
-            field.RegisterValueChangedCallback(evt => _value = evt.newValue);
-            return field;
-        }
-
         public bool AddToRuntimeBlackboard(RuntimeBlackboard runtimeBB, string key) => runtimeBB.Add(key, _value);
-
-        protected abstract BaseField<T> PrimitivePropView { get; }
     }
 }

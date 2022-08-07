@@ -1,37 +1,20 @@
-using UnityEngine;
+using System;
 
 namespace RR.AI
 {  
-    public interface IBBValue : IBBValueBase
+    public struct BBValue<T> : IBBValueBase
     {
-        string ValueTypeString { get; }
+        public readonly T value;
 
-        bool SetValue(object value);
-        bool AddToRuntimeBlackboard(RuntimeBlackboard runtimeBB, string key);
-    }
-
-    public abstract class BBValue<T> : ScriptableObject, IBBValue
-    {
-        [SerializeField]
-        private T _value;
-
-        public T Value { get => _value; set => _value = value; }
-        public object ValueAsObject => _value as object;
-        public System.Type ValueType => typeof(T);
-
-        public abstract string ValueTypeString { get; }
-         
-        public bool SetValue(object value)
+        public BBValue(T value)
         {
-            if (!(value is T))
-            {
-                return false;
-            }
-
-            Value = (T) value;
-            return true;
+            this.value = value;
         }
 
-        public bool AddToRuntimeBlackboard(RuntimeBlackboard runtimeBB, string key) => runtimeBB.Add(key, _value);
+        public static implicit operator BBValue<T>(T val) => new BBValue<T>(val);
+        public static implicit operator T(BBValue<T> val) => val.value;
+
+        public object ValueAsObject => value as object;
+        public Type ValueType => typeof(T);
     }
 }

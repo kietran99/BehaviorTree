@@ -20,6 +20,7 @@ namespace RR.AI.BehaviorTree
         private BTSubWndGraphSettings _graphSettingsWnd;
         private BTDecoratorSearchWindow _decoSearchWnd;
         private Debugger.BTVisualDebugger _debugger;
+        private AI.Debugger.BBVisualDebugger _BBDebugger;
         private List<BTGraphNodeBase> _graphNodes;
 
         // public static Action<string> OnNodeSelected { get; set; }
@@ -195,6 +196,7 @@ namespace RR.AI.BehaviorTree
         public void AttachVisualDebugger(BTScheduler scheduler)
         {
             _debugger = new Debugger.BTVisualDebugger(scheduler, _graphNodes);
+            _BBDebugger = new AI.Debugger.BBVisualDebugger(_blackboard);
         }
 
         private void HandleNewNodeSelected(string guid, string name, string desc, BTBaseTask task)

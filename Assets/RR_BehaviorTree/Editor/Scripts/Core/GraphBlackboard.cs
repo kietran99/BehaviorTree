@@ -13,6 +13,8 @@ namespace RR.AI
 		private Dictionary<System.Type, List<string>> _typeToKeysMap;
 		private Dictionary<GraphElement, VisualElement> _BBFieldToRowMap;
 
+		private Dictionary<System.Type, string> _BBValueTypeNameMap;
+
         public GraphBlackboard(
 			Blackboard serializableBB,
 			ScriptableObject BBContainer,
@@ -28,27 +30,50 @@ namespace RR.AI
 			_BBFieldToRowMap = DisplayFields(serializableBB);
 			graphView.OnElementDeleted += OnElementDeleted;
 
+			_BBValueTypeNameMap = new Dictionary<System.Type, string>()
+			{
+				{ typeof(int), "Integer" },
+				{ typeof(float), "Float" },
+				{ typeof(bool), "Boolean" },
+				{ typeof(string), "String" },
+				{ typeof(Vector2), "Vector2" },
+				{ typeof(Vector3), "Vector3" },
+				{ typeof(Object), "Object" },
+			};
+
 			style.backgroundColor = new StyleColor(Utils.ColorExtension.Create(50f));
+		}
+
+		public VisualElement AddEntry<T>(string key, BBValue<T> val)
+		{
+			return AddEntryInternal(key, val, _BBValueTypeNameMap[val.ValueType]);
 		}
 
 		private void OnAddItemRequested(UnityEditor.Experimental.GraphView.Blackboard blackboard)
 		{
-			Add(new AddBBEntryBox(
-				contentRect.width, 
-				(key, valView, BBvalueInfo) => 
-				{
-					var addRes = BBvalueInfo.AddToBlackboard(this, key, valView, _BBcontainer, out var BBValue);
+			var addBBEntryBox = new AddBBEntryBox(contentRect.width, OnAddItemConfirmed);
+			this.Add(addBBEntryBox);
+		}
 
-					if (!addRes)
-					{
-						return;
-					}			
+		private void OnAddItemConfirmed(string key, VisualElement valView, IBBValueInfo BBvalueInfo)
+		{
+			var addRes = BBvalueInfo.AddToBlackboard(this, key, valView, _BBcontainer, out var val);
 
-					var BBField = CreateBBField(BBvalueInfo.TypeText, key);
-					var (BBEntry, fieldRowPair) = CreateBBEntry(BBPropFieldFactory.Create(BBValue), BBField);
-					Add(BBEntry);
-					_BBFieldToRowMap.Add(fieldRowPair.Key, fieldRowPair.Value);
-				}));
+			if (!addRes)
+			{
+				return;
+			}			
+
+			AddEntryInternal(key, val, BBvalueInfo.TypeText);
+		}
+
+		private VisualElement AddEntryInternal(string key, IBBValueBase val, string typeText)
+		{
+			BlackboardField BBField = CreateBBField(typeText, key);
+			var (newEntry, fieldRowPair) = CreateBBEntry(BBPropFieldFactory.Create(val), BBField);
+			this.Add(newEntry);
+			_BBFieldToRowMap.Add(fieldRowPair.Key, fieldRowPair.Value);
+			return newEntry;
 		}
 
 		private void OnKeyEdited(UnityEditor.Experimental.GraphView.Blackboard _, VisualElement BBField, string newKey)

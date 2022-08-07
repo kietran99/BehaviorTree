@@ -136,6 +136,7 @@ namespace RR.AI.BehaviorTree
                 })
                 .ToArray();
 
+            _runtimeBlackboard = _designContainer.Blackboard.CreateRuntimeBlackboard();
             _scheduler = new BTScheduler(execList, _actor, _runtimeBlackboard);
         }
 

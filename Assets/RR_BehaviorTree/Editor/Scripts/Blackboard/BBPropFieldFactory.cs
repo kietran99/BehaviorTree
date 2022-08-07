@@ -6,6 +6,15 @@ namespace RR.AI
 {
     public static class BBPropFieldFactory
     {
+        // private static BBTypeMatcher<VisualElement> _BBTypeMatcher = new BBTypeMatcher<VisualElement>()
+        //     .SetHandlerInt(val => Create(val))
+        //     .SetHandlerFloat(val => Create(val))
+        //     .SetHandlerBool(val => Create(val))
+        //     .SetHandlerString(val => Create(val))
+        //     .SetHandlerVec2(val => Create(val))
+        //     .SetHandlerVec3(val => Create(val))
+        //     .SetHandlerObject(val => Create(val));
+
         public static BaseField<int> Create(int value) => Create(new IntegerField(), value);
 
         public static BaseField<float> Create(float value) => Create(new FloatField(), value);
@@ -26,36 +35,37 @@ namespace RR.AI
         {
             System.Type valueType = valueContainer.ValueType;
 
-            if (valueType == typeof(int))
-            {
-                return Create((int)valueContainer.ValueAsObject);
-            }
-            else if (valueType == typeof(float))
-            {
-                return Create((float)valueContainer.ValueAsObject);
-            }
-            else if (valueType == typeof(bool))
-            {
-                return Create((bool)valueContainer.ValueAsObject);
-            }
-            else if (valueType == typeof(string))
-            {
-                return Create((string)valueContainer.ValueAsObject);
-            }
-            else if (valueType == typeof(Vector2))
-            {
-                return Create((Vector2)valueContainer.ValueAsObject);
-            }
-            else if (valueType == typeof(Vector3))
-            {
-                return Create((Vector3)valueContainer.ValueAsObject);
-            }
-            else if (valueType == typeof(Object))
-            {
-                return Create((Object)valueContainer.ValueAsObject);
-            }
+            // VisualElement x = valueType switch
+            // {
+            //     var type when type == typeof(int) => Create((int)valueContainer.ValueAsObject),
+            //     var type when type == typeof(float) => Create((float)valueContainer.ValueAsObject),
+            //     var type when type == typeof(bool) => Create((bool)valueContainer.ValueAsObject),
+            //     var type when type == typeof(string) => Create((string)valueContainer.ValueAsObject),
+            //     var type when type == typeof(Vector2) => Create((Vector2)valueContainer.ValueAsObject),
+            //     var type when type == typeof(Vector3) => Create((Vector3)valueContainer.ValueAsObject),
+            //     var type when type == typeof(Object) => Create((Object)valueContainer.ValueAsObject),
+            //     _ => null
+            // };
 
-            return null;
+            switch (valueType)
+            {
+                case var type when type == typeof(int):
+                    return Create((int)valueContainer.ValueAsObject);
+                case var type when type == typeof(float):
+                    return Create((float)valueContainer.ValueAsObject);
+                case var type when type == typeof(bool):
+                    return Create((bool)valueContainer.ValueAsObject);
+                case var type when type == typeof(string):
+                    return Create((string)valueContainer.ValueAsObject);
+                case var type when type == typeof(Vector2):
+                    return Create((Vector2)valueContainer.ValueAsObject);
+                case var type when type == typeof(Vector3):
+                    return Create((Vector3)valueContainer.ValueAsObject);
+                case var type when type == typeof(Object):
+                    return Create((Object)valueContainer.ValueAsObject);
+                default:
+                    return null;
+            }
         }
 
         private static BaseField<T> Create<T>(BaseField<T> field, T value)

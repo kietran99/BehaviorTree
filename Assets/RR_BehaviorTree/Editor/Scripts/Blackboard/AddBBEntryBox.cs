@@ -11,7 +11,7 @@ namespace RR.AI
 		string TypeText { get; }
 		Func<VisualElement> CreateValView { get; set; }
 		VisualElement CloneValView(VisualElement valView);
-		bool AddToBlackboard(GraphBlackboard blackboard, string key, VisualElement valView, ScriptableObject BBContainer, out IBBValue BBValue);
+		bool AddToBlackboard(GraphBlackboard blackboard, string key, VisualElement valView, ScriptableObject BBContainer, out IBBSerializableValue BBValue);
 	}
 
 	public class AddBBEntryBox : VisualElement
@@ -49,7 +49,7 @@ namespace RR.AI
 				return clone;
             }
 
-            public bool AddToBlackboard(GraphBlackboard blackboard, string key, VisualElement valView, ScriptableObject BBContainer, out IBBValue BBValue)
+            public bool AddToBlackboard(GraphBlackboard blackboard, string key, VisualElement valView, ScriptableObject BBContainer, out IBBSerializableValue BBValue)
             {
                 var converted = valView as BaseField<T>;
 

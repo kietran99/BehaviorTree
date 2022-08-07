@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace RR.AI
 {
-	public static class BBValueFactory
+	public static class SerializableBBValueFactory
 	{
 		private static Dictionary<Type, Type> _typeToValSODict = new Dictionary<Type, Type>()
 		{
@@ -37,13 +37,13 @@ namespace RR.AI
 				return null;
 			}
 			
-			(obj as IBBValue).SetValue(value);
+			(obj as IBBSerializableValue).SetValue(value);
 			return obj;
 		}
 
 		private static ScriptableObject CreateValueObject(ScriptableObject assetObj, System.Type BBValType)
 		{
-			if (!typeof(IBBValue).IsAssignableFrom(BBValType))
+			if (!typeof(IBBSerializableValue).IsAssignableFrom(BBValType))
 			{
 				Debug.LogError($"{BBValType} must derived from ScriptableObject and IBBValue");
 				return null;

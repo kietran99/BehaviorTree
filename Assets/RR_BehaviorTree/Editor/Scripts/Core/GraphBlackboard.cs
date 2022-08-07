@@ -8,24 +8,24 @@ namespace RR.AI
 {
 	public class GraphBlackboard : UnityEditor.Experimental.GraphView.Blackboard
 	{
-		private Blackboard _blackboard;
+        private Blackboard _blackboard;
 		private ScriptableObject _BBcontainer;
 		private Dictionary<System.Type, List<string>> _typeToKeysMap;
 		private Dictionary<GraphElement, VisualElement> _BBFieldToRowMap;
 
         public GraphBlackboard(
-			Blackboard blackboard,
+			Blackboard serializableBB,
 			ScriptableObject BBContainer,
 			AbstractGraphView graphView) : base(graphView)
 		{
-			_blackboard = blackboard;
+			_blackboard = serializableBB;
 			_BBcontainer = BBContainer;
-			_typeToKeysMap = blackboard.TypeToKeysMap;
+			_typeToKeysMap = serializableBB.TypeToKeysMap;
 
 			addItemRequested = OnAddItemRequested;
 			editTextRequested += OnKeyEdited;
 			
-			_BBFieldToRowMap = DisplayFields(blackboard);
+			_BBFieldToRowMap = DisplayFields(serializableBB);
 			graphView.OnElementDeleted += OnElementDeleted;
 
 			style.backgroundColor = new StyleColor(Utils.ColorExtension.Create(50f));
@@ -76,7 +76,7 @@ namespace RR.AI
 
 			var resultList = blackboard.Map<(VisualElement entry, KeyValuePair<GraphElement, VisualElement> BBfieldRowPair)>((key, val) => 
 			{
-				var BBVal = val as IBBValue;
+				var BBVal = val as IBBSerializableValue;
 
 				if (val == null)
 				{
@@ -125,19 +125,19 @@ namespace RR.AI
 			RemoveEntryOnDisk((element as BlackboardField).text, _BBcontainer);
 		}
 
-		public void OnGOSelectionChanged(Blackboard runtimeBlackboard = null, ScriptableObject BBContainer = null)
+		public void OnGOSelectionChanged(Blackboard serializableBB = null, ScriptableObject BBContainer = null)
 		{
 			Clear();
 
-			if (runtimeBlackboard == null || BBContainer == null)
+			if (serializableBB == null || BBContainer == null)
 			{
 				return;
 			}
 
-			_blackboard = runtimeBlackboard;
+			_blackboard = serializableBB;
 			_BBcontainer = BBContainer;
-			_typeToKeysMap = runtimeBlackboard.TypeToKeysMap;
-			_BBFieldToRowMap = DisplayFields(runtimeBlackboard);
+			_typeToKeysMap = serializableBB.TypeToKeysMap;
+			_BBFieldToRowMap = DisplayFields(serializableBB);
 		}
 
 		public List<string> GetKeys(System.Type type)
@@ -150,7 +150,7 @@ namespace RR.AI
 			return new List<string>();
 		}
 
-		public bool AddEntryOnDisk<T>(string key, T value, ScriptableObject BBContainer, out IBBValue BBVal)
+		public bool AddEntryOnDisk<T>(string key, T value, ScriptableObject BBContainer, out IBBSerializableValue BBVal)
 		{
 			if (BBContainer == null)
 			{
@@ -165,7 +165,7 @@ namespace RR.AI
 				return false;
 			}
 
-			var newEntry = BBValueFactory.New<T>(BBContainer, value);
+			var newEntry = SerializableBBValueFactory.New<T>(BBContainer, value);
 			
 			if (newEntry == null)
 			{
@@ -184,7 +184,7 @@ namespace RR.AI
 
 			_typeToKeysMap[valType].Add(key);
 
-			BBVal = newEntry as IBBValue;
+			BBVal = newEntry as IBBSerializableValue;
 
 			return true;
 		}
@@ -196,7 +196,7 @@ namespace RR.AI
 				return false;
 			}
 
-			var keys = _typeToKeysMap[(valueSO as IBBValue).ValueType];
+			var keys = _typeToKeysMap[(valueSO as IBBSerializableValue).ValueType];
 			
 			for (int i = 0; i < keys.Count; i++)
 			{

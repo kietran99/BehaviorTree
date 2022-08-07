@@ -1,5 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
+
+using System.Collections.Generic;
+
+using RR.Serialization;
 
 namespace RR.AI
 {
@@ -7,13 +10,13 @@ namespace RR.AI
 	public class Blackboard : ScriptableObject
 	{
 		[SerializeField]
-		private RR.Serialization.SerializableDictionary<string, ScriptableObject> _map = new Serialization.SerializableDictionary<string, ScriptableObject>();
+		private SerializableDictionary<string, ScriptableObject> _map = new SerializableDictionary<string, ScriptableObject>();
 
 		public bool TryGetValue<T>(string key, out T value)
 		{
 			if (_map.TryGetValue(key, out var SO))
 			{
-				if (SO is BBValue<T> valSO)
+				if (SO is BBSerializableValue<T> valSO)
 				{
 					value = valSO.Value;
 					return true;
@@ -44,7 +47,7 @@ namespace RR.AI
 		{
 			if (_map.TryGetValue(key, out var SO))
 			{
-				if (SO is BBValue<T> valSO)
+				if (SO is BBSerializableValue<T> valSO)
 				{
 					return valSO.Value;
 				}
@@ -106,7 +109,7 @@ namespace RR.AI
 
 				foreach (var entry in entries)
 				{
-					var value = entry.Value as IBBValue;
+					var value = entry.Value as IBBSerializableValue;
 
 					if (value == null)
 					{
@@ -127,21 +130,18 @@ namespace RR.AI
 			}
 		}
 
-		public System.Collections.Generic.IEnumerable<T> Map<T>(System.Func<string, ScriptableObject, T> fn) => _map.Map(fn);
+		public IEnumerable<T> Map<T>(System.Func<string, ScriptableObject, T> fn) => _map.Map(fn);
 
-		public RuntimeBlackboard RuntimeBlackboard
+		public RuntimeBlackboard CreateRuntimeBlackboard()
 		{
-			get
+			var RTBlackboard = new RuntimeBlackboard();
+
+			foreach (var entry in _map.Entries)
 			{
-				var RTBlackboard = new RuntimeBlackboard();
-
-				foreach (var entry in _map.Entries)
-				{
-					(entry.Value as IBBValue).AddToRuntimeBlackboard(RTBlackboard, entry.Key);
-				}
-
-				return RTBlackboard;
+				(entry.Value as IBBSerializableValue).AddToRuntimeBlackboard(RTBlackboard, entry.Key);
 			}
+
+			return RTBlackboard;
 		}
 	}
 }

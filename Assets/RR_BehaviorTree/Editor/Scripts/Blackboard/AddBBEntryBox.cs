@@ -1,8 +1,9 @@
-using System.Collections.Generic;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+
 using System;
+using System.Collections.Generic;
 
 namespace RR.AI
 {
@@ -64,7 +65,7 @@ namespace RR.AI
             }
         }
 
-        private Dictionary<string, IBBValueInfo> _menuBBTypeToValueInfomap;
+        private Dictionary<string, IBBValueInfo> _menuBBTypeToValueInfoMap;
 		private List<string> _menuBBTypeOptions;
 
 		private TextField _keyField;
@@ -76,7 +77,7 @@ namespace RR.AI
 			Action<string, VisualElement, IBBValueInfo> addCallback = null, 
 			Action cancelCallback = null)
 		{
-			_menuBBTypeToValueInfomap = new Dictionary<string, IBBValueInfo>()
+			_menuBBTypeToValueInfoMap = new Dictionary<string, IBBValueInfo>()
 			{
 				{ "Int", new BBValueInfo<int>("Int", () => new IntegerField()) },
 				{ "Bool", new BBValueInfo<bool>("Bool", () => new Toggle()) },
@@ -87,7 +88,7 @@ namespace RR.AI
 				{ "Components/Transform", new BBValueInfo<Transform>("Transform", () => new ObjectField() { objectType = typeof(Transform) }) },
 				{ "Object", new BBValueInfo<UnityEngine.Object>("Object", () => new ObjectField() { objectType = typeof(UnityEngine.Object) }) }
 			};
-			_menuBBTypeOptions = new List<string>(_menuBBTypeToValueInfomap.Keys);
+			_menuBBTypeOptions = new List<string>(_menuBBTypeToValueInfoMap.Keys);
 
 			var BORDER_COLOR = new Color(26f / 255f, 26f / 255f, 26f / 255f);
 			style.paddingBottom = 5f;
@@ -106,7 +107,7 @@ namespace RR.AI
 
 			var DEFAULT_TYPE_TEXT = "Int";
 			var TYPE_CHOICE_FIELD_WIDTH = 80f;
-			_curBBValueInfo = _menuBBTypeToValueInfomap[DEFAULT_TYPE_TEXT];
+			_curBBValueInfo = _menuBBTypeToValueInfoMap[DEFAULT_TYPE_TEXT];
 			_valViewContainer = CreateValueContainer(TYPE_CHOICE_FIELD_WIDTH, DEFAULT_TYPE_TEXT, OnTypeChoiceChange);
 			_curValView = CreateValueView(_curBBValueInfo, parentWidth - TYPE_CHOICE_FIELD_WIDTH);
 			_valViewContainer.Add(_curValView);
@@ -189,7 +190,7 @@ namespace RR.AI
 		{
 			_valViewContainer.Remove(_curValView);
 			var (valViewWidth, valViewHeight) = (_curValView.style.width, _curValView.style.height);
-			_curBBValueInfo = _menuBBTypeToValueInfomap[evt.newValue];
+			_curBBValueInfo = _menuBBTypeToValueInfoMap[evt.newValue];
 			_curValView = _curBBValueInfo.CreateValView();
 			_curValView.style.width = valViewWidth;
 			_curValView.style.height = valViewHeight;

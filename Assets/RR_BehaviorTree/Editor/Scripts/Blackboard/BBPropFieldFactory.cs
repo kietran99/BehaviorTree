@@ -6,15 +6,6 @@ namespace RR.AI
 {
     public static class BBPropFieldFactory
     {
-        // private static BBTypeMatcher<VisualElement> _BBTypeMatcher = new BBTypeMatcher<VisualElement>()
-        //     .SetHandlerInt(val => Create(val))
-        //     .SetHandlerFloat(val => Create(val))
-        //     .SetHandlerBool(val => Create(val))
-        //     .SetHandlerString(val => Create(val))
-        //     .SetHandlerVec2(val => Create(val))
-        //     .SetHandlerVec3(val => Create(val))
-        //     .SetHandlerObject(val => Create(val));
-
         public static BaseField<int> Create(int value) => Create(new IntegerField(), value);
 
         public static BaseField<float> Create(float value) => Create(new FloatField(), value);

@@ -12,7 +12,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "cfed752550a58963bc55be11fe03773f6fefca09"
+      "hash": "20dc70774aa2f84ebb3e479789b3b8d1ae31f4c4"
     },
     "com.rraptor.serialization": {
       "version": "https://github.com/kietran99/RR_Serialization.git#main",

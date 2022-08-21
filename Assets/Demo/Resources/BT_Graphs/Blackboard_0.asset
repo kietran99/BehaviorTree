@@ -15,7 +15,7 @@ MonoBehaviour:
   _map:
     _entries:
     - Key: Player
-      Value: {fileID: 5015776642500793452}
+      Value: {fileID: 0}
 --- !u!114 &5015776642500793452
 MonoBehaviour:
   m_ObjectHideFlags: 0

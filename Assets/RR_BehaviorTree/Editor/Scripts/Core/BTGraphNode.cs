@@ -233,5 +233,7 @@ namespace RR.AI.BehaviorTree
         {
             designContainer.NodeDataList.Find(node => node.Guid == _guid).ParentGuid = parentGuid;
         }
+
+        protected override bool CanAttachDecorators => _nodeAction.NodeType != BTNodeType.Root;
     }
 }

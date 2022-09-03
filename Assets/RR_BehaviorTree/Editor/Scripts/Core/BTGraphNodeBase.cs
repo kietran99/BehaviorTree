@@ -99,6 +99,11 @@ namespace RR.AI.BehaviorTree
         {
             base.BuildContextualMenu(evt);
 
+            if (!CanAttachDecorators)
+            {
+                return;
+            }
+
             evt.menu.InsertAction(1, "Add Decorator", action => 
             {
                 var rect = GetPosition();
@@ -108,6 +113,8 @@ namespace RR.AI.BehaviorTree
 
             evt.menu.InsertSeparator("/", 1);
         }
+
+        protected abstract bool CanAttachDecorators { get; }
 
         private void AttachNewDecorator(BTGraphInitParamsDeco initParams)
         {

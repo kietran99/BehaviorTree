@@ -13,7 +13,7 @@ namespace RR.AI.Debugger
 
             protected BBEventBroker _evtBroker;
             protected GraphBlackboard _blackboard;
-            protected Dictionary<Type, Delegate> _callbackMap;
+            private Dictionary<Type, Delegate> _callbackMap;
 
             protected BBEventActionBase(BBEventBroker evtBroker, GraphBlackboard blackboard)
             {
@@ -22,31 +22,45 @@ namespace RR.AI.Debugger
                 _callbackMap = new Dictionary<Type, Delegate>(N_PRIM_TYPES);     
             }
 
-            public void SubscribeAll()
+            public virtual void SubscribeAll()
             {
-                Subscribe<int>();
-                Subscribe<float>();
-                Subscribe<bool>();
-                Subscribe<string>();
-                Subscribe<Vector2>();
-                Subscribe<Vector3>();
-                Subscribe<UnityEngine.Object>();
+                AddCallbackToMap<int>(Subscribe<int>());
+                AddCallbackToMap<float>(Subscribe<float>());
+                AddCallbackToMap<bool>(Subscribe<bool>());
+                AddCallbackToMap<string>(Subscribe<string>());
+                AddCallbackToMap<Vector2>(Subscribe<Vector2>());
+                AddCallbackToMap<Vector3>(Subscribe<Vector3>());
+                AddCallbackToMap<UnityEngine.Object>(Subscribe<UnityEngine.Object>());
             }
 
-            protected abstract void Subscribe<TVal>();
+            private void AddCallbackToMap<T>(Delegate callback) => _callbackMap.Add(typeof(T), callback);
 
-            public void UnsubscribeAll()
+            protected abstract Delegate Subscribe<TVal>();
+
+            public virtual void UnsubscribeAll()
             {
-                Unsubscribe<int>();
-                Unsubscribe<float>();
-                Unsubscribe<bool>();
-                Unsubscribe<string>();
-                Unsubscribe<Vector2>();
-                Unsubscribe<Vector3>();
-                Unsubscribe<UnityEngine.Object>();
+                RemoveCallbackAndUnsubscribe<int>();
+                RemoveCallbackAndUnsubscribe<float>();
+                RemoveCallbackAndUnsubscribe<bool>();
+                RemoveCallbackAndUnsubscribe<string>();
+                RemoveCallbackAndUnsubscribe<Vector2>();
+                RemoveCallbackAndUnsubscribe<Vector3>();
+                RemoveCallbackAndUnsubscribe<UnityEngine.Object>();
             }
 
-            protected abstract void Unsubscribe<TVal>();
+            protected void RemoveCallbackAndUnsubscribe<T>()
+            {
+                Delegate callback = RemoveCallbackFromMap<T>();
+                Unsubscribe<T>(callback);
+            }
+
+            private Delegate RemoveCallbackFromMap<T>()
+            {
+                _callbackMap.Remove(typeof(T), out Delegate callback);
+                return callback;
+            }
+
+            protected abstract void Unsubscribe<TVal>(Delegate callback);
         }
 
         private class AddEntryAction : BBEventActionBase
@@ -54,16 +68,58 @@ namespace RR.AI.Debugger
             public AddEntryAction(BBEventBroker evtBroker, GraphBlackboard blackboard) : base(evtBroker, blackboard)
             {}
 
-            protected override void Subscribe<TVal>()
+            protected override Delegate Subscribe<TVal>()
             {
                 Action<BBAddEntryEvent<TVal>> callback = evt => _blackboard.AddEntry<TVal>(evt.key, evt.value);
                 _evtBroker.Subscribe<BBAddEntryEvent<TVal>>(callback);
+                return callback;
             }
 
-            protected override void Unsubscribe<TVal>()
+            protected override void Unsubscribe<TVal>(Delegate callback)
             {
-                Delegate callback = _callbackMap[typeof(BBAddEntryEvent<TVal>)];
                 _evtBroker.Unsubscribe((Action<BBAddEntryEvent<TVal>>)callback);
+            }
+        }
+
+        private class UpdateEntryAction : BBEventActionBase
+        {
+            public UpdateEntryAction(BBEventBroker evtBroker, GraphBlackboard blackboard) : base(evtBroker, blackboard)
+            {}
+
+            protected override Delegate Subscribe<TVal>()
+            {
+                Action<BBUpdateEntryEvent<TVal>> callback = evt => _blackboard.UpdateEntry<TVal>(evt.key, evt.value);
+                _evtBroker.Subscribe<BBUpdateEntryEvent<TVal>>(callback);
+                return callback;
+            }
+
+            protected override void Unsubscribe<TVal>(Delegate callback)
+            {
+                _evtBroker.Unsubscribe((Action<BBUpdateEntryEvent<TVal>>)callback);
+            }
+        }
+
+        private class DeleteEntryAction : BBEventActionBase
+        {
+            public DeleteEntryAction(BBEventBroker evtBroker, GraphBlackboard blackboard) : base(evtBroker, blackboard)
+            {}
+
+            public override void SubscribeAll()
+            {
+                Action<BBDeleteEntryEvent> callback = evt => _blackboard.DeleteEntry(evt.key);
+                _evtBroker.Subscribe<BBDeleteEntryEvent>(callback);
+            }
+
+            public override void UnsubscribeAll()
+            {
+                RemoveCallbackAndUnsubscribe<int>(); // Any type will do
+            }
+
+            protected override Delegate Subscribe<TVal>() => null;
+
+            protected override void Unsubscribe<TVal>(Delegate callback)
+            {
+                _evtBroker.Unsubscribe((Action<BBDeleteEntryEvent>)callback);
             }
         }
 
@@ -81,7 +137,9 @@ namespace RR.AI.Debugger
 
             _BBEventActionList = new BBEventActionBase[]
             {
-                new AddEntryAction(_evtBroker, _blackboard)
+                new AddEntryAction(_evtBroker, _blackboard),
+                new UpdateEntryAction(_evtBroker, _blackboard),
+                new DeleteEntryAction(_evtBroker, _blackboard)
             };
             
             foreach (BBEventActionBase action in _BBEventActionList)

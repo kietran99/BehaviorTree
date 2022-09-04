@@ -8,11 +8,23 @@ namespace RR.AI
 {
 	public class GraphBlackboard : UnityEditor.Experimental.GraphView.Blackboard
 	{
+		private class RowContainer : VisualElement
+		{
+			public string key;
+			public VisualElement propView;
+
+            public RowContainer(string key, VisualElement propView, BlackboardRow row)
+            {
+                this.key = key;
+                this.propView = propView;
+				Add(row);
+            }
+        }
+
         private Blackboard _blackboard;
 		private ScriptableObject _BBcontainer;
 		private Dictionary<System.Type, List<string>> _typeToKeysMap;
-		private Dictionary<GraphElement, VisualElement> _BBFieldToRowMap;
-
+		private Dictionary<string, RowContainer> _keyToRowMap;
 		private Dictionary<System.Type, string> _BBValueTypeNameMap;
 
         public GraphBlackboard(
@@ -27,7 +39,7 @@ namespace RR.AI
 			addItemRequested = OnAddItemRequested;
 			editTextRequested += OnKeyEdited;
 			
-			_BBFieldToRowMap = DisplayFields(serializableBB);
+			_keyToRowMap = InitBBFields(serializableBB);
 			graphView.OnElementDeleted += OnElementDeleted;
 
 			_BBValueTypeNameMap = new Dictionary<System.Type, string>()
@@ -44,7 +56,7 @@ namespace RR.AI
 			style.backgroundColor = new StyleColor(Utils.ColorExtension.Create(50f));
 		}
 
-		public VisualElement AddEntry<T>(string key, BBValue<T> val)
+		public bool AddEntry<T>(string key, BBValue<T> val)
 		{
 			return AddEntryInternal(key, val, _BBValueTypeNameMap[val.ValueType]);
 		}
@@ -67,13 +79,13 @@ namespace RR.AI
 			AddEntryInternal(key, val, BBvalueInfo.TypeText);
 		}
 
-		private VisualElement AddEntryInternal(string key, IBBValueBase val, string typeText)
+		private bool AddEntryInternal(string key, IBBValueBase val, string typeText)
 		{
 			BlackboardField BBField = CreateBBField(typeText, key);
-			var (newEntry, fieldRowPair) = CreateBBEntry(BBPropFieldFactory.Create(val), BBField);
-			this.Add(newEntry);
-			_BBFieldToRowMap.Add(fieldRowPair.Key, fieldRowPair.Value);
-			return newEntry;
+			RowContainer rowContainer = CreateBBEntry(key, BBPropFieldFactory.Create(val), BBField);
+			this.Add(rowContainer);
+			_keyToRowMap.Add(key, rowContainer);
+			return true;
 		}
 
 		private void OnKeyEdited(UnityEditor.Experimental.GraphView.Blackboard _, VisualElement BBField, string newKey)
@@ -90,47 +102,45 @@ namespace RR.AI
 			UpdateKeyOnDisk(oldKey, newKey);
 		}
 
-		private Dictionary<GraphElement, VisualElement> DisplayFields(Blackboard blackboard)
+		private Dictionary<string, RowContainer> InitBBFields(Blackboard blackboard)
 		{
 			if (blackboard == null)
 			{
 				return null;
 			}
 
-			var BBFieldToRowMap = new Dictionary<GraphElement, VisualElement>();
+			var keyToRowMap = new Dictionary<string, RowContainer>();
 
-			var resultList = blackboard.Map<(VisualElement entry, KeyValuePair<GraphElement, VisualElement> BBfieldRowPair)>((key, val) => 
+			var resultList = blackboard.Map<(string key, RowContainer rowContainer)>((key, val) => 
 			{
 				var BBVal = val as IBBSerializableValue;
 
 				if (val == null)
 				{
 					Debug.LogError("Invalid cast from ScriptableObject to IBBValue");
-					return (null, new KeyValuePair<GraphElement, VisualElement>(null, null));
+					return (string.Empty, new RowContainer(string.Empty, null, null));
 				}
 
 				BlackboardField BBField = CreateBBField(BBVal.ValueTypeString, key);
 				VisualElement propField = BBPropFieldFactory.Create(BBVal);
-				return CreateBBEntry(propField, BBField);
+				return (key, CreateBBEntry(key, propField, BBField));
 			});
 			
-			foreach(var result in resultList)
+			foreach (var result in resultList)
 			{
-				Add(result.entry);
-				BBFieldToRowMap.Add(result.BBfieldRowPair.Key, result.BBfieldRowPair.Value);
+				Add(result.rowContainer);
+				keyToRowMap.Add(result.key, result.rowContainer);
 			}
 
-			return BBFieldToRowMap;
+			return keyToRowMap;
 		}
 
-		private (VisualElement entry, KeyValuePair<GraphElement, VisualElement> BBfieldRowPair) CreateBBEntry(
-			VisualElement propView, BlackboardField blackboardField)
+		private RowContainer CreateBBEntry(string key, VisualElement propView, BlackboardField blackboardField)
 		{
-			var container = new VisualElement();
 			propView.style.width = contentRect.width - 16f;
-			var entry = new BlackboardRow(blackboardField, propView);
-			container.Add(entry);
-			return (container, new KeyValuePair<GraphElement, VisualElement>(blackboardField, container));
+			var row = new BlackboardRow(blackboardField, propView);
+			var rowContainer = new RowContainer(key, propView, row);
+			return rowContainer;
 		}
 
 		private BlackboardField CreateBBField(string typeText, string key = "")
@@ -140,13 +150,9 @@ namespace RR.AI
 
 		private void OnElementDeleted(GraphElement element)
 		{
-			if (!_BBFieldToRowMap.TryGetValue(element, out var entry))
-			{
-				return;
-			}
-
-			_BBFieldToRowMap.Remove(element);
-			Remove(entry);
+			RowContainer rowContainer = element.parent as RowContainer;
+			_keyToRowMap.Remove(rowContainer.key);
+			Remove(rowContainer);
 			RemoveEntryOnDisk((element as BlackboardField).text, _BBcontainer);
 		}
 
@@ -162,7 +168,7 @@ namespace RR.AI
 			_blackboard = serializableBB;
 			_BBcontainer = BBContainer;
 			_typeToKeysMap = serializableBB.TypeToKeysMap;
-			_BBFieldToRowMap = DisplayFields(serializableBB);
+			_keyToRowMap = InitBBFields(serializableBB);
 		}
 
 		public List<string> GetKeys(System.Type type)
@@ -235,6 +241,30 @@ namespace RR.AI
 			return _blackboard.UpdateKey(oldKey, newKey);
 		}
 
+		public bool UpdateEntryOnDisk<T>(string key, BBValue<T> val)
+		{
+			return _blackboard.UpdateVal<T>(key, val);
+		}
+
+		public bool UpdateEntry<T>(string key, BBValue<T> val)
+		{
+			if (!_keyToRowMap.TryGetValue(key, out RowContainer rowContainer))
+			{
+				return false;
+			}
+
+			var castedPropView = rowContainer.propView as BaseField<T>;
+
+			if (castedPropView == null)
+			{
+				Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {castedPropView.GetType()}");
+				return false;
+			}
+
+			castedPropView.value = val;
+			return true;
+		}
+
 		private bool RemoveEntryOnDisk(string key, ScriptableObject BBContainer)
 		{
 			if (BBContainer == null)
@@ -253,6 +283,18 @@ namespace RR.AI
 			UnityEditor.AssetDatabase.RemoveObjectFromAsset(valSO);
 			UnityEditor.AssetDatabase.SaveAssets();
 
+			return true;
+		}
+	
+		public bool DeleteEntry(string key)
+		{
+			if (!_keyToRowMap.TryGetValue(key, out RowContainer row))
+			{
+				return false;
+			}
+
+			_keyToRowMap.Remove(key);
+			Remove(row);
 			return true;
 		}
 	}

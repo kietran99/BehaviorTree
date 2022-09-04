@@ -34,7 +34,7 @@ namespace RR.AI
             _map = map == null ? new Dictionary<string, IBBValueBase>() : map;
         }
 
-        public bool AddEntry<T>(string key, BBValue<T> val)
+        private bool AddEntry<T>(string key, BBValue<T> val)
         {
             if (_map.TryGetValue(key, out IBBValueBase _))
             {
@@ -47,6 +47,25 @@ namespace RR.AI
             return true;
         }
 
+        private bool UpdateEntry<T>(string key, BBValue<T> val)
+        {
+            if (!_map.TryGetValue(key, out var oldVal))
+			{
+				Debug.LogWarning($"Key {key} does not exist");
+				return false;
+			}
+
+            if (!typeof(T).Equals(val.ValueType))
+            {
+                Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {val.ValueType}");
+                return false;
+            }
+
+			(_map[key] as BBRTValueGeneric<T>).Value = val;
+            BBEventBroker.Instance.Publish(new BBUpdateEntryEvent<T>(key, val.value));
+			return true;
+        }
+
         public bool AddEntry(string key, int val) => AddEntry<int>(key, val);
         public bool AddEntry(string key, float val) => AddEntry<float>(key, val);
         public bool AddEntry(string key, bool val) => AddEntry<bool>(key, val);
@@ -54,6 +73,14 @@ namespace RR.AI
         public bool AddEntry(string key, Vector2 val) => AddEntry<Vector2>(key, val);
         public bool AddEntry(string key, Vector3 val) => AddEntry<Vector3>(key, val);
         public bool AddEntry(string key, UnityEngine.Object val) => AddEntry<UnityEngine.Object>(key, val);
+
+        public bool UpdateEntry(string key, int val) => UpdateEntry<int>(key, val);
+        public bool UpdateEntry(string key, float val) => UpdateEntry<float>(key, val);
+        public bool UpdateEntry(string key, bool val) => UpdateEntry<bool>(key, val);
+        public bool UpdateEntry(string key, string val) => UpdateEntry<string>(key, val);
+        public bool UpdateEntry(string key, Vector2 val) => UpdateEntry<Vector2>(key, val);
+        public bool UpdateEntry(string key, Vector3 val) => UpdateEntry<Vector3>(key, val);
+        public bool UpdateEntry(string key, UnityEngine.Object val) => UpdateEntry<UnityEngine.Object>(key, val);
 
         public T GetValue<T>(string key) => ValueOr<T>(key, default);
 
@@ -104,7 +131,11 @@ namespace RR.AI
 			return true;
 		}
         
-        public bool Remove(string key) => _map.Remove(key);
+        public bool Remove(string key)
+        {
+            BBEventBroker.Instance.Publish(new BBDeleteEntryEvent(key));
+            return _map.Remove(key);
+        }
     
         public void Log()
         {
@@ -119,18 +150,6 @@ namespace RR.AI
             sb.Append("}");
 
             Debug.Log(sb.ToString());
-        }
-    }
-
-    public struct BBAddEntryEvent<T> : RR.Events.IEventData
-    {
-        public readonly string key;
-        public readonly T value;
-
-        public BBAddEntryEvent(string key, T value)
-        {
-            this.key = key;
-            this.value = value;
         }
     }
 }

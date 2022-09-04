@@ -76,19 +76,21 @@ namespace RR.AI
 
 		public bool UpdateVal<T>(string key, T value)
 		{
-			// if (!_map.TryGetValue(key, out var SO))
-			// {
-			// 	Debug.LogWarning($"Key {key} not found");
-			// 	return false;
-			// }
+			if (!_map.TryGetValue(key, out ScriptableObject BBValContainer))
+			{
+				Debug.LogWarning($"Key {key} not found");
+				return false;
+			}
 
-			// if (!(SO is BBKeyValueDatabase<T> db))
-			// {
-			// 	Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {SO.GetType()}");
-			// 	return false;
-			// }
+			var containerAsBBValue = BBValContainer as IBBSerializableValue;
 
-			// db.UpdateEntry(key, value);
+			if (typeof(T) != containerAsBBValue.ValueType)
+			{
+				Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {containerAsBBValue.ValueType}");
+				return false;
+			}
+
+			containerAsBBValue.SetValue(value);
 			return true;
 		}
 
@@ -134,14 +136,14 @@ namespace RR.AI
 
 		public RuntimeBlackboard CreateRuntimeBlackboard()
 		{
-			var RTBlackboard = new RuntimeBlackboard();
+			var runtimeBB = new RuntimeBlackboard();
 
 			foreach (var entry in _map.Entries)
 			{
-				(entry.Value as IBBSerializableValue).AddToRuntimeBlackboard(RTBlackboard, entry.Key);
+				(entry.Value as IBBSerializableValue).AddToRuntimeBlackboard(runtimeBB, entry.Key);
 			}
 
-			return RTBlackboard;
+			return runtimeBB;
 		}
 	}
 }

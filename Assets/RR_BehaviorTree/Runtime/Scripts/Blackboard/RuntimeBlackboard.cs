@@ -61,7 +61,7 @@ namespace RR.AI
                 return false;
             }
 
-			(_map[key] as BBRTValueGeneric<T>).Value = val;
+			_map[key] = val;
             BBEventBroker.Instance.Publish(new BBUpdateEntryEvent<T>(key, val.value));
 			return true;
         }

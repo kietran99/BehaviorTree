@@ -13,5 +13,6 @@ namespace RR.AI.BehaviorTree
         public string guid = "";
         public Texture2D icon = null;
         public Action<string, Vector2, Action<BTGraphInitParamsDeco>> OpenDecoSearchWindow;
+        public Action<string, Vector2, Action<BTGraphInitParamsDeco>> OpenServiceSearchWindow;
     }
 }

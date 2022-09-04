@@ -38,6 +38,7 @@ namespace RR.AI.BehaviorTree
         public int y { get; protected set; }
 
         protected Action<string, Vector2, Action<BTGraphInitParamsDeco>> OpenDecoSearchWnd;
+        protected Action<string, Vector2, Action<BTGraphInitParamsDeco>> OpenServiceSearchWnd;
 
         public abstract void OnConnect(BTDesignContainer designContainer, string parentGuid);
         public abstract void OnCreate(BTDesignContainer designContainer, Vector2 position);
@@ -99,7 +100,7 @@ namespace RR.AI.BehaviorTree
         {
             base.BuildContextualMenu(evt);
 
-            if (!CanAttachDecorators)
+            if (!AreAttachersAllowed)
             {
                 return;
             }
@@ -111,10 +112,22 @@ namespace RR.AI.BehaviorTree
                 OpenDecoSearchWnd(_guid, mousePos, AttachNewDecorator);
             });
 
+            evt.menu.InsertAction(2, "Add Service", action => 
+            {
+                var rect = GetPosition();
+                var mousePos = rect.position + new Vector2(rect.width, 0f);
+                OpenServiceSearchWnd(_guid, mousePos, AttachNewDecorator);
+            });
+
             evt.menu.InsertSeparator("/", 1);
         }
 
-        protected abstract bool CanAttachDecorators { get; }
+        protected abstract bool AreAttachersAllowed { get; }
+
+        // private void AddNewAttacher<T>(BTGraphInitParamsDeco initParams) where T : VisualElement
+        // {
+        //     var attacher = ;
+        // }
 
         private void AttachNewDecorator(BTGraphInitParamsDeco initParams)
         {
@@ -132,7 +145,6 @@ namespace RR.AI.BehaviorTree
             RefreshExpandedState();
         }
 
-        private BTGraphNodeDecorator CreateDecorator(BTGraphInitParamsDeco initParams)
-            => new BTGraphNodeDecorator(initParams);
+        private BTGraphNodeDecorator CreateDecorator(BTGraphInitParamsDeco initParams) => new BTGraphNodeDecorator(initParams);
     }
 }

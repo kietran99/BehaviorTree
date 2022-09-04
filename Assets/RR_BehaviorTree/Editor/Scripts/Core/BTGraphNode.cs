@@ -44,6 +44,7 @@ namespace RR.AI.BehaviorTree
             y = Mathf.FloorToInt(pos.y);
 
             OpenDecoSearchWnd = initParams.OpenDecoSearchWindow;
+            OpenServiceSearchWnd = initParams.OpenServiceSearchWindow;
 
             if (_nodeAction.NodeType == BTNodeType.Root)
             {
@@ -234,6 +235,6 @@ namespace RR.AI.BehaviorTree
             designContainer.NodeDataList.Find(node => node.Guid == _guid).ParentGuid = parentGuid;
         }
 
-        protected override bool CanAttachDecorators => _nodeAction.NodeType != BTNodeType.Root;
+        protected override bool AreAttachersAllowed => _nodeAction.NodeType != BTNodeType.Root;
     }
 }

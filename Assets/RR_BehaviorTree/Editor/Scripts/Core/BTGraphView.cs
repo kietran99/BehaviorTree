@@ -37,7 +37,7 @@ namespace RR.AI.BehaviorTree
             _nodeDetails = new BTSubWndGraphDetails(NODE_INFO_RECT);
             Add(_nodeDetails);
             Init(designContainer);
-            _decoSearchWnd = CreateDecoSearchWindow();
+            _decoSearchWnd = CreateAttacherSearchWindow<BTDecoratorSearchWindow>();
             _serviceSearchWnd = CreateAttacherSearchWindow<BTServiceSearchWindow>();
 
             graphViewChanged += OnGraphViewChanged;
@@ -174,68 +174,42 @@ namespace RR.AI.BehaviorTree
             return wnd;
         }
 
-        private BTDecoratorSearchWindow CreateDecoSearchWindow()
+        private void OpenDecoSearchWnd(string decorateeGuid, Vector2 pos, Action<BTGraphInitParamsAttacher> onEntrySelectCb)
         {
-            var wnd = ScriptableObject.CreateInstance<BTDecoratorSearchWindow>();
-            wnd.Init();
-            return wnd;
+            OpenAttacherSearchWnd(_decoSearchWnd, decorateeGuid, pos, onEntrySelectCb);
         }
 
-        private void OpenDecoSearchWnd(string decorateeGuid, Vector2 pos, Action<BTGraphInitParamsDeco> onEntrySelectCb)
+        private void OpenServiceSearchWnd(string decorateeGuid, Vector2 pos, Action<BTGraphInitParamsAttacher> onEntrySelectCb)
         {
-            _decoSearchWnd.SetEntrySelectCallback(type =>
-            {
-                BTBaseTask decoSO = BTGlobalSettings.Instance.PlaygroundMode 
-                    ? DesignContainer.CreateDummyTask(type)
-                    : DesignContainer.GetOrCreateTask(type);
-                string decoGuid = System.Guid.NewGuid().ToString();
-                var initParams = new BTGraphInitParamsDeco()
-                {
-                    guid = decoGuid,
-                    nodeID = decorateeGuid,
-                    decoName = decoSO.Name,
-                    icon = BTGlobalSettings.Instance.GetIcon(type),
-                    task = decoSO
-                };
-                onEntrySelectCb(initParams);
-                decoSO.SavePropData(decoGuid, Activator.CreateInstance(decoSO.PropertyType));
-                DesignContainer.AddDecorator(decorateeGuid, new BTSerializableDecoData(decoGuid, decoSO.Name, decoSO));
-            });
-
-            SearchWindow.Open(new SearchWindowContext(pos), _decoSearchWnd);
-        }
-
-        private void OpenServiceSearchWnd(string decorateeGuid, Vector2 pos, Action<BTGraphInitParamsDeco> onEntrySelectCb)
-        {
-            OpenAttacherSearchWnd<BTServiceSearchWindow>(_serviceSearchWnd, decorateeGuid, pos, onEntrySelectCb);
+            OpenAttacherSearchWnd(_serviceSearchWnd, decorateeGuid, pos, onEntrySelectCb);
         }
 
         private void OpenAttacherSearchWnd<T>(
             T window, 
             string decorateeGuid, 
             Vector2 pos, 
-            Action<BTGraphInitParamsDeco> onEntrySelectCb)
+            Action<BTGraphInitParamsAttacher> onEntrySelectCb)
             where T : BTSearchWindowBase
         {
             window.OnEntrySelected = (type, pos) =>
                 {
-                    BTBaseTask decoSO = BTGlobalSettings.Instance.PlaygroundMode 
+                    BTBaseTask attacherSO = BTGlobalSettings.Instance.PlaygroundMode 
                         ? DesignContainer.CreateDummyTask(type)
                         : DesignContainer.GetOrCreateTask(type);
 
-                    string decoGuid = System.Guid.NewGuid().ToString();
-                    var initParams = new BTGraphInitParamsDeco()
+                    string decoGuid = Guid.NewGuid().ToString();
+                    var initParams = new BTGraphInitParamsAttacher()
                     {
                         guid = decoGuid,
                         nodeID = decorateeGuid,
-                        decoName = decoSO.Name,
+                        name = attacherSO.Name,
                         icon = BTGlobalSettings.Instance.GetIcon(type),
-                        task = decoSO
+                        task = attacherSO
                     };
 
                     onEntrySelectCb(initParams);
-                    decoSO.SavePropData(decoGuid, Activator.CreateInstance(decoSO.PropertyType));
-                    DesignContainer.AddDecorator(decorateeGuid, new BTSerializableDecoData(decoGuid, decoSO.Name, decoSO));
+                    attacherSO.SavePropData(decoGuid, Activator.CreateInstance(attacherSO.PropertyType));
+                    // DesignContainer.AddDecorator(decorateeGuid, new BTSerializableDecoData(decoGuid, attacherSO.Name, attacherSO));
                 };
 
             SearchWindow.Open(new SearchWindowContext(pos), window);

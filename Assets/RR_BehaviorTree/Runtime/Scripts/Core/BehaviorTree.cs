@@ -7,6 +7,28 @@ namespace RR.AI.BehaviorTree
 {
     public class BehaviorTree : MonoBehaviour
     {
+        private class RuntimeNodeSortWrapper : IBTOrderable, IBTIdentifiable
+        {
+            public string Guid { get; }
+            public string ParentGuid { get; set; }
+            public string NextSiblingGuid { get; set; }
+            public BTBaseTask Task { get; }
+            public BTNodeType Type { get; }
+            public BTNodeType ParentType { get; }
+            public int x { get; set; }
+            public int y { get; set; }
+
+            public RuntimeNodeSortWrapper(string guid, BTNodeType nodeType, BTNodeType parentType, int x, int y, BTBaseTask task = null)
+            {
+                Guid = guid;
+                Type = nodeType;
+                ParentType = parentType;
+                this.x = x;
+                this.y = y;
+                Task = task;
+            }
+        }
+
         [SerializeField]
         private GameObject _actor = null;
 
@@ -138,28 +160,6 @@ namespace RR.AI.BehaviorTree
 
             _runtimeBlackboard = _designContainer.Blackboard.CreateRuntimeBlackboard();
             _scheduler = new BTScheduler(execList, _actor, _runtimeBlackboard);
-        }
-
-        private class RuntimeNodeSortWrapper : IBTOrderable, IBTIdentifiable
-        {
-            public string Guid { get; }
-            public string ParentGuid { get; set; }
-            public string NextSiblingGuid { get; set; }
-            public BTBaseTask Task { get; }
-            public BTNodeType Type { get; }
-            public BTNodeType ParentType { get; }
-            public int x { get; set; }
-            public int y { get; set; }
-
-            public RuntimeNodeSortWrapper(string guid, BTNodeType nodeType, BTNodeType parentType, int x, int y, BTBaseTask task = null)
-            {
-                Guid = guid;
-                Type = nodeType;
-                ParentType = parentType;
-                this.x = x;
-                this.y = y;
-                Task = task;
-            }
         }
 
         private void Update()

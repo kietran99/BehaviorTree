@@ -110,7 +110,7 @@ namespace RR.AI.BehaviorTree
 
         public override void OnUnselected()
         {
-            BTGraphNodeDecorator.OnNodeUnselected(_guid);
+            BTGraphNodeAttacher.OnNodeUnselected(_guid);
             base.OnUnselected();
         }
 

@@ -86,18 +86,14 @@ namespace RR.AI.BehaviorTree
 
         private BTNodeSearchWindow CreateNodeSearchWindow(BTGraphView graphView)
         {
-            var window = UnityEngine.ScriptableObject.CreateInstance<BTNodeSearchWindow>();
+            var window = ScriptableObject.CreateInstance<BTNodeSearchWindow>();
             graphView.nodeCreationRequest += context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), window);
-            System.Func<Vector2, Vector2> contextToLocalMousePos = contextMousePos =>
-            {
-                var worldPos = rootVisualElement.ChangeCoordinatesTo(rootVisualElement.parent, contextMousePos - position.position);
-                return graphView.WorldToLocal(worldPos);
-            };
 
             window.Init((nodeType, pos) => 
             {
-                var localMousePos = contextToLocalMousePos(pos);
-                var node = BTGraphNodeFactory.CreateDefaultGraphNode(
+                Vector2 worldMousePos = rootVisualElement.ChangeCoordinatesTo(rootVisualElement.parent, pos - position.position);
+                Vector2 localMousePos = graphView.WorldToLocal(worldMousePos);
+                Node node = BTGraphNodeFactory.CreateDefaultGraphNode(
                     nodeType, 
                     _graphView.GetBlackboard() as GraphBlackboard, 
                     localMousePos,

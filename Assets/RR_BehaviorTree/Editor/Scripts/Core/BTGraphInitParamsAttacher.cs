@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTGraphInitParamsDeco
+    public class BTGraphInitParamsAttacher
     {
-        public string guid, nodeID, decoName;
+        public string guid, nodeID, name;
         public Texture2D icon;
         public BTBaseTask task;
     }

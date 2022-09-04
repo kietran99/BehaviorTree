@@ -11,14 +11,14 @@ namespace RR.AI.BehaviorTree
     public abstract class BTGraphNodeBase : Node, IBTSerializableNode
     {
         protected string _guid;
-        private List<BTGraphNodeDecorator> _decorators;
-        protected List<BTGraphNodeDecorator> Decorators
+        private List<BTGraphNodeAttacher> _decorators;
+        protected List<BTGraphNodeAttacher> Attachers
         {
             get
             {
                 if (_decorators == null)
                 {
-                    _decorators = new List<BTGraphNodeDecorator>();
+                    _decorators = new List<BTGraphNodeAttacher>();
                 }
 
                 return _decorators;
@@ -37,8 +37,8 @@ namespace RR.AI.BehaviorTree
         public int x { get; protected set; }
         public int y { get; protected set; }
 
-        protected Action<string, Vector2, Action<BTGraphInitParamsDeco>> OpenDecoSearchWnd;
-        protected Action<string, Vector2, Action<BTGraphInitParamsDeco>> OpenServiceSearchWnd;
+        protected Action<string, Vector2, Action<BTGraphInitParamsAttacher>> OpenDecoSearchWnd;
+        protected Action<string, Vector2, Action<BTGraphInitParamsAttacher>> OpenServiceSearchWnd;
 
         public abstract void OnConnect(BTDesignContainer designContainer, string parentGuid);
         public abstract void OnCreate(BTDesignContainer designContainer, Vector2 position);
@@ -72,7 +72,7 @@ namespace RR.AI.BehaviorTree
 
         public void InitDecorators(List<BTSerializableDecoData> serializedDecorators)
         {
-            _decorators = new List<BTGraphNodeDecorator>(serializedDecorators.Count);
+            _decorators = new List<BTGraphNodeAttacher>(serializedDecorators.Count);
 
             foreach (var serializedDeco in serializedDecorators)
             {
@@ -82,14 +82,14 @@ namespace RR.AI.BehaviorTree
             }
         }
 
-        private BTGraphNodeDecorator CreateDecorator(BTSerializableDecoData serializedDecorator)
+        private BTGraphNodeAttacher CreateDecorator(BTSerializableDecoData serializedDecorator)
         {
             var decoIcon = BTGlobalSettings.Instance.GetIcon(serializedDecorator.decorator.GetType());
-            var initParams = new BTGraphInitParamsDeco()
+            var initParams = new BTGraphInitParamsAttacher()
             {
                 guid = serializedDecorator.guid,
                 nodeID = _guid,
-                decoName = serializedDecorator.name,
+                name = serializedDecorator.name,
                 icon = decoIcon,
                 task = serializedDecorator.decorator
             };
@@ -129,22 +129,23 @@ namespace RR.AI.BehaviorTree
         //     var attacher = ;
         // }
 
-        private void AttachNewDecorator(BTGraphInitParamsDeco initParams)
+        private void AttachNewDecorator(BTGraphInitParamsAttacher initParams)
         {
             var decorator = CreateDecorator(initParams);
             AttachDecorator(decorator);
             OrderLabel.SetRealPosition(new Vector2(x + LabelPosX, y));
         }
 
-        private void AttachDecorator(BTGraphNodeDecorator decorator)
+        private void AttachDecorator(BTGraphNodeAttacher decorator)
         {
             extensionContainer.style.backgroundColor = Utils.ColorExtension.Create(62f);
             extensionContainer.style.paddingTop = 3f;
             extensionContainer.Add(decorator);
-            Decorators.Add(decorator);
+            Attachers.Add(decorator);
             RefreshExpandedState();
         }
 
-        private BTGraphNodeDecorator CreateDecorator(BTGraphInitParamsDeco initParams) => new BTGraphNodeDecorator(initParams);
+        private BTGraphNodeAttacher CreateDecorator(BTGraphInitParamsAttacher initParams) 
+            => BTGraphNodeAttacher.CreateDecorator(initParams);
     }
 }

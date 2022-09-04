@@ -1,6 +1,7 @@
+using UnityEditor.Experimental.GraphView;
+
 using System;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 
 namespace RR.AI.BehaviorTree
 {

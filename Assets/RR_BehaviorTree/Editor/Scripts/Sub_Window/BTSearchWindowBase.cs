@@ -38,12 +38,12 @@ namespace RR.AI.BehaviorTree
             List<SearchTreeEntry> tree = CreateSearchTreeTopLevelEntries(context);
 
             foreach (Type type in _itemTypes)
-            {      
+            {    
                 tree.Add(
                     new SearchTreeEntry(new GUIContent(GetItemName(type), _indentation))
                     {
                         userData = type,
-                        level = 2
+                        level = 1
                     });
             }
 

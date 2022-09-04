@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTGraphNodeDecorator : VisualElement
+    public class BTGraphNodeAttacher : VisualElement
     {
         private const string STYLE_IDLE_UNSELECTED_BORDER = "idle-unselected-border";
         private const string STYLE_IDLE_SELECTED_BORDER = "idle-selected-border";
@@ -19,13 +19,23 @@ namespace RR.AI.BehaviorTree
 
         public string Name { get; private set; }
 
-        private static BTGraphNodeDecorator _curSelected = null;
+        private static BTGraphNodeAttacher _curSelected = null;
 
-        public BTGraphNodeDecorator(BTGraphInitParamsDeco initParams)
+        public static BTGraphNodeAttacher CreateDecorator(BTGraphInitParamsAttacher initParams)
         {
-            _contentContainer = CreateTitleContent(initParams.decoName, initParams.icon);
-            Name = initParams.decoName;
-            _contentContainer.styleSheets.Add(Resources.Load<StyleSheet>("Stylesheets/BTNodeDecorator"));
+            return new BTGraphNodeAttacher(initParams, "BTNodeDecorator");
+        }
+
+        public static BTGraphNodeAttacher CreateService(BTGraphInitParamsAttacher initParams)
+        {
+            return new BTGraphNodeAttacher(initParams, "BTNodeService");
+        }
+
+        public BTGraphNodeAttacher(BTGraphInitParamsAttacher initParams, string styleSheetName)
+        {
+            _contentContainer = CreateTitleContent(initParams.name, initParams.icon);
+            Name = initParams.name;
+            _contentContainer.styleSheets.Add(Resources.Load<StyleSheet>($"Stylesheets/{styleSheetName}"));
             _curBorderStyle = STYLE_IDLE_UNSELECTED_BORDER;
             _contentContainer.AddToClassList(_curBorderStyle);
             

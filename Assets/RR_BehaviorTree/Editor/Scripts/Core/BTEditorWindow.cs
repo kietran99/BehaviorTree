@@ -77,9 +77,13 @@ namespace RR.AI.BehaviorTree
                 _graphView.OpenGraphSettingsWnd();
             }) { text = "Settings" };
 
+            var playgroundModeToggle = new Toggle() { text = "Playground Mode", value = BTGlobalSettings.Instance.PlaygroundMode };
+            playgroundModeToggle.RegisterValueChangedCallback(evt => BTGlobalSettings.Instance.PlaygroundMode = evt.newValue);
+
             toolbar.Add(saveBtn);
             toolbar.Add(cleanupBtn);
             toolbar.Add(settingsBtn);
+            toolbar.Add(playgroundModeToggle);
 
             return toolbar;
         }

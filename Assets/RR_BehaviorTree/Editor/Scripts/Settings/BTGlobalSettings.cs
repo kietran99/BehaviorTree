@@ -45,8 +45,11 @@ namespace RR.AI.BehaviorTree
 
         private NodeIconSettingsManager _nodeIconSettingsManager;
 
-
-        public bool PlaygroundMode => _playgroundMode;
+        public bool PlaygroundMode
+        {
+            get => _playgroundMode;
+            set => _playgroundMode = value;
+        }
 
         public TextAsset NodeIconSettingsAsset
         {

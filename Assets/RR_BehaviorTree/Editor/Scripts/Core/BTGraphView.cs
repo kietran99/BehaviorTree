@@ -186,7 +186,7 @@ namespace RR.AI.BehaviorTree
 
         private void OpenAttacherSearchWnd<T>(
             T window, 
-            string decorateeGuid, 
+            string targetGuid, 
             Vector2 pos, 
             Action<BTGraphInitParamsAttacher> onEntrySelectCb)
             where T : BTSearchWindowBase
@@ -197,18 +197,18 @@ namespace RR.AI.BehaviorTree
                         ? DesignContainer.CreateDummyTask(type)
                         : DesignContainer.GetOrCreateTask(type);
 
-                    string decoGuid = Guid.NewGuid().ToString();
+                    string attacherGuid = Guid.NewGuid().ToString();
                     var initParams = new BTGraphInitParamsAttacher()
                     {
-                        guid = decoGuid,
-                        nodeID = decorateeGuid,
+                        guid = attacherGuid,
+                        nodeID = targetGuid,
                         name = attacherSO.Name,
                         icon = BTGlobalSettings.Instance.GetIcon(type),
                         task = attacherSO
                     };
 
                     onEntrySelectCb(initParams);
-                    attacherSO.SavePropData(decoGuid, Activator.CreateInstance(attacherSO.PropertyType));
+                    attacherSO.SavePropData(attacherGuid, Activator.CreateInstance(attacherSO.PropertyType));
                     // DesignContainer.AddDecorator(decorateeGuid, new BTSerializableDecoData(decoGuid, attacherSO.Name, attacherSO));
                 };
 
@@ -439,7 +439,7 @@ namespace RR.AI.BehaviorTree
             }
 
             _graphSettingsWnd.Open();
-            AddElement(_graphSettingsWnd);
+            Add(_graphSettingsWnd);
         }
     }
 }

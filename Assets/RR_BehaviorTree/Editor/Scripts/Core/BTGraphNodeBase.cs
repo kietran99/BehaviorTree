@@ -11,17 +11,17 @@ namespace RR.AI.BehaviorTree
     public abstract class BTGraphNodeBase : Node, IBTSerializableNode
     {
         protected string _guid;
-        private List<BTGraphNodeAttacher> _decorators;
+        private List<BTGraphNodeAttacher> _attachers;
         protected List<BTGraphNodeAttacher> Attachers
         {
             get
             {
-                if (_decorators == null)
+                if (_attachers == null)
                 {
-                    _decorators = new List<BTGraphNodeAttacher>();
+                    _attachers = new List<BTGraphNodeAttacher>();
                 }
 
-                return _decorators;
+                return _attachers;
             }
         }
 
@@ -60,40 +60,41 @@ namespace RR.AI.BehaviorTree
         {
             get
             {
-                if (_decorators == null || _decorators.Count == 0)
+                if (_attachers == null || _attachers.Count == 0)
                 {
                     return Name.Length;
                 }
 
-                var longestDecorator = _decorators.Aggregate((longest, next) => next.Name.Length > longest.Name.Length ? next : longest);
+                var longestDecorator = _attachers.Aggregate((longest, next) => next.Name.Length > longest.Name.Length ? next : longest);
                 return Mathf.Max(Name.Length, longestDecorator.Name.Length);
             }
         }
 
-        public void InitDecorators(List<BTSerializableDecoData> serializedDecorators)
+        public void InitAttachers(List<BTSerializableAttacher> serializedAttachers)
         {
-            _decorators = new List<BTGraphNodeAttacher>(serializedDecorators.Count);
+            _attachers = new List<BTGraphNodeAttacher>(serializedAttachers.Count);
 
-            foreach (var serializedDeco in serializedDecorators)
-            {
-                var decoElement = CreateDecorator(serializedDeco);
-                _decorators.Add(decoElement);
-                AttachDecorator(decoElement);
+            foreach (var serializedAttacher in serializedAttachers)
+            {   
+                bool isDecorator = typeof(IBTDecorator).IsAssignableFrom(serializedAttacher.task.GetType());
+                BTGraphInitParamsAttacher initParams = ToGraphInitParams(serializedAttacher);
+                var graphAttacher = isDecorator ? AttachNewDecorator(initParams) : AttachNewService(initParams);
             }
         }
 
-        private BTGraphNodeAttacher CreateDecorator(BTSerializableDecoData serializedDecorator)
+        private BTGraphInitParamsAttacher ToGraphInitParams(BTSerializableAttacher serializedAttacher)
         {
-            var decoIcon = BTGlobalSettings.Instance.GetIcon(serializedDecorator.decorator.GetType());
+            var icon = BTGlobalSettings.Instance.GetIcon(serializedAttacher.task.GetType());
             var initParams = new BTGraphInitParamsAttacher()
             {
-                guid = serializedDecorator.guid,
+                guid = serializedAttacher.guid,
                 nodeID = _guid,
-                name = serializedDecorator.name,
-                icon = decoIcon,
-                task = serializedDecorator.decorator
+                name = serializedAttacher.name,
+                icon = icon,
+                task = serializedAttacher.task
             };
-            return CreateDecorator(initParams);
+
+            return initParams;
         }
 
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
@@ -109,14 +110,14 @@ namespace RR.AI.BehaviorTree
             {
                 var rect = GetPosition();
                 var mousePos = rect.position + new Vector2(rect.width, 0f);
-                OpenDecoSearchWnd(_guid, mousePos, AttachNewDecorator);
+                OpenDecoSearchWnd(_guid, mousePos, initParams => AttachNewDecorator(initParams));
             });
 
             evt.menu.InsertAction(2, "Add Service", action => 
             {
                 var rect = GetPosition();
                 var mousePos = rect.position + new Vector2(rect.width, 0f);
-                OpenServiceSearchWnd(_guid, mousePos, AttachNewDecorator);
+                OpenServiceSearchWnd(_guid, mousePos, initParams => AttachNewService(initParams));
             });
 
             evt.menu.InsertSeparator("/", 1);
@@ -124,28 +125,27 @@ namespace RR.AI.BehaviorTree
 
         protected abstract bool AreAttachersAllowed { get; }
 
-        // private void AddNewAttacher<T>(BTGraphInitParamsDeco initParams) where T : VisualElement
-        // {
-        //     var attacher = ;
-        // }
+        private BTGraphNodeAttacher AttachNewService(BTGraphInitParamsAttacher initParams) 
+            => AddNewAttacher(initParams, BTGraphNodeAttacher.CreateService);
 
-        private void AttachNewDecorator(BTGraphInitParamsAttacher initParams)
-        {
-            var decorator = CreateDecorator(initParams);
-            AttachDecorator(decorator);
-            OrderLabel.SetRealPosition(new Vector2(x + LabelPosX, y));
-        }
+        private BTGraphNodeAttacher AttachNewDecorator(BTGraphInitParamsAttacher initParams)
+            => AddNewAttacher(initParams, BTGraphNodeAttacher.CreateDecorator);
 
-        private void AttachDecorator(BTGraphNodeAttacher decorator)
+        private BTGraphNodeAttacher AddNewAttacher(BTGraphInitParamsAttacher initParams, Func<BTGraphInitParamsAttacher, BTGraphNodeAttacher> ctor)
         {
+            BTGraphNodeAttacher attacher = ctor(initParams);
             extensionContainer.style.backgroundColor = Utils.ColorExtension.Create(62f);
             extensionContainer.style.paddingTop = 3f;
-            extensionContainer.Add(decorator);
-            Attachers.Add(decorator);
+            extensionContainer.Add(attacher);
+            Attachers.Add(attacher);
             RefreshExpandedState();
-        }
 
-        private BTGraphNodeAttacher CreateDecorator(BTGraphInitParamsAttacher initParams) 
-            => BTGraphNodeAttacher.CreateDecorator(initParams);
+            if (OrderLabel != null)
+            {
+                OrderLabel.SetRealPosition(new Vector2(x + LabelPosX, y));
+            }
+
+            return attacher;
+        }
     }
 }

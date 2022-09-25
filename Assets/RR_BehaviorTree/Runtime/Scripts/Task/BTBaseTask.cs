@@ -1,5 +1,6 @@
-using System;
 using UnityEngine;
+
+using System;
 
 namespace RR.AI.BehaviorTree
 {
@@ -12,20 +13,25 @@ namespace RR.AI.BehaviorTree
 
         public override Type PropertyType => typeof(TProp);
         
-        public override void Init(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid)
+        public sealed override void Init(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid)
         {
             Init(actor, blackboard, LoadPropValue(nodeGuid) as TProp);
         }
 
-        public override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid)
+        public sealed override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid)
         {
             return Tick(actor, blackboard, LoadPropValue(nodeGuid) as TProp);
         }
 
+        public sealed override void OnTreeEval(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid)
+        {
+            OnTreeEval(actor, blackboard, LoadPropValue(nodeGuid) as TProp);
+        }
+
         public abstract void Init(GameObject actor, RuntimeBlackboard blackboard, TProp prop);
         public abstract BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, TProp prop);
+        public virtual void OnTreeEval(GameObject actor, RuntimeBlackboard blackboard, TProp prop) {}
 
-        #region SAVE & LOAD
         public override bool SavePropData(string key, object data)
         {
             if (_propMap == null)
@@ -39,7 +45,7 @@ namespace RR.AI.BehaviorTree
             return res;
         }
 
-        public override object LoadPropValue(string key)
+        public sealed override object LoadPropValue(string key)
         {
             if (!_propMap.TryGetValue(key, out var data))
             {
@@ -49,14 +55,13 @@ namespace RR.AI.BehaviorTree
             return data;
         }
 
-        public override bool RemoveProp(string key)
+        public sealed override bool RemoveProp(string key)
         {
             var res = _propMap.Remove(key);
             UnityEditor.EditorUtility.SetDirty(this);
             UnityEditor.AssetDatabase.SaveAssetIfDirty(this);
             return res;
         }
-        #endregion
     }
 
     public abstract class BTBaseTask : ScriptableObject
@@ -65,7 +70,7 @@ namespace RR.AI.BehaviorTree
         private Texture2D _icon = null;
 
         public abstract string Name { get; }
-        public virtual System.Type PropertyType => typeof(BTTaskDataNone);
+        public virtual Type PropertyType => typeof(BTTaskDataNone);
 
         protected virtual string DefaultIconPath => string.Empty;
         public Texture2D Icon
@@ -90,6 +95,7 @@ namespace RR.AI.BehaviorTree
 
         public abstract void Init(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid);
         public abstract BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid);
+        public virtual void OnTreeEval(GameObject actor, RuntimeBlackboard blackboard, string nodeGuid) {}
         public virtual bool SavePropData(string key, object data) => true;
         public virtual object LoadPropValue(string key) 
         {

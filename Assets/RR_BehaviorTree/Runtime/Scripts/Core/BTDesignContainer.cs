@@ -18,7 +18,7 @@ namespace RR.AI.BehaviorTree
         private List<BTSerializableTaskData> _taskDataList = null;
 
         [SerializeField]
-        private SerializableDictionary<string, List<BTSerializableDecoData>> _decoratorDict = null;
+        private SerializableDictionary<string, List<BTSerializableAttacher>> _attacherDict = null;
 
         [SerializeField]
         private Blackboard _blackboard = null;
@@ -100,20 +100,20 @@ namespace RR.AI.BehaviorTree
             _nodeDataList.Remove(nodeToDelete);
         }
 
-        public void AddDecorator(string decorateeGuid, BTSerializableDecoData decorator)
+        public void AddAttacher(string decorateeGuid, BTSerializableAttacher attacher)
         {
-            if (!_decoratorDict.TryGetValue(decorateeGuid, out List<BTSerializableDecoData> decorators))
+            if (!_attacherDict.TryGetValue(decorateeGuid, out List<BTSerializableAttacher> attachers))
             {
-                _decoratorDict.Add(decorateeGuid, new List<BTSerializableDecoData>() { decorator });
+                _attacherDict.Add(decorateeGuid, new List<BTSerializableAttacher>() { attacher });
                 return;
             }
 
-            decorators.Add(decorator);
+            attachers.Add(attacher);
         }
 
-        public bool TryGetDecorators(string decorateeGuid, out List<BTSerializableDecoData> decorators)
+        public bool TryGetAttachers(string decorateeGuid, out List<BTSerializableAttacher> decorators)
         {
-            return _decoratorDict.TryGetValue(decorateeGuid, out decorators);
+            return _attacherDict.TryGetValue(decorateeGuid, out decorators);
         }
     }
 }

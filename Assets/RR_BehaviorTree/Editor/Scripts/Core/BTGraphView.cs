@@ -127,9 +127,9 @@ namespace RR.AI.BehaviorTree
             _graphNodes = new BTExecListBuilder<BTSerializableNodeDataBase, BTGraphNodeBase>()
                 .OnObjectCreate((node, parentGuid) =>
                 {
-                    if (DesignContainer.TryGetDecorators(node.Guid, out List<BTSerializableDecoData> decorators))
+                    if (DesignContainer.TryGetAttachers(node.Guid, out List<BTSerializableAttacher> attachers))
                     {
-                        node.InitDecorators(decorators);
+                        node.InitAttachers(attachers);
                     }
 
                     nodeDict.Add(node.Guid, node);
@@ -193,7 +193,7 @@ namespace RR.AI.BehaviorTree
         {
             window.OnEntrySelected = (type, pos) =>
                 {
-                    BTBaseTask attacherSO = BTGlobalSettings.Instance.PlaygroundMode 
+                    BTBaseTask attacherSO = BTGlobalSettings.Instance.PlaygroundMode
                         ? DesignContainer.CreateDummyTask(type)
                         : DesignContainer.GetOrCreateTask(type);
 
@@ -208,8 +208,14 @@ namespace RR.AI.BehaviorTree
                     };
 
                     onEntrySelectCb(initParams);
+
+                    if (BTGlobalSettings.Instance.PlaygroundMode)
+                    {
+                        return;
+                    }
+                    
                     attacherSO.SavePropData(attacherGuid, Activator.CreateInstance(attacherSO.PropertyType));
-                    // DesignContainer.AddDecorator(decorateeGuid, new BTSerializableDecoData(decoGuid, attacherSO.Name, attacherSO));
+                    DesignContainer.AddAttacher(targetGuid, new BTSerializableAttacher(attacherGuid, attacherSO.Name, attacherSO));
                 };
 
             SearchWindow.Open(new SearchWindowContext(pos), window);

@@ -51,7 +51,7 @@ namespace RR.AI.BehaviorTree
             _task = initParams.task;
         }
 
-        public VisualElement CreateTitleContent(string title, Texture2D nodeIcon)
+        private VisualElement CreateTitleContent(string title, Texture2D nodeIcon)
         {
             var container = new VisualElement();
             container.style.flexDirection = FlexDirection.Row;

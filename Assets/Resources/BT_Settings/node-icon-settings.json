@@ -21,16 +21,16 @@
             "icon": "Icons/BTNode/Task/BTDecoSucceeder"
         },
         {
-            "taskname": "BTDecoWithinRange",
-            "icon": "Icons/BTNode/Task/BTDecoWithinRange"
-        },
-        {
             "taskname": "BTTaskLog",
             "icon": "Icons/BTNode/Task/BTTaskLog"
         },
         {
             "taskname": "BTTaskWait",
             "icon": "Icons/BTNode/Task/BTTaskWait"
+        },
+        {
+            "taskname": "BTServiceFindTarget",
+            "icon": "Icons/BTNode/Task/BTServiceFindTarget"
         }
     ]
 }

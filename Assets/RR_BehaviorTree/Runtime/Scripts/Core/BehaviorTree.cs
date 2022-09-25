@@ -93,9 +93,9 @@ namespace RR.AI.BehaviorTree
 
             Func<string, System.Collections.Generic.IEnumerable<BTRuntimeDecorator>> FindDecorators = (decorateeGuid) =>
             {
-                if (_designContainer.TryGetDecorators(decorateeGuid, out var decoDataList))
+                if (_designContainer.TryGetAttachers(decorateeGuid, out var decoDataList))
                 {
-                    return decoDataList.Select(deco => new BTRuntimeDecorator(deco.guid, deco.decorator));
+                    return decoDataList.Select(deco => new BTRuntimeDecorator(deco.guid, deco.task));
                 };
 
                 return null;

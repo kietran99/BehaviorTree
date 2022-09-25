@@ -7,7 +7,12 @@ namespace RR.AI.BehaviorTree
 {
     public class BTServiceSearchWindow : BTSearchWindowBase
     {
-        protected override Func<Type, bool> ItemFilterPredicate => type => false;
+        protected override Func<Type, bool> ItemFilterPredicate => type => 
+                                                typeof(IBTService).IsAssignableFrom(type)
+                                                && !type.IsAbstract
+                                                && type != typeof(BTBaseTask)
+                                                && !type.IsGenericType
+                                                && type != typeof(BTTaskNull);
 
         protected override string BuiltInItemNamePrefix => "BTService";
 

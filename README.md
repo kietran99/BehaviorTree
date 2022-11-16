@@ -1,4 +1,6 @@
-# Behavior Tree (Work in Progress)
+# Behavior Tree
+## (Work in Progress - Project is currently being developed at **_develop_** branch)
+
 Behavior Tree is a Unity framework for implementing modular AI (Artificial Intelligence) behavior.
 
 ## Features

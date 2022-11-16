@@ -1,12 +1,5 @@
 {
   "dependencies": {
-    "com.coffee.upm-git-extension": {
-      "version": "https://github.com/mob-sakai/UpmGitExtension.git#2.0.1",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "e949d3e741950d55be7e3d6c6924dcf8935bbec2"
-    },
     "com.rraptor.events": {
       "version": "https://github.com/kietran99/RR_Events.git?path=Assets/RR_Events/#main",
       "depth": 0,
@@ -29,11 +22,11 @@
       "hash": "cc9ae0075471d0e51800d1e0557539d0f3069072"
     },
     "com.unity.2d.animation": {
-      "version": "7.0.7",
+      "version": "7.0.8",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "6.0.4",
+        "com.unity.2d.common": "6.0.5",
         "com.unity.2d.sprite": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
         "com.unity.modules.uielements": "1.0.0"
@@ -41,7 +34,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.common": {
-      "version": "6.0.4",
+      "version": "6.0.5",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -67,12 +60,12 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.psdimporter": {
-      "version": "6.0.5",
+      "version": "6.0.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.animation": "7.0.7",
-        "com.unity.2d.common": "6.0.4",
+        "com.unity.2d.animation": "7.0.8",
+        "com.unity.2d.common": "6.0.5",
         "com.unity.2d.sprite": "1.0.0"
       },
       "url": "https://packages.unity.com"
@@ -111,7 +104,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
-      "version": "1.17.2",
+      "version": "1.17.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -157,7 +150,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.core": {
-      "version": "1.4.2",
+      "version": "1.5.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {

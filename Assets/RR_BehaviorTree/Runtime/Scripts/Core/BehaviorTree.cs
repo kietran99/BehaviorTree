@@ -2,6 +2,7 @@ using UnityEngine;
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace RR.AI.BehaviorTree
 {
@@ -91,14 +92,15 @@ namespace RR.AI.BehaviorTree
                     return (0, 0);
                 };
 
-            Func<string, System.Collections.Generic.IEnumerable<BTRuntimeDecorator>> FindDecorators = (decorateeGuid) =>
+            Func<string, (IEnumerable<BTRuntimeAttacher>, IEnumerable<BTRuntimeAttacher>)> FindAttachers = (decorateeGuid) =>
             {
-                if (_designContainer.TryGetAttachers(decorateeGuid, out var decoDataList))
+                if (!_designContainer.TryGetAttachers(decorateeGuid, out var decorators, out var services))
                 {
-                    return decoDataList.Select(deco => new BTRuntimeDecorator(deco.guid, deco.task));
+                    return (null, null);
                 };
 
-                return null;
+                return (decorators.Select(deco => new BTRuntimeAttacher(deco.guid, deco.task))
+                    , services.Select(service => new BTRuntimeAttacher(service.guid, service.task)));
             };
 
             BTRuntimeNodeBase[] execList = execListBuilder
@@ -121,40 +123,42 @@ namespace RR.AI.BehaviorTree
                     int parentIdx = execListBuilder.GetNodeIndex(nodeWrapper.ParentGuid);
                     int nextSiblingIdx = execListBuilder.GetNodeIndex(nodeWrapper.NextSiblingGuid, parentIdx);
                     (int successIdx, int failIdx) = CalcIdxPair(nodeWrapper.Type, nodeWrapper.ParentType, parentIdx, nextSiblingIdx);
-                    System.Collections.Generic.IEnumerable<BTRuntimeDecorator> decorators = FindDecorators(nodeWrapper.Guid);
-                    
-                    if (decorators == null)
+                    (IEnumerable<BTRuntimeAttacher> decorators, IEnumerable<BTRuntimeAttacher> services) = FindAttachers(nodeWrapper.Guid);
+                    List<BTRuntimeAttacher> filteredDecorators = null;
+
+                    if (decorators != null)
                     {
-                        return new BTRuntimeNodeBase(
-                            nodeWrapper.Guid, 
-                            successIdx, failIdx, 
-                            nodeWrapper.Type, 
-                            nodeWrapper.Task,
-                            null);
+                        filteredDecorators = new List<BTRuntimeAttacher>();
+
+                        foreach (var deco in decorators)
+                        {
+                            Type taskType = deco.Task.GetType();
+                            if (taskType == typeof(BTDecoFailer))
+                            {
+                                successIdx = failIdx;
+                                continue;
+                            }
+
+                            if (taskType == typeof(BTDecoSucceeder))
+                            {
+                                failIdx = successIdx;
+                                continue;
+                            }
+
+                            filteredDecorators.Add(deco);
+                        }
                     }
 
-                    foreach (var deco in decorators)
-                    {
-                        if (deco.Task.GetType() == typeof(BTDecoFailer))
-                        {
-                            successIdx = failIdx;
-                        }
-                        else if (deco.Task.GetType() == typeof(BTDecoSucceeder))
-                        {
-                            failIdx = successIdx;
-                        }
-                    }
-
-                    BTRuntimeDecorator[] filteredDecorators = decorators
-                        .Where(deco => deco.Task.GetType() != typeof(BTDecoFailer) && deco.Task.GetType() != typeof(BTDecoSucceeder))
-                        .ToArray();
-
-                    return new BTRuntimeNodeBase(
+                    var node = new BTRuntimeNodeBase(
                         nodeWrapper.Guid, 
                         successIdx, failIdx, 
                         nodeWrapper.Type, 
-                        nodeWrapper.Task,
-                        filteredDecorators);
+                        nodeWrapper.Task);
+
+                    node.Decorators = filteredDecorators == null ? null : filteredDecorators.ToArray();
+                    node.Services = services == null ? null : services.ToArray();
+
+                    return node;
                 })
                 .ToArray();
 

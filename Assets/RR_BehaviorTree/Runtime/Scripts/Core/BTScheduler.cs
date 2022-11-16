@@ -3,6 +3,7 @@ using UnityEngine;
 using System;
 
 using ChoiceStack = System.Collections.Generic.Stack<(int successIdx, int failIdx)>;
+using System.Collections.Generic;
 
 namespace RR.AI.BehaviorTree
 {
@@ -13,6 +14,7 @@ namespace RR.AI.BehaviorTree
         private RuntimeBlackboard _blackboard;
         private ChoiceStack _choiceStack;
         private int _runningIdx;
+        private Stack<int> _activeServicesStack;
 
         public Action TreeEval;
         public Action<int> NodeTick;
@@ -27,15 +29,12 @@ namespace RR.AI.BehaviorTree
             _actor = actor;
             _blackboard = blackboard;
             _choiceStack = new ChoiceStack(_orderedNodes.Length);
-            _runningIdx = -1;
+            _activeServicesStack = new Stack<int>();
+            ResetRunningIdx();
 
             Init(actor, blackboard);
 
-            // for (int i = 0; i < _orderedNodes.Length; i++)
-            // {
-            //     var node = _orderedNodes[i];
-            //     Debug.Log($"{i} ({node.SuccessIdx} {node.FailIdx})");
-            // }
+            LogSetupStats();
 
             shouldTickOnce = false;
             hasTicked = false;
@@ -62,10 +61,12 @@ namespace RR.AI.BehaviorTree
 
         public void Tick()
         {
-            if (_runningIdx == -1)
+            bool hasNoRunningNode = !HasRunningNode();
+
+            if (hasNoRunningNode)
             {
-                // Debug.Log("Clear Stack");
                 _choiceStack.Clear();
+                _activeServicesStack.Clear();
             }
             
             if (shouldTickOnce)
@@ -80,12 +81,13 @@ namespace RR.AI.BehaviorTree
                 return;
             }
 
-            if (_runningIdx == -1)
+            if (hasNoRunningNode)
             {
                 TreeEval?.Invoke();
             }
 
-            InternalTick(_runningIdx == -1 ? 1 : _runningIdx, _choiceStack);
+            int tickIdx = hasNoRunningNode ? 1 : _runningIdx;
+            InternalTick(tickIdx, _choiceStack);
         }
 
         private BTNodeState InternalTick(int curIdx, ChoiceStack choiceStack)
@@ -97,10 +99,9 @@ namespace RR.AI.BehaviorTree
             }
 
             BTRuntimeNodeBase curNode = _orderedNodes[curIdx];
-            // Debug.Log($"Ticking node {curIdx}");
             NodeTick?.Invoke(curIdx);
 
-            BTRuntimeDecorator[] decorators = curNode.Decorators;
+            BTRuntimeAttacher[] decorators = curNode.Decorators;
 
             if (decorators != null)
             {
@@ -121,6 +122,16 @@ namespace RR.AI.BehaviorTree
                 }
             }
 
+            BTRuntimeAttacher[] services = curNode.Services;
+            if (services != null)
+            {
+                _activeServicesStack.Push(curIdx);
+                // foreach (var service in services)
+                // {
+
+                // }
+            }
+
             return curNode.Type == BTNodeType.Leaf
                 ? OnTickTask(curNode, curIdx, choiceStack)
                 : OnTickComposite(curNode, curIdx, choiceStack);
@@ -132,7 +143,7 @@ namespace RR.AI.BehaviorTree
             if (hasLowerSibling)
             {
                 choiceStack.Push((curNode.SuccessIdx, curNode.FailIdx));
-                // Debug.Log($"Choice stack push ({curNode.SuccessIdx}, {curNode.FailIdx})");
+                // Debug.Log($"Choice stack push ({curNode.SuccessIdx} : {curNode.FailIdx})");
             }
 
             return InternalTick(curIdx + 1, choiceStack);
@@ -141,23 +152,46 @@ namespace RR.AI.BehaviorTree
         private BTNodeState OnTickTask(BTRuntimeNodeBase curNode, int curIdx, ChoiceStack choiceStack)
         {
             BTNodeState taskState = curNode.Task.Tick(_actor, _blackboard, curNode.Guid);
-            _runningIdx = -1;
 
             if (taskState == BTNodeState.Running)
             {
                 // NodeReturn?.Invoke(curIdx); // May add a RunningNodeReturn event in the future
+
+                foreach (var idx in _activeServicesStack)
+                {
+                    // Debug.Log($"Service: {idx}");
+                    var serviceAttachee = _orderedNodes[idx];
+
+                    foreach (var service in serviceAttachee.Services)
+                    {
+                        service.Tick(_actor, _blackboard);
+                    }
+                }
+
                 _runningIdx = curIdx;
                 return BTNodeState.Running;
             }
 
+            bool finishedRunning = HasRunningNode();
+            
+            ResetRunningIdx();
             NodeReturn?.Invoke(curIdx);
 
             int contIdx = taskState == BTNodeState.Success ? curNode.SuccessIdx : curNode.FailIdx;
-            bool isContIdxNextSibling = contIdx > curIdx;
+            bool shouldTickNextSibling = contIdx > curIdx;
 
-            if (isContIdxNextSibling)
+            if (shouldTickNextSibling)
             {
                 return InternalTick(contIdx, choiceStack);
+            }
+
+            int parentIdx = contIdx;
+            NodeReturn?.Invoke(parentIdx);
+
+            if (_activeServicesStack.Count > 0 && parentIdx == _activeServicesStack.Peek())
+            {
+                int popIdx = _activeServicesStack.Pop();
+                // Debug.Log($"Services stack pop {popIdx}");
             }
 
             bool isLowestPriorityNode = choiceStack.Count == 0;
@@ -166,12 +200,22 @@ namespace RR.AI.BehaviorTree
                 return taskState;
             }
 
-            int parentIdx = isContIdxNextSibling ? curIdx : contIdx;
-            NodeReturn?.Invoke(parentIdx);
-
             (int parentSuccessIdx, int parentFailIdx) = choiceStack.Pop();
-            // Debug.Log($"Choice stack pop ({parentSuccessIdx}, {parentFailIdx})");
+            // Debug.Log($"Choice stack pop ({parentSuccessIdx} : {parentFailIdx})");
             int nextIdx = taskState == BTNodeState.Success ? parentSuccessIdx : parentFailIdx;
+
+            while (_activeServicesStack.Count > 0)
+            {
+                int topIdx = _activeServicesStack.Peek();
+                int topNodeProgressIdx = _orderedNodes[topIdx].ProgressIdx;
+                if (topNodeProgressIdx > nextIdx || topIdx == 1) // Services of node #1 are always active until BT reevaluates
+                {
+                    break;
+                }
+
+                _activeServicesStack.Pop();
+                // Debug.Log($"Services stack pop {topIdx}");
+            }
 
             if (nextIdx == 1)
             {
@@ -182,5 +226,18 @@ namespace RR.AI.BehaviorTree
         }
     
         private bool HasLowerSibling(BTRuntimeNodeBase node, int curIdx) => node.SuccessIdx > curIdx || node.FailIdx > curIdx;
+    
+        private bool HasRunningNode() => _runningIdx != -1;
+
+        private void ResetRunningIdx() => _runningIdx = -1;
+
+        private void LogSetupStats()
+        {
+            for (int i = 0; i < _orderedNodes.Length; i++)
+            {
+                var node = _orderedNodes[i];
+                Debug.Log($"[{i}] - {node.ToString()}");
+            }
+        }
     }
 }

@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTRuntimeDecorator
+    public class BTRuntimeAttacher
     {
-        public BTRuntimeDecorator(string guid, BTBaseTask task)
+        public BTRuntimeAttacher(string guid, BTBaseTask task)
         {
             Guid = guid;
             Task = task;

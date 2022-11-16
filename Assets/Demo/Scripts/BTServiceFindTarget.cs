@@ -17,7 +17,7 @@ namespace RR.Demo.AI.BehaviorTree
 
         protected override void OnUpdate(GameObject actor, RuntimeBlackboard blackboard, BTPropServiceFindTarget prop)
         {
-            
+            Debug.Log("[Service] Find Target");
         }
     }
 

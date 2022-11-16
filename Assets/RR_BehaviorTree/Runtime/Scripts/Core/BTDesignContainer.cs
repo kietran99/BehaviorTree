@@ -111,9 +111,36 @@ namespace RR.AI.BehaviorTree
             attachers.Add(attacher);
         }
 
-        public bool TryGetAttachers(string decorateeGuid, out List<BTSerializableAttacher> decorators)
+        public bool TryGetAttachers(string decorateeGuid, out List<BTSerializableAttacher> attachers)
         {
-            return _attacherDict.TryGetValue(decorateeGuid, out decorators);
+            return _attacherDict.TryGetValue(decorateeGuid, out attachers);
+        }
+
+        public bool TryGetAttachers(string decorateeGuid, out List<BTSerializableAttacher> decorators, out List<BTSerializableAttacher> services)
+        {
+            if (!_attacherDict.TryGetValue(decorateeGuid, out List<BTSerializableAttacher> attachers))
+            {
+                decorators = services = null;
+                return false;
+            }
+
+            decorators = new List<BTSerializableAttacher>();
+            services = new List<BTSerializableAttacher>();
+
+            foreach (var attacher in attachers)
+            {
+                bool isDecorator = typeof(IBTDecorator).IsAssignableFrom(attacher.task.GetType());
+                if (isDecorator)
+                {
+                    decorators.Add(attacher);
+                }
+                else
+                {
+                    services.Add(attacher);
+                }
+            }
+
+            return true;
         }
     }
 }

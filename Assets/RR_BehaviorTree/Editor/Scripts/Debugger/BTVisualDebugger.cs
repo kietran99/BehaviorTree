@@ -69,7 +69,7 @@ namespace RR.AI.BehaviorTree.Debugger
 
         private void OnNodeTick(int nodeIdx)
         {
-            // Debug.Log($"OnNodeTick: {nodeIdx}");
+            UnityEngine.Debug.Log($"OnNodeTick: {nodeIdx}");
 
             if (_isInitFrame || _isFirstCapturedTick)
             {
@@ -131,7 +131,7 @@ namespace RR.AI.BehaviorTree.Debugger
 
         private void OnNodeReturn(int nodeIdx)
         {
-            // Debug.Log($"OnNodeReturn: {nodeIdx}");
+            UnityEngine.Debug.Log($"OnNodeReturn: {nodeIdx}");
             
             _returnIdx = nodeIdx;
         }

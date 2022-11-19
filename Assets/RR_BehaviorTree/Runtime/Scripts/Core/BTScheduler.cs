@@ -52,6 +52,14 @@ namespace RR.AI.BehaviorTree
                     }
                 }
 
+                if (node.Services != null)
+                {
+                    foreach (var service in node.Services)
+                    {
+                        service.Init(actor, blackboard);
+                    }
+                }
+
                 if (node.Type == BTNodeType.Leaf)
                 {
                     node.Task.Init(_actor, _blackboard, node.Guid);
@@ -159,7 +167,6 @@ namespace RR.AI.BehaviorTree
 
                 foreach (var idx in _activeServicesStack)
                 {
-                    // Debug.Log($"Service: {idx}");
                     var serviceAttachee = _orderedNodes[idx];
 
                     foreach (var service in serviceAttachee.Services)

@@ -34,7 +34,7 @@ namespace RR.AI
             _map = map == null ? new Dictionary<string, IBBValueBase>() : map;
         }
 
-        private bool AddEntry<T>(string key, BBValue<T> val)
+        public bool AddEntry<T>(string key, BBValue<T> val)
         {
             if (_map.TryGetValue(key, out IBBValueBase _))
             {
@@ -42,12 +42,26 @@ namespace RR.AI
                 return false;
             }
             
+            var valType = val.ValueType;
+
+            if (valType != typeof(int)
+                && valType != typeof(float)
+                && valType != typeof(bool)
+                && valType != typeof(string)
+                && valType != typeof(Vector2)
+                && valType != typeof(Vector3)
+                && !typeof(UnityEngine.Object).IsAssignableFrom(valType))
+            {
+                Debug.LogError($"Unsupported type: {valType}");
+                return false;
+            }
+
             _map.Add(key, val);
             BBEventBroker.Instance.Publish(new BBAddEntryEvent<T>(key, val.value));
             return true;
         }
 
-        private bool UpdateEntry<T>(string key, BBValue<T> val)
+        public bool UpdateEntry<T>(string key, BBValue<T> val)
         {
             if (!_map.TryGetValue(key, out var oldVal))
 			{
@@ -62,7 +76,7 @@ namespace RR.AI
             }
 
 			_map[key] = val;
-            BBEventBroker.Instance.Publish(new BBUpdateEntryEvent<T>(key, val.value));
+            BBEventBroker.Instance.Publish(new BBUpdateEntryEvent<T>(key, (BBValue<T>)oldVal, val.value));
 			return true;
         }
 
@@ -99,36 +113,6 @@ namespace RR.AI
             }
      
             return val as BBRTValueGeneric<T>;
-		}
-    
-        public bool Add<T>(string key, T value)
-		{
-			if (_map.TryGetValue(key, out var _))
-			{
-				Debug.LogWarning($"Key {key} already exists");
-				return false;
-			}
-
-			_map.Add(key, new BBRTValueGeneric<T>(value));
-			return true;
-		}
-
-        public bool Update<T>(string key, T value)
-		{
-			if (!_map.TryGetValue(key, out var val))
-			{
-				Debug.LogWarning($"Key {key} does not exist");
-				return false;
-			}
-
-            if (!typeof(T).Equals(val.ValueType))
-            {
-                Debug.LogWarning($"Type mismatch {typeof(T)}. Expecting type of {val.ValueType}");
-                return false;
-            }
-
-			(_map[key] as BBRTValueGeneric<T>).Value = value;
-			return true;
 		}
         
         public bool Remove(string key)

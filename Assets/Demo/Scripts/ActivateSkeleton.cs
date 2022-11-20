@@ -22,7 +22,7 @@ namespace RR.Demo.AI.BehaviorTree
         public override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, ActivateSkeletonProp prop)
         {
             prop.ActorAnimator.SetTrigger(prop.AnimParam);
-            return blackboard.Update<bool>(prop.ActivatedKey, true).ToBTNodeState();
+            return blackboard.UpdateEntry<bool>(prop.ActivatedKey, true).ToBTNodeState();
         }
     }
 

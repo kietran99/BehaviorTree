@@ -245,6 +245,8 @@ namespace RR.AI.BehaviorTree
                 var node = _orderedNodes[i];
                 Debug.Log($"[{i}] - {node.ToString()}");
             }
+
+            _blackboard.Log();
         }
     }
 }

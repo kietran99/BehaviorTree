@@ -32,6 +32,6 @@ namespace RR.AI
             return true;
         }
 
-        public bool AddToRuntimeBlackboard(RuntimeBlackboard runtimeBB, string key) => runtimeBB.Add(key, _value);
+        public bool AddToRuntimeBlackboard(RuntimeBlackboard runtimeBB, string key) => runtimeBB.AddEntry<T>(key, _value);
     }
 }

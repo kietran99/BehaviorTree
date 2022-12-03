@@ -115,7 +115,7 @@ namespace RR.AI.BehaviorTree
             {
                 foreach (var deco in decorators)
                 {
-                    BTNodeState decoState = deco.Tick(_actor, _blackboard);
+                    BTNodeState decoState = deco.Tick();
                     // Debug.Log($"Ticking decorator {deco.Task.Name}: {decoState}");
 
                     if (decoState == BTNodeState.Success)
@@ -171,7 +171,7 @@ namespace RR.AI.BehaviorTree
 
                     foreach (var service in serviceAttachee.Services)
                     {
-                        service.Tick(_actor, _blackboard);
+                        service.Tick();
                     }
                 }
 

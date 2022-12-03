@@ -16,7 +16,7 @@ namespace RR.AI.BehaviorTree
         public void Init(GameObject actor, RuntimeBlackboard blackboard)
             => Task.Init(actor, blackboard);
 
-        public BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard)
+        public BTNodeState Tick()
             => Task.Update();
     }
 }

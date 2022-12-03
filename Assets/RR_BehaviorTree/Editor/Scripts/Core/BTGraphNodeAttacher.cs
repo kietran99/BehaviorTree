@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
+using System;
+
 namespace RR.AI.BehaviorTree
 {
     public class BTGraphNodeAttacher : VisualElement
@@ -20,6 +22,9 @@ namespace RR.AI.BehaviorTree
         public string Name { get; private set; }
 
         private static BTGraphNodeAttacher _curSelected = null;
+
+        public Action MouseEntered { get; set; }
+        public Action MouseExited { get; set; }
 
         public static BTGraphNodeAttacher CreateDecorator(BTGraphInitParamsAttacher initParams)
         {
@@ -94,11 +99,13 @@ namespace RR.AI.BehaviorTree
         private void OnMouseEnter(MouseEnterEvent evt)
         {
             SwapBorderStyle(_selected ? STYLE_HOVER_SELECTED_BORDER : STYLE_HOVER_UNSELECTED_BORDER);
+            MouseEntered?.Invoke();
         }
     
         private void OnMouseExit(MouseLeaveEvent evt)
         {
             SwapBorderStyle(_selected ? STYLE_IDLE_SELECTED_BORDER : STYLE_IDLE_UNSELECTED_BORDER);
+            MouseExited?.Invoke();
         }
 
         public static void OnNodeUnselected(string nodeID)

@@ -145,7 +145,24 @@ namespace RR.AI.BehaviorTree
                 OrderLabel.SetRealPosition(new Vector2(x + LabelPosX, y));
             }
 
+            attacher.MouseEntered += OnAttacherMouseEnter;
+            attacher.MouseExited += OnAttacherMouseExit;
+
             return attacher;
+        }
+
+        private void OnAttacherMouseEnter()
+        {
+            var evtPtrLeave = PointerLeaveEvent.GetPooled();
+            evtPtrLeave.target = this;
+            this.SendEvent(evtPtrLeave);
+        }
+
+        private void OnAttacherMouseExit()
+        {
+            var evtPtrEnter = PointerEnterEvent.GetPooled();
+            evtPtrEnter.target = this;
+            this.SendEvent(evtPtrEnter);
         }
     }
 }

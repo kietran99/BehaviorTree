@@ -11,7 +11,7 @@ namespace RR.AI.BehaviorTree
         private const string STYLE_HOVER_SELECTED_BORDER = "hover-selected-border";
 
         private string _guid, _nodeID;
-        private BTBaseTask _task;
+        private BTTaskBase _task;
 
         private VisualElement _contentContainer;
         private bool _selected;

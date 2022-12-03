@@ -1,5 +1,5 @@
+using UnityEditor;
 using UnityEditor.UIElements;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace RR.AI.BehaviorTree
@@ -10,7 +10,6 @@ namespace RR.AI.BehaviorTree
         private TextField _nameField, _descField;
         private VisualElement _taskPropsContentContainer;
         private float _height, _width;
-
 
         public BTSubWndGraphDetails(UnityEngine.Rect rect)
         {
@@ -93,84 +92,30 @@ namespace RR.AI.BehaviorTree
             _descField.value = desc;
         }
 
-        public void DrawTaskProperties(object propFieldValue, System.Type propType, GraphBlackboard blackboard)
+        public void ClearTaskPropsContent() => _taskPropsContentContainer.Clear();
+
+        public void DrawTaskProp(BTTaskBase task)
         {
             ClearTaskPropsContent();
-
-            var serializableAttribs = propType.GetCustomAttributes(typeof(System.SerializableAttribute), true);
-            
-            if (serializableAttribs.Length == 0)
-            {
-                Debug.LogError($"{propType} must be Serializable");
-                return;
-            }
-
+            var serializedTask = new SerializedObject(task);
             var container = new VisualElement();
-            var fieldInfoList = propType.GetFields();
-
-            foreach (var fieldInfo in fieldInfoList)
+            var taskIter = serializedTask.GetIterator();
+            do
             {
-                var childContainer = CreatePropFieldContainer();
-                childContainer.Add(CreatePropLabel(fieldInfo.Name, 150f)); 
+                string displayName = taskIter.displayName;
 
-                var field = DrawPropField(fieldInfo, propFieldValue, blackboard);
-                childContainer.Add(field);
+                if (displayName == "Script" || displayName == "Base")
+                {
+                    continue;
+                }
 
-                container.Add(childContainer);
-            }
+                var UIField = new PropertyField(taskIter, taskIter.displayName);
+                UIField.Bind(serializedTask);
+                container.Add(UIField);
+            } while (taskIter.NextVisible(true));
 
             AddVerticalSpaceToFields(container);
             _taskPropsContentContainer.Add(container);
         }
-
-        private VisualElement CreatePropFieldContainer()
-        {
-            var container = new VisualElement();
-            container.style.flexDirection = FlexDirection.Row;
-            return container;
-        }
-
-        private VisualElement CreatePropLabel(string text, float width)
-        {
-            var label = new Label(RR.Utils.StringUtility.InsertWhiteSpaces(text));
-            label.style.width = width;
-            label.style.unityTextAlign = TextAnchor.MiddleLeft;
-            label.style.fontSize = 12;
-            label.style.whiteSpace = WhiteSpace.Normal;
-            return label;
-        }
-
-        private VisualElement DrawPropField(
-            System.Reflection.FieldInfo fieldInfo, 
-            object propFieldValue, 
-            GraphBlackboard blackboard)
-        {
-            var type = fieldInfo.FieldType;
-            return StylizePropField(_propFieldFactory.PropField(type, fieldInfo, propFieldValue, blackboard));
-        }
-
-        private VisualElement StylizePropField(VisualElement field)
-        {
-            field.style.width = _width - 150f - 14f;
-            return field;
-        }
-
-        public void ClearTaskPropsContent() => _taskPropsContentContainer.Clear();
-
-        // public void ShowTaskProp(SerializedProperty prop)
-        // {
-        //     _taskPropContainer.Clear();
-
-        //     if (prop == null)
-        //     {
-        //         return;
-        //     }
-
-        //     foreach (SerializedProperty propField in prop)
-        //     {
-        //         var UIField = new UnityEditor.UIElements.PropertyField(propField, propField.displayName);
-        //         _taskPropContainer.Add(UIField);
-        //     }
-        // }
     }
 }

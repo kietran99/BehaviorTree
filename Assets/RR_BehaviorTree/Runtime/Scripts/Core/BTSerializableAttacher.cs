@@ -5,9 +5,9 @@ namespace RR.AI.BehaviorTree
 	{
 		public string guid;
 		public string name;
-		public BTBaseTask task;
+		public BTTaskBase task;
 
-        public BTSerializableAttacher(string guid, string name, BTBaseTask decorator)
+        public BTSerializableAttacher(string guid, string name, BTTaskBase decorator)
         {
             this.guid = guid;
             this.name = name;

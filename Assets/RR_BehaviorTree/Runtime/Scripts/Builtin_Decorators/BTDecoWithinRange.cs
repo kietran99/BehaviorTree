@@ -4,22 +4,29 @@ using RR.Serialization;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTDecoWithinRange : BTBaseDecorator<BTDecoWithinRangeData>
+    public class BTDecoWithinRange : BTDecoratorBase
 	{
 		public override string Name => "Within Range";
 
-        protected override void OnStart(GameObject actor, RuntimeBlackboard blackboard, BTDecoWithinRangeData prop)
+        public float Range;
+        [TagField] public string TargetTag;
+        [LayerMaskField] public int TargetLayers;
+        [BlackboardValue(typeof(Vector3))] public string TargetPosition;
+
+        public Collider2D[] Targets { get; set; }
+
+        protected override void OnStart()
         {
-            prop.Targets = new Collider2D[1];
+            Targets = new Collider2D[1];
         }
 
-        protected override BTDecoState OnUpdate(GameObject actor, RuntimeBlackboard blackboard, BTDecoWithinRangeData prop)
+        protected override BTDecoState OnEvaluate()
         {
             var filter = new ContactFilter2D();
             filter.useLayerMask = true;
-            filter.SetLayerMask(prop.TargetLayers);
+            filter.SetLayerMask(TargetLayers);
 
-            int nTargetsInRangeWithoutTag = Physics2D.OverlapCircle(actor.transform.position, prop.Range, filter, prop.Targets);
+            int nTargetsInRangeWithoutTag = Physics2D.OverlapCircle(_actor.transform.position, Range, filter, Targets);
             
             if (nTargetsInRangeWithoutTag == 0)
             {
@@ -28,28 +35,18 @@ namespace RR.AI.BehaviorTree
 
             int nTargetsInRangeWithTag = 0;
 
-            for (int i = 0; i < prop.Targets.Length; i++)
+            for (int i = 0; i < Targets.Length; i++)
             {
-                nTargetsInRangeWithTag += prop.Targets[i].CompareTag(prop.TargetTag) ? 1 : 0;
+                nTargetsInRangeWithTag += Targets[i].CompareTag(TargetTag) ? 1 : 0;
             }
             
             if (nTargetsInRangeWithTag > 0)
             {
-                blackboard.Update<Vector2>(prop.TargetPosition, prop.Targets[0].transform.position);
+                Vector2 newTargetPos = Targets[0].transform.position;
+                _blackboard.UpdateEntry<Vector2>(TargetPosition, newTargetPos);
             }
 
             return nTargetsInRangeWithTag.ToBTDecoState();
         }
     }
-
-	[System.Serializable]
-	public class BTDecoWithinRangeData
-	{
-		public float Range;
-        [TagField] public string TargetTag;
-        [LayerMaskField] public int TargetLayers;
-        [BlackboardValue(typeof(Vector3))] public string TargetPosition;
-
-        public Collider2D[] Targets { get; set; }
-	}
 }

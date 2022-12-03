@@ -1,8 +1,8 @@
 namespace RR.AI.BehaviorTree
 {
-    public class BTGraphLeaf<T> : IBTGraphNodeInfo where T : BTBaseTask
+    public class BTGraphLeaf<T> : IBTGraphNodeInfo where T : BTTaskBase
     {
-        private BTBaseTask _task;
+        private BTTaskBase _task;
 
         public string Name => _task.Name;
 
@@ -10,7 +10,7 @@ namespace RR.AI.BehaviorTree
 
         public (BTPortCapacity In, BTPortCapacity Out) Capacity => (BTPortCapacity.Single, BTPortCapacity.None);
 
-        public BTBaseTask Task { get => _task; set => _task = value; }
+        public BTTaskBase Task { get => _task; set => _task = value; }
 
         public BTGraphLeaf()
         {}

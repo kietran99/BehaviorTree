@@ -17,7 +17,7 @@ namespace RR.AI.BehaviorTree
         protected string _description;
 
         public override string Name => _name;
-        protected virtual BTBaseTask Task => null;
+        protected virtual BTTaskBase Task => null;
 
         public BTGraphNode(BTGraphInitParamsNode initParams)
         {
@@ -186,7 +186,7 @@ namespace RR.AI.BehaviorTree
             return InstantiatePort(Orientation.Horizontal, direction, capacity, typeof(float));
         }
     
-        public override void OnCreate(BTDesignContainer designContainer, Vector2 position)
+        public override void OnCreate(BTGraphDesign designContainer, Vector2 position)
         {
             designContainer.NodeDataList.Add(
                 new BTSerializableNodeData(
@@ -211,13 +211,13 @@ namespace RR.AI.BehaviorTree
             return (parentNode as IBTSerializableNode).Guid;
         }
 
-        public override void OnDelete(BTDesignContainer designContainer)
+        public override void OnDelete(BTGraphDesign designContainer)
         {
             BTSerializableNodeData nodeToDelete = designContainer.NodeDataList.Find(node => node.Guid == _guid);
             designContainer.NodeDataList.Remove(nodeToDelete);
         }
 
-        public override void OnMove(BTDesignContainer designContainer, Vector2 moveDelta)
+        public override void OnMove(BTGraphDesign designContainer, Vector2 moveDelta)
         {
             designContainer.NodeDataList.Find(node => node.Guid == _guid).Position = GetPosition().position;
             SyncOrderLabelPosition(moveDelta);
@@ -230,7 +230,7 @@ namespace RR.AI.BehaviorTree
             OrderLabel.BringToFront();
         }
 
-        public override void OnConnect(BTDesignContainer designContainer, string parentGuid)
+        public override void OnConnect(BTGraphDesign designContainer, string parentGuid)
         {
             designContainer.NodeDataList.Find(node => node.Guid == _guid).ParentGuid = parentGuid;
         }

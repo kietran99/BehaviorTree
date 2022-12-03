@@ -40,10 +40,10 @@ namespace RR.AI.BehaviorTree
         protected Action<string, Vector2, Action<BTGraphInitParamsAttacher>> OpenDecoSearchWnd;
         protected Action<string, Vector2, Action<BTGraphInitParamsAttacher>> OpenServiceSearchWnd;
 
-        public abstract void OnConnect(BTDesignContainer designContainer, string parentGuid);
-        public abstract void OnCreate(BTDesignContainer designContainer, Vector2 position);
-        public abstract void OnDelete(BTDesignContainer designContainer);
-        public abstract void OnMove(BTDesignContainer designContainer, Vector2 moveDelta);
+        public abstract void OnConnect(BTGraphDesign designContainer, string parentGuid);
+        public abstract void OnCreate(BTGraphDesign designContainer, Vector2 position);
+        public abstract void OnDelete(BTGraphDesign designContainer);
+        public abstract void OnMove(BTGraphDesign designContainer, Vector2 moveDelta);
 
         public int LabelPosX
         {
@@ -76,7 +76,7 @@ namespace RR.AI.BehaviorTree
 
             foreach (var serializedAttacher in serializedAttachers)
             {   
-                bool isDecorator = typeof(IBTDecorator).IsAssignableFrom(serializedAttacher.task.GetType());
+                bool isDecorator = typeof(BTDecoratorBase).IsAssignableFrom(serializedAttacher.task.GetType());
                 BTGraphInitParamsAttacher initParams = ToGraphInitParams(serializedAttacher);
                 var graphAttacher = isDecorator ? AttachNewDecorator(initParams) : AttachNewService(initParams);
             }

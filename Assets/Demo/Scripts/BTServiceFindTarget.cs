@@ -6,27 +6,28 @@ using RR.Serialization;
 
 namespace RR.Demo.AI.BehaviorTree
 {
-    public class BTServiceFindTarget : BTServiceBase<BTPropServiceFindTarget>
+    public class BTServiceFindTarget: BTServiceBase
     {
+        [SerializeField]
+        private float _range;
+
+        [SerializeField]
+        [TagField]
+        private string _targetTag;
+
+        [SerializeField]
+        [LayerMaskField]
+        private int _targetLayers;
+
+        [SerializeField]
+        [BlackboardValue(typeof(Object))]
+        private string _target;
+
         public override string Name => "Find Target";
 
-        protected override void OnStart(GameObject actor, RuntimeBlackboard blackboard, BTPropServiceFindTarget prop)
+        protected override void OnEvaluate()
         {
-            
+            Debug.Log("Find Target");
         }
-
-        protected override void OnUpdate(GameObject actor, RuntimeBlackboard blackboard, BTPropServiceFindTarget prop)
-        {
-            Debug.Log("[Service] Find Target");
-        }
-    }
-
-    [System.Serializable]
-    public class BTPropServiceFindTarget : BTPropServiceBase
-    {
-        public float Range;
-        [TagField] public string TargetTag;
-        [LayerMaskField] public int TargetLayers;
-        [BlackboardValue(typeof(Object))] public string Target;
     }
 }

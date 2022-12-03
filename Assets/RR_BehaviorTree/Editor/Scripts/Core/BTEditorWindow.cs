@@ -45,7 +45,7 @@ namespace RR.AI.BehaviorTree
             rootVisualElement.Add(_toolbar);
         }
 
-        private BTGraphView CreateGraphView(BTDesignContainer designContainer, BTScheduler scheduler)
+        private BTGraphView CreateGraphView(BTGraphDesign designContainer, BTScheduler scheduler)
         {
             var graphView = new BTGraphView(designContainer);
 
@@ -101,7 +101,7 @@ namespace RR.AI.BehaviorTree
                     nodeType, 
                     _graphView.GetBlackboard() as GraphBlackboard, 
                     localMousePos,
-                    graphView.DesignContainer.GetOrCreateTask);
+                    graphView.DesignContainer.TaskCtor);
                 graphView.AddNode(node, localMousePos);
             });
 

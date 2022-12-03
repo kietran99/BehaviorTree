@@ -6,9 +6,9 @@ using System;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTGraphNodeLeaf<T> : BTGraphNode<BTGraphLeaf<T>> where T : BTBaseTask
+    public class BTGraphNodeLeaf<T> : BTGraphNode<BTGraphLeaf<T>> where T : BTTaskBase
     {
-        protected override BTBaseTask Task => _nodeAction.Task;
+        protected override BTTaskBase Task => _nodeAction.Task;
 
         private Func<object> TaskPropConstructFn;
 
@@ -19,54 +19,54 @@ namespace RR.AI.BehaviorTree
             _name = initParams.task.Name;
         }
 
-        public BTGraphNodeLeaf(Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid = "") 
-            : base(pos, blackboard, name, desc, guid)
-        {
-            mainContainer.style.backgroundColor = new StyleColor(new Color(50f / 255f, 50f / 255f, 50f / 255f));
-            DrawTaskProperties(_nodeAction.Task.PropertyType, blackboard);
-        }
+        // public BTGraphNodeLeaf(Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid = "") 
+        //     : base(pos, blackboard, name, desc, guid)
+        // {
+        //     mainContainer.style.backgroundColor = new StyleColor(new Color(50f / 255f, 50f / 255f, 50f / 255f));
+        //     DrawTaskProperties(_nodeAction.TaskLegacy.PropertyType, blackboard);
+        // }
 
-        private void DrawTaskProperties(Type propType, GraphBlackboard blackboard)
-        {
-            var serializableAttribs = propType.GetCustomAttributes(typeof(SerializableAttribute), true);
+        // private void DrawTaskProperties(Type propType, GraphBlackboard blackboard)
+        // {
+        //     var serializableAttribs = propType.GetCustomAttributes(typeof(SerializableAttribute), true);
             
-            if (serializableAttribs.Length == 0)
-            {
-                Debug.LogError($"{propType} must be Serializable");
-                return;
-            }
+        //     if (serializableAttribs.Length == 0)
+        //     {
+        //         Debug.LogError($"{propType} must be Serializable");
+        //         return;
+        //     }
 
-            var propFieldData = _nodeAction.Task.LoadPropValue(_guid);
+        //     var propFieldData = _nodeAction.TaskLegacy.LoadPropValue(_guid);
 
-            var container = new VisualElement();
-            var fieldInfoList = propType.GetFields();
+        //     var container = new VisualElement();
+        //     var fieldInfoList = propType.GetFields();
 
-            Action<object> bindPropDataFn = null;
+        //     Action<object> bindPropDataFn = null;
 
-            foreach (var fieldInfo in fieldInfoList)
-            {
-                var childContainer = CreatePropContainer(20f, 190f);
+        //     foreach (var fieldInfo in fieldInfoList)
+        //     {
+        //         var childContainer = CreatePropContainer(20f, 190f);
 
-                childContainer.Add(CreatePropLabel(fieldInfo.Name, 90f)); 
+        //         childContainer.Add(CreatePropLabel(fieldInfo.Name, 90f)); 
 
-                var (field, bindPropFieldFn) = DrawPropField(fieldInfo, propFieldData, blackboard);
-                childContainer.Add(field);
-                field.style.maxWidth = 100f;
+        //         var (field, bindPropFieldFn) = DrawPropField(fieldInfo, propFieldData, blackboard);
+        //         childContainer.Add(field);
+        //         field.style.maxWidth = 100f;
                 
-                bindPropDataFn += bindPropFieldFn;
+        //         bindPropDataFn += bindPropFieldFn;
 
-                container.Add(childContainer);
-            }
+        //         container.Add(childContainer);
+        //     }
             
-            TaskPropConstructFn = () => 
-            {
-                var prop = Activator.CreateInstance(propType);
-                bindPropDataFn?.Invoke(prop);
-                return prop;
-            };
+        //     TaskPropConstructFn = () => 
+        //     {
+        //         var prop = Activator.CreateInstance(propType);
+        //         bindPropDataFn?.Invoke(prop);
+        //         return prop;
+        //     };
 
-            mainContainer.Add(container);
-        }
+        //     mainContainer.Add(container);
+        // }
 
         private VisualElement CreatePropContainer(float height, float width)
         {
@@ -187,33 +187,31 @@ namespace RR.AI.BehaviorTree
             return field;
         }
 
-        public override void OnCreate(BTDesignContainer designContainer, Vector2 position)
+        public override void OnCreate(BTGraphDesign designContainer, Vector2 position)
         {   
             designContainer.TaskDataList.Add(
                 new BTSerializableTaskData(position, 
                 _name,
                 _description,
                 _guid, 
-                GetParentGuid(inputContainer), 
+                GetParentGuid(inputContainer),
                 _nodeAction.Task));
-                
-            _nodeAction.Task.SavePropData(_guid, Activator.CreateInstance(_nodeAction.Task.PropertyType));        
         }
 
-        public override void OnDelete(BTDesignContainer designContainer)
+        public override void OnDelete(BTGraphDesign designContainer)
         {
-            _nodeAction.Task.RemoveProp(_guid);
             BTSerializableTaskData nodeToDelete = designContainer.TaskDataList.Find(node => node.Guid == _guid);
             designContainer.TaskDataList.Remove(nodeToDelete);
+            UnityEditor.AssetDatabase.RemoveObjectFromAsset(nodeToDelete.Task);
         }
 
-        public override void OnMove(BTDesignContainer designContainer, Vector2 moveDelta)
+        public override void OnMove(BTGraphDesign designContainer, Vector2 moveDelta)
         {
             designContainer.TaskDataList.Find(node => node.Guid == _guid).Position = GetPosition().position;
             SyncOrderLabelPosition(moveDelta);
         }
 
-        public override void OnConnect(BTDesignContainer designContainer, string parentGuid)
+        public override void OnConnect(BTGraphDesign designContainer, string parentGuid)
         {
             designContainer.TaskDataList.Find(node => node.Guid == _guid).ParentGuid = parentGuid;
         }

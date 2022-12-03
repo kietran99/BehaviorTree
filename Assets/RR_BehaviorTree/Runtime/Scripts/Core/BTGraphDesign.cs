@@ -8,8 +8,8 @@ using RR.Serialization;
 
 namespace RR.AI.BehaviorTree
 {
-    [CreateAssetMenu(fileName = "BT_Design_Container", menuName = "Generator/AI/BT Design Container")]
-    public class BTDesignContainer : ScriptableObject
+    [CreateAssetMenu(fileName = "BT_Graph", menuName = "Generator/AI/BT Graph")]
+    public class BTGraphDesign : ScriptableObject
     {
         [SerializeField]
         private List<BTSerializableNodeData> _nodeDataList = null;
@@ -22,9 +22,6 @@ namespace RR.AI.BehaviorTree
 
         [SerializeField]
         private Blackboard _blackboard = null;
-
-        [SerializeField]
-        private SerializableDictionary<int, BTBaseTask> _taskDict = null;
 
         public List<BTSerializableNodeData> NodeDataList => _nodeDataList;
         public List<BTSerializableTaskData> TaskDataList => _taskDataList;
@@ -43,48 +40,19 @@ namespace RR.AI.BehaviorTree
 
         public void Cleanup()
         {
-            RemoveRedundantBTTaskSOs();
             Save();
         }
 
-        private void RemoveRedundantBTTaskSOs()
+        public BTTaskBase TaskCtor(System.Type taskType)
         {
-            HashSet<int> allTaskIds = new HashSet<int>();
-
-            foreach (BTSerializableTaskData taskData in _taskDataList)
-            {
-                var taskId = Animator.StringToHash(taskData.Task.GetType().ToString());
-                allTaskIds.Add(taskId);
-            }
-            // TODO decorators
-            _taskDict.ForEach((id, taskSO) => 
-            { 
-                if (!allTaskIds.Contains(id))  
-                {
-                    UnityEditor.AssetDatabase.RemoveObjectFromAsset(taskSO);
-                }
-            });
-
-            _taskDict.RemoveAll((id, _) => allTaskIds.Contains(id));
-        }
-
-        public BTBaseTask GetOrCreateTask(System.Type taskType)
-        {
-            int key = Animator.StringToHash(taskType.ToString());
-
-            if (!_taskDict.TryGetValue(key, out var task))
-            {
-                task = CreateInstance(taskType) as BTBaseTask;
-                AssetDatabase.AddObjectToAsset(task, this);
-			    AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(task));
-                _taskDict.Add(key, task);
-            }
- 
+            var task = CreateInstance(taskType) as BTTaskBase;
+            AssetDatabase.AddObjectToAsset(task, this);
+            AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(task));
             return task;
         }
 
-        public BTBaseTask CreateDummyTask(System.Type taskType)
-            => CreateInstance(taskType) as BTBaseTask;
+        public BTTaskBase CreateDummyTask(System.Type taskType)
+            => CreateInstance(taskType) as BTTaskBase;
 
         public BTNodeType FindParentType(string parentGuid)
             => _nodeDataList.Find(node => node.Guid == parentGuid).NodeType;
@@ -129,7 +97,7 @@ namespace RR.AI.BehaviorTree
 
             foreach (var attacher in attachers)
             {
-                bool isDecorator = typeof(IBTDecorator).IsAssignableFrom(attacher.task.GetType());
+                bool isDecorator = typeof(BTDecoratorBase).IsAssignableFrom(attacher.task.GetType());
                 if (isDecorator)
                 {
                     decorators.Add(attacher);

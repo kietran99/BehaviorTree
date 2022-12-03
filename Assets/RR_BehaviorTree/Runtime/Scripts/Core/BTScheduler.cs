@@ -62,7 +62,7 @@ namespace RR.AI.BehaviorTree
 
                 if (node.Type == BTNodeType.Leaf)
                 {
-                    node.Task.Init(_actor, _blackboard, node.Guid);
+                    node.Task.Init(_actor, _blackboard);
                 }
             }
         }
@@ -159,7 +159,7 @@ namespace RR.AI.BehaviorTree
 
         private BTNodeState OnTickTask(BTRuntimeNodeBase curNode, int curIdx, ChoiceStack choiceStack)
         {
-            BTNodeState taskState = curNode.Task.Tick(_actor, _blackboard, curNode.Guid);
+            BTNodeState taskState = curNode.Task.Update();
 
             if (taskState == BTNodeState.Running)
             {

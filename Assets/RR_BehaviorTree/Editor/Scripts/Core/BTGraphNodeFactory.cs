@@ -14,12 +14,12 @@ namespace RR.AI.BehaviorTree
             Type graphInfoType
             , GraphBlackboard blackboard
             , Vector2 pos
-            , Func<Type, BTBaseTask> GetOrCreateTaskFn)
+            , Func<Type, BTTaskBase> TaskCtor)
         {
-            var isTaskNode = typeof(BTBaseTask).IsAssignableFrom(graphInfoType);
+            var isTaskNode = typeof(BTTaskBase).IsAssignableFrom(graphInfoType);
 
             var ctorParams = isTaskNode
-                ? new object[] { new BTGraphInitParamsNodeLeaf(GetOrCreateTaskFn(graphInfoType), pos, blackboard) }
+                ? new object[] { new BTGraphInitParamsNodeLeaf(TaskCtor(graphInfoType), pos, blackboard) }
                 : new object[] { new BTGraphInitParamsNode() { pos = pos, blackboard = blackboard } };
             
             if (!_nodeInfoToGraphNodeMap.TryGetValue(graphInfoType, out var graphNodeType))

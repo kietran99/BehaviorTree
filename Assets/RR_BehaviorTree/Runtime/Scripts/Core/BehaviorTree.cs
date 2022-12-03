@@ -13,13 +13,13 @@ namespace RR.AI.BehaviorTree
             public string Guid { get; }
             public string ParentGuid { get; set; }
             public string NextSiblingGuid { get; set; }
-            public BTBaseTask Task { get; }
+            public BTTaskBase Task { get; }
             public BTNodeType Type { get; }
             public BTNodeType ParentType { get; }
             public int x { get; set; }
             public int y { get; set; }
 
-            public RuntimeNodeSortWrapper(string guid, BTNodeType nodeType, BTNodeType parentType, int x, int y, BTBaseTask task = null)
+            public RuntimeNodeSortWrapper(string guid, BTNodeType nodeType, BTNodeType parentType, int x, int y, BTTaskBase task = null)
             {
                 Guid = guid;
                 Type = nodeType;
@@ -34,12 +34,12 @@ namespace RR.AI.BehaviorTree
         private GameObject _actor = null;
 
         [SerializeField]
-        private BTDesignContainer _designContainer = null;
+        private BTGraphDesign _designContainer = null;
 
         private BTScheduler _scheduler;
         private RuntimeBlackboard _runtimeBlackboard;
 
-        public BTDesignContainer DesignContainer => _designContainer;
+        public BTGraphDesign DesignContainer => _designContainer;
         public BTScheduler Scheduler => _scheduler;
 
         private void Start()
@@ -110,7 +110,7 @@ namespace RR.AI.BehaviorTree
                     {
                         bool isTaskNode = data.GetType().Equals(typeof(BTSerializableTaskData));
                         BTNodeType nodeType = isTaskNode ? BTNodeType.Leaf : (data as BTSerializableNodeData).NodeType;
-                        BTBaseTask task = isTaskNode ? (data as BTSerializableTaskData).Task : null;
+                        BTTaskBase task = isTaskNode ? (data as BTSerializableTaskData).Task : null;
                         return new RuntimeNodeSortWrapper(
                             data.Guid, 
                             nodeType, nodeType == BTNodeType.Root ? BTNodeType.Root : _designContainer.FindParentType(data.ParentGuid), 

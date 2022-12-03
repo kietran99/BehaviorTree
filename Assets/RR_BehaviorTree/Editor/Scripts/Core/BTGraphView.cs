@@ -25,12 +25,12 @@ namespace RR.AI.BehaviorTree
         private List<BTGraphNodeBase> _graphNodes;
 
         // public static Action<string> OnNodeSelected { get; set; }
-        public static Action<string, string, string, BTBaseTask> OnNewNodeSelected { get; set; }
+        public static Action<string, string, string, BTTaskBase> OnNewNodeSelected { get; set; }
         // public Action OnNodeDeleted { get; set; }
 
-        public BTDesignContainer DesignContainer => _serializedDesContainer.targetObject as BTDesignContainer;
+        public BTGraphDesign DesignContainer => _serializedDesContainer.targetObject as BTGraphDesign;
 
-        public BTGraphView(BTDesignContainer designContainer) : base()
+        public BTGraphView(BTGraphDesign designContainer) : base()
         {
             _blackboard = CreateBlackboard(this, designContainer.Blackboard, designContainer.Blackboard, "Shared Variables", BB_RECT);
             Add(_blackboard);
@@ -52,12 +52,12 @@ namespace RR.AI.BehaviorTree
 
                 foreach (var listener in OnNewNodeSelected.GetInvocationList())
                 {
-                    OnNewNodeSelected -= (Action<string, string, string, BTBaseTask>) listener;
+                    OnNewNodeSelected -= (Action<string, string, string, BTTaskBase>) listener;
                 }
             };  
         }
 
-        public void Init(BTDesignContainer designContainer)
+        public void Init(BTGraphDesign designContainer)
         {
             _serializedDesContainer = new SerializedObject(designContainer);
 
@@ -193,9 +193,9 @@ namespace RR.AI.BehaviorTree
         {
             window.OnEntrySelected = (type, pos) =>
                 {
-                    BTBaseTask attacherSO = BTGlobalSettings.Instance.PlaygroundMode
+                    BTTaskBase attacherSO = BTGlobalSettings.Instance.PlaygroundMode
                         ? DesignContainer.CreateDummyTask(type)
-                        : DesignContainer.GetOrCreateTask(type);
+                        : DesignContainer.TaskCtor(type);
 
                     string attacherGuid = Guid.NewGuid().ToString();
                     var initParams = new BTGraphInitParamsAttacher()
@@ -214,7 +214,6 @@ namespace RR.AI.BehaviorTree
                         return;
                     }
                     
-                    attacherSO.SavePropData(attacherGuid, Activator.CreateInstance(attacherSO.PropertyType));
                     DesignContainer.AddAttacher(targetGuid, new BTSerializableAttacher(attacherGuid, attacherSO.Name, attacherSO));
                 };
 
@@ -227,107 +226,18 @@ namespace RR.AI.BehaviorTree
             _BBDebugger = new AI.Debugger.BBVisualDebugger(_blackboard);
         }
 
-        private void HandleNewNodeSelected(string guid, string name, string desc, BTBaseTask task)
+        private void HandleNewNodeSelected(string guid, string name, string desc, BTTaskBase task)
         {
             _nodeDetails.ShowNodeInfo(name, desc);
             
             if (task != null)
             {
-                _nodeDetails.DrawTaskProperties(task.LoadPropValue(guid), task.PropertyType, _blackboard);
+                _nodeDetails.DrawTaskProp(task);
             }
             else
             {
                 _nodeDetails.ClearTaskPropsContent();
             }
-        }
-
-        private void HandleNodeSelected(string guid)
-        {
-            System.Func<SerializedProperty, bool> FindNodeDetails = nodeDataList =>
-            {
-                foreach (SerializedProperty node in nodeDataList)
-                {
-                    var graphData = node.FindPropertyRelative("_graphData");
-
-                    if (graphData.FindPropertyRelative("_guid").stringValue == guid)
-                    {
-                        var name = graphData.FindPropertyRelative("_name").stringValue;
-                        var desc = graphData.FindPropertyRelative("_description").stringValue;
-                        _nodeDetails.ShowNodeInfo(name, desc);
-                        return true;
-                    }
-                }
-
-                return false;
-            };
-
-            var isFound = FindNodeDetails(_serializedDesContainer.FindProperty("_nodeDataList"));
-
-            if (isFound)
-            {
-                return;
-            }
-
-            System.Func<SerializedProperty, string, (string, string, SerializedProperty)> MapNodeDataList = 
-                (nodeDataList, nodeGuid) =>
-                {
-                    foreach (SerializedProperty node in nodeDataList)
-                    {
-                        var graphData = node.FindPropertyRelative("_graphData");
-
-                        if (graphData.FindPropertyRelative("_guid").stringValue != nodeGuid)
-                        {
-                            continue;
-                        }
-
-                        var name = graphData.FindPropertyRelative("_name").stringValue;
-                        var desc = graphData.FindPropertyRelative("_description").stringValue;
-                        // var taskEntries = node
-                        //                     .FindPropertyRelative("_task")
-                        //                     .FindPropertyRelative("_propMap")
-                                            // .FindPropertyRelative("_entries");
-                        
-                        foreach (SerializedProperty prop in node.FindPropertyRelative("_task"))
-                        {
-                            Debug.Log(prop.displayName);
-                        }
-
-                        // foreach (SerializedProperty entry in taskEntries)
-                        // {
-                        //     if (entry.stringValue != nodeGuid)
-                        //     {
-                        //         continue;
-                        //     }
-
-                        //     var prop = entry.FindPropertyRelative("Value");
-                        //     return (name, desc, entry);
-                        // }
-                    }
-
-                    return (string.Empty, string.Empty, null);
-                };
-
-            System.Func<List<BTSerializableTaskData>, string, (string, string, BTBaseTask)> FindTaskDetails = 
-                (taskDataList, nodeGuid) =>
-                {
-                    foreach (var taskData in taskDataList)
-                    {
-                        if (taskData.Guid != nodeGuid)
-                        {
-                            continue;
-                        }
-
-                        return (taskData.Name, taskData.Description, taskData.Task);
-                    }
-
-                    return (string.Empty, string.Empty, null);
-                };
-
-            // FindNodeDetails(_serializedDesContainer.FindProperty("_taskDataList"));
-            // var (name, desc, prop) = MapNodeDataList(_serializedDesContainer.FindProperty("_taskDataList"), guid);
-            var (name, desc, task) = FindTaskDetails(DesignContainer.TaskDataList, guid);
-            _nodeDetails.ShowNodeInfo(name, desc);
-            _nodeDetails.DrawTaskProperties(task.LoadPropValue(guid), task.PropertyType, _blackboard);
         }
 
         private GraphBlackboard CreateBlackboard(

@@ -6,15 +6,15 @@ namespace RR.AI.BehaviorTree
     public class BTSerializableTaskData : BTSerializableNodeDataBase
     {
         [SerializeField]
-        private BTBaseTask _task = null;
+        private BTTaskBase _task = null;
 
         public BTSerializableTaskData(
-            Vector2 position, string name, string description, string guid, string parentGuid, BTBaseTask task)
+            Vector2 position, string name, string description, string guid, string parentGuid, BTTaskBase task)
             : base(position, name, description, guid, parentGuid)
         {
             _task = task;
         }
 
-        public BTBaseTask Task => _task;
+        public BTTaskBase Task => _task;
     }
 }

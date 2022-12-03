@@ -22,11 +22,11 @@
       "hash": "cc9ae0075471d0e51800d1e0557539d0f3069072"
     },
     "com.unity.2d.animation": {
-      "version": "7.0.8",
+      "version": "7.0.9",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "6.0.5",
+        "com.unity.2d.common": "6.0.6",
         "com.unity.2d.sprite": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
         "com.unity.modules.uielements": "1.0.0"
@@ -34,7 +34,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.common": {
-      "version": "6.0.5",
+      "version": "6.0.6",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -53,7 +53,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.pixel-perfect": {
-      "version": "5.0.1",
+      "version": "5.0.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -104,7 +104,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
-      "version": "1.17.6",
+      "version": "1.17.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {

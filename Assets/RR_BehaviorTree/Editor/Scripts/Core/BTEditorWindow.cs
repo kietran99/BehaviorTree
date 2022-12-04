@@ -101,7 +101,7 @@ namespace RR.AI.BehaviorTree
                     nodeType, 
                     _graphView.GetBlackboard() as GraphBlackboard, 
                     localMousePos,
-                    graphView.DesignContainer.TaskCtor);
+                    graphView.GraphDesign.TaskCtor);
                 graphView.AddNode(node, localMousePos);
             });
 
@@ -122,6 +122,7 @@ namespace RR.AI.BehaviorTree
 
             if (_graphView != null)
             {
+                _graphView.Cleanup();
                 rootVisualElement.Remove(_graphView);
             }
 

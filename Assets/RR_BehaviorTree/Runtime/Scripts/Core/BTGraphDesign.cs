@@ -68,6 +68,36 @@ namespace RR.AI.BehaviorTree
             _nodeDataList.Remove(nodeToDelete);
         }
 
+        public bool DeleteAttacher(string nodeGuid, string attacherGuid)
+        {
+            if (!_attacherDict.TryGetValue(nodeGuid, out List<BTSerializableAttacher> attachers))
+            {
+                Debug.LogWarning($"Invalid node: {nodeGuid}");
+                return false;
+            }
+
+            BTSerializableAttacher attacherToDelete = null;
+            foreach (BTSerializableAttacher attacher in attachers)
+            {
+                if (attacher.guid != attacherGuid)
+                {
+                    continue;
+                }
+
+                attacherToDelete = attacher;
+                break;
+            }
+
+            if (attacherToDelete == null)
+            {
+                Debug.LogWarning($"Invalid attacher: {attacherGuid}");
+                return false;
+            }
+
+            attachers.Remove(attacherToDelete);
+            return true;
+        }
+
         public void AddAttacher(string decorateeGuid, BTSerializableAttacher attacher)
         {
             if (!_attacherDict.TryGetValue(decorateeGuid, out List<BTSerializableAttacher> attachers))

@@ -24,6 +24,7 @@ namespace RR.AI.BehaviorTree
                 return _attachers;
             }
         }
+        private BTGraphNodeAttacher _hoveredAttacher;
 
         public string Guid => _guid;
         public abstract string Name { get; }
@@ -37,13 +38,15 @@ namespace RR.AI.BehaviorTree
         public int x { get; protected set; }
         public int y { get; protected set; }
 
+        public static Action<string, string, Action> AttacherDeleted { get; set; }
+
         protected Action<string, Vector2, Action<BTGraphInitParamsAttacher>> OpenDecoSearchWnd;
         protected Action<string, Vector2, Action<BTGraphInitParamsAttacher>> OpenServiceSearchWnd;
 
-        public abstract void OnConnect(BTGraphDesign designContainer, string parentGuid);
-        public abstract void OnCreate(BTGraphDesign designContainer, Vector2 position);
-        public abstract void OnDelete(BTGraphDesign designContainer);
-        public abstract void OnMove(BTGraphDesign designContainer, Vector2 moveDelta);
+        public abstract void OnConnect(BTGraphDesign graphDesign, string parentGuid);
+        public abstract void OnCreate(BTGraphDesign graphDesign, Vector2 position);
+        public abstract void OnDelete(BTGraphDesign graphDesign);
+        public abstract void OnMove(BTGraphDesign graphDesign, Vector2 moveDelta);
 
         public int LabelPosX
         {
@@ -99,6 +102,17 @@ namespace RR.AI.BehaviorTree
 
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
+            if (_hoveredAttacher != null)
+            {
+                BuildContextualMenuAttacher(evt, _hoveredAttacher);
+                return;
+            }
+
+            BuildContextualMenuNode(evt);
+        }
+
+        private void BuildContextualMenuNode(ContextualMenuPopulateEvent evt)
+        {
             base.BuildContextualMenu(evt);
 
             if (!AreAttachersAllowed)
@@ -121,6 +135,28 @@ namespace RR.AI.BehaviorTree
             });
 
             evt.menu.InsertSeparator("/", 1);
+        }
+
+        private void BuildContextualMenuAttacher(ContextualMenuPopulateEvent evt, BTGraphNodeAttacher hoveredAttacher)
+        {
+            evt.menu.InsertAction(0, "Delete Attacher", action =>
+            {
+                // Hovered attacher somehow becomes null here so it must be passed as arg
+                string attacherToDeleteGuid = hoveredAttacher.Guid;
+                AttacherDeleted?.Invoke(_guid, attacherToDeleteGuid, () =>
+                {
+                    Attachers.Remove(hoveredAttacher);
+                    extensionContainer.Remove(hoveredAttacher);
+                    hoveredAttacher.OnRemove();
+
+                    if (Attachers.Count != 0)
+                    {
+                        return;
+                    }
+
+                    RefreshExpandedState();
+                });
+            });
         }
 
         protected abstract bool AreAttachersAllowed { get; }
@@ -151,15 +187,17 @@ namespace RR.AI.BehaviorTree
             return attacher;
         }
 
-        private void OnAttacherMouseEnter()
+        private void OnAttacherMouseEnter(BTGraphNodeAttacher attacher)
         {
+            _hoveredAttacher = attacher;
             var evtPtrLeave = PointerLeaveEvent.GetPooled();
             evtPtrLeave.target = this;
             this.SendEvent(evtPtrLeave);
         }
 
-        private void OnAttacherMouseExit()
+        private void OnAttacherMouseExit(BTGraphNodeAttacher attacher)
         {
+            _hoveredAttacher = null;
             var evtPtrEnter = PointerEnterEvent.GetPooled();
             evtPtrEnter.target = this;
             this.SendEvent(evtPtrEnter);

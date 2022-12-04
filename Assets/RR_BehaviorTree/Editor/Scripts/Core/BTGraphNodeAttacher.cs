@@ -5,7 +5,7 @@ using System;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTGraphNodeAttacher : VisualElement
+    public class BTGraphNodeAttacher : VisualElement, IBTIdentifiable
     {
         private const string STYLE_IDLE_UNSELECTED_BORDER = "idle-unselected-border";
         private const string STYLE_IDLE_SELECTED_BORDER = "idle-selected-border";
@@ -20,11 +20,12 @@ namespace RR.AI.BehaviorTree
         private string _curBorderStyle;
 
         public string Name { get; private set; }
+        public string Guid => _guid;
 
         private static BTGraphNodeAttacher _curSelected = null;
 
-        public Action MouseEntered { get; set; }
-        public Action MouseExited { get; set; }
+        public Action<BTGraphNodeAttacher> MouseEntered { get; set; }
+        public Action<BTGraphNodeAttacher> MouseExited { get; set; }
 
         public static BTGraphNodeAttacher CreateDecorator(BTGraphInitParamsAttacher initParams)
         {
@@ -99,13 +100,13 @@ namespace RR.AI.BehaviorTree
         private void OnMouseEnter(MouseEnterEvent evt)
         {
             SwapBorderStyle(_selected ? STYLE_HOVER_SELECTED_BORDER : STYLE_HOVER_UNSELECTED_BORDER);
-            MouseEntered?.Invoke();
+            MouseEntered?.Invoke(this);
         }
     
         private void OnMouseExit(MouseLeaveEvent evt)
         {
             SwapBorderStyle(_selected ? STYLE_IDLE_SELECTED_BORDER : STYLE_IDLE_UNSELECTED_BORDER);
-            MouseExited?.Invoke();
+            MouseExited?.Invoke(this);
         }
 
         public static void OnNodeUnselected(string nodeID)
@@ -124,6 +125,11 @@ namespace RR.AI.BehaviorTree
             _contentContainer.RemoveFromClassList(_curBorderStyle);
             _contentContainer.AddToClassList(newStyle);
             _curBorderStyle = newStyle;
+        }
+
+        public void OnRemove()
+        {
+            UnityEditor.AssetDatabase.RemoveObjectFromAsset(_task);
         }
     }
 }

@@ -68,38 +68,6 @@ namespace RR.AI.BehaviorTree
             OrderLabel.SetEnabled(false);
         }
 
-        public BTGraphNode(Vector2 pos, GraphBlackboard blackboard, string name = "", string desc = "", string guid="", Texture2D icon = null)
-        {
-            styleSheets.Add(Resources.Load<StyleSheet>("Stylesheets/BTGraphNode"));
-            AddToClassList("bold-text");
-            mainContainer.style.minWidth = 100;
-            
-            _nodeAction = new T();
-            CreatePorts(inputContainer, outputContainer, _nodeAction.Capacity.In, _nodeAction.Capacity.Out);
-            _name = string.IsNullOrEmpty(name) ? _nodeAction.Name : name;
-            _description = desc;
-            _guid = string.IsNullOrEmpty(guid) ? System.Guid.NewGuid().ToString() : guid;
-            
-            titleContainer.Clear();
-            StylizeTitleContainer(titleContainer);
-            
-            Texture2D titleIcon = icon;
-            var titleContent = CreateTitleContent(_name, titleIcon);
-            titleContainer.Add(titleContent);
-
-            SetPosition(new Rect(pos, DEFAULT_NODE_SIZE));
-            y = Mathf.FloorToInt(pos.y);
-
-            if (_nodeAction.NodeType == BTNodeType.Root)
-            {
-                capabilities &= ~Capabilities.Movable;
-                capabilities &= ~Capabilities.Deletable;
-            }
-
-            // BTBaseNode.OnRootTick += OnRootTick;
-            // BTBaseNode.OnTick += OnNodeTick;
-        }
-
         public override void OnSelected()
         {
             // BTGraphView.OnNodeSelected?.Invoke(_guid);
@@ -186,9 +154,9 @@ namespace RR.AI.BehaviorTree
             return InstantiatePort(Orientation.Horizontal, direction, capacity, typeof(float));
         }
     
-        public override void OnCreate(BTGraphDesign designContainer, Vector2 position)
+        public override void OnCreate(BTGraphDesign graphDesign, Vector2 position)
         {
-            designContainer.NodeDataList.Add(
+            graphDesign.NodeDataList.Add(
                 new BTSerializableNodeData(
                     position, _name, _description, _guid, GetParentGuid(inputContainer), _nodeAction.NodeType));
         }

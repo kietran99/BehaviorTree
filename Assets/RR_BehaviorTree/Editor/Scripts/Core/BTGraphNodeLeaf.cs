@@ -187,9 +187,9 @@ namespace RR.AI.BehaviorTree
             return field;
         }
 
-        public override void OnCreate(BTGraphDesign designContainer, Vector2 position)
+        public override void OnCreate(BTGraphDesign graphDesign, Vector2 position)
         {   
-            designContainer.TaskDataList.Add(
+            graphDesign.TaskDataList.Add(
                 new BTSerializableTaskData(position, 
                 _name,
                 _description,

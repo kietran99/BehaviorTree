@@ -14,7 +14,7 @@ namespace RR.AI.BehaviorTree
         private readonly Rect BB_RECT = new Rect(10, 30 + 560 + 10, 320, 400);
         private readonly Rect SETTINGS_RECT = new Rect(10f, 30f, 400f, 400f);
 
-        private SerializedObject _serializedDesContainer;
+        private SerializedObject _serializedGraphDesign;
         private GraphBlackboard _blackboard;
         private BTSubWndGraphDetails _nodeDetails;
         private BTSubWndGraphSettings _graphSettingsWnd;
@@ -28,7 +28,7 @@ namespace RR.AI.BehaviorTree
         public static Action<string, string, string, BTTaskBase> OnNewNodeSelected { get; set; }
         // public Action OnNodeDeleted { get; set; }
 
-        public BTGraphDesign DesignContainer => _serializedDesContainer.targetObject as BTGraphDesign;
+        public BTGraphDesign GraphDesign => _serializedGraphDesign.targetObject as BTGraphDesign;
 
         public BTGraphView(BTGraphDesign designContainer) : base()
         {
@@ -59,7 +59,7 @@ namespace RR.AI.BehaviorTree
 
         public void Init(BTGraphDesign designContainer)
         {
-            _serializedDesContainer = new SerializedObject(designContainer);
+            _serializedGraphDesign = new SerializedObject(designContainer);
 
             if (designContainer.NodeDataList == null || designContainer.NodeDataList.Count == 0)
             {
@@ -127,7 +127,7 @@ namespace RR.AI.BehaviorTree
             _graphNodes = new BTExecListBuilder<BTSerializableNodeDataBase, BTGraphNodeBase>()
                 .OnObjectCreate((node, parentGuid) =>
                 {
-                    if (DesignContainer.TryGetAttachers(node.Guid, out List<BTSerializableAttacher> attachers))
+                    if (GraphDesign.TryGetAttachers(node.Guid, out List<BTSerializableAttacher> attachers))
                     {
                         node.InitAttachers(attachers);
                     }
@@ -165,8 +165,22 @@ namespace RR.AI.BehaviorTree
                 var edge = (child.inputContainer[0] as Port).ConnectTo(parent.outputContainer[0] as Port);
                 AddElement(edge);
             });
+
+            BTGraphNodeBase.AttacherDeleted += OnAttacherDelete;
         }
-        
+
+        private void OnAttacherDelete(string nodeGuid, string attacherToDeleteGuid, Action onSuccessCallback)
+        {
+            bool deleteSuccess = GraphDesign.DeleteAttacher(nodeGuid, attacherToDeleteGuid);
+
+            if (!deleteSuccess)
+            {
+                return;
+            }
+
+            onSuccessCallback();
+        }
+
         private T CreateAttacherSearchWindow<T>() where T : BTSearchWindowBase
         {
             var wnd = ScriptableObject.CreateInstance<T>();
@@ -194,8 +208,8 @@ namespace RR.AI.BehaviorTree
             window.OnEntrySelected = (type, pos) =>
                 {
                     BTTaskBase attacherSO = BTGlobalSettings.Instance.PlaygroundMode
-                        ? DesignContainer.CreateDummyTask(type)
-                        : DesignContainer.TaskCtor(type);
+                        ? GraphDesign.CreateDummyTask(type)
+                        : GraphDesign.TaskCtor(type);
 
                     string attacherGuid = Guid.NewGuid().ToString();
                     var initParams = new BTGraphInitParamsAttacher()
@@ -214,7 +228,7 @@ namespace RR.AI.BehaviorTree
                         return;
                     }
                     
-                    DesignContainer.AddAttacher(targetGuid, new BTSerializableAttacher(attacherGuid, attacherSO.Name, attacherSO));
+                    GraphDesign.AddAttacher(targetGuid, new BTSerializableAttacher(attacherGuid, attacherSO.Name, attacherSO));
                 };
 
             SearchWindow.Open(new SearchWindowContext(pos), window);
@@ -265,7 +279,7 @@ namespace RR.AI.BehaviorTree
                 {
                     if (element is IBTSerializableNode)
                     {
-                        (element as IBTSerializableNode).OnDelete(DesignContainer);
+                        (element as IBTSerializableNode).OnDelete(GraphDesign);
                     }
                 }
             };
@@ -285,7 +299,7 @@ namespace RR.AI.BehaviorTree
                     {
                         var node = (element as IBTSerializableNode);
                         var newPos = element.GetPosition();
-                        node.OnMove(DesignContainer, graphViewChange.moveDelta);
+                        node.OnMove(GraphDesign, graphViewChange.moveDelta);
                     }
                 }
             };
@@ -301,7 +315,7 @@ namespace RR.AI.BehaviorTree
                 {
                     var inputNode = edgesToCreate[i].output.node as IBTSerializableNode;
                     var outputNode = edgesToCreate[i].input.node as IBTSerializableNode;
-                    outputNode.OnConnect(DesignContainer, inputNode.Guid);
+                    outputNode.OnConnect(GraphDesign, inputNode.Guid);
                 }
             };
 
@@ -321,7 +335,7 @@ namespace RR.AI.BehaviorTree
             AddElement(orderLb);
             convertedNode.OrderLabel = orderLb;
             convertedNode.OrderLabel.visible = false;
-            convertedNode.OnCreate(DesignContainer, pos);
+            convertedNode.OnCreate(GraphDesign, pos);
         }
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
@@ -356,6 +370,11 @@ namespace RR.AI.BehaviorTree
 
             _graphSettingsWnd.Open();
             Add(_graphSettingsWnd);
+        }
+
+        public void Cleanup()
+        {
+            BTGraphNodeBase.AttacherDeleted -= OnAttacherDelete;
         }
     }
 }

@@ -100,7 +100,9 @@ namespace RR.AI.BehaviorTree
             var serializedTask = new SerializedObject(task);
             var container = new VisualElement();
             var taskIter = serializedTask.GetIterator();
-            do
+            taskIter.NextVisible(true);
+
+            while (taskIter.NextVisible(false))
             {
                 string displayName = taskIter.displayName;
 
@@ -112,7 +114,7 @@ namespace RR.AI.BehaviorTree
                 var UIField = new PropertyField(taskIter, taskIter.displayName);
                 UIField.Bind(serializedTask);
                 container.Add(UIField);
-            } while (taskIter.NextVisible(true));
+            }
 
             AddVerticalSpaceToFields(container);
             _taskPropsContentContainer.Add(container);

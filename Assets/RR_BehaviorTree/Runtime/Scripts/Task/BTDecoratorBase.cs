@@ -1,9 +1,6 @@
 namespace RR.AI.BehaviorTree
 {
-    public abstract class BTDecoratorBase: BTTaskBase
+    public abstract class BTDecoratorBase : BTDecoratorSimpleBase
     {
-        protected sealed override BTNodeState OnUpdate() => OnEvaluate().ToBTNodeState();
-
-        protected abstract BTDecoState OnEvaluate();
     }
 }

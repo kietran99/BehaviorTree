@@ -127,7 +127,7 @@ namespace RR.AI.BehaviorTree
 
             foreach (var attacher in attachers)
             {
-                bool isDecorator = typeof(BTDecoratorBase).IsAssignableFrom(attacher.task.GetType());
+                bool isDecorator = typeof(BTDecoratorSimpleBase).IsAssignableFrom(attacher.task.GetType());
                 if (isDecorator)
                 {
                     decorators.Add(attacher);

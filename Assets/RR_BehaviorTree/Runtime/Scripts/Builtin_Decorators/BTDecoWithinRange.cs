@@ -4,7 +4,7 @@ using RR.Serialization;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTDecoWithinRange : BTDecoratorBase
+    public class BTDecoWithinRange : BTDecoratorSimpleBase
 	{
 		public override string Name => "Within Range";
 

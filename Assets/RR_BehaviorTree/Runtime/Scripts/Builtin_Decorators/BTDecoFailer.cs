@@ -1,6 +1,6 @@
 namespace RR.AI.BehaviorTree
 {
-    public class BTDecoFailer : BTDecoratorBase
+    public class BTDecoFailer : BTDecoratorSimpleBase
     {
         public override string Name => "Failer";
 

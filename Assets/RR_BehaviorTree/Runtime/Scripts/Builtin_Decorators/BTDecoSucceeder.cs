@@ -1,6 +1,6 @@
 namespace RR.AI.BehaviorTree
 {
-    public class BTDecoSucceeder : BTDecoratorBase
+    public class BTDecoSucceeder : BTDecoratorSimpleBase
     {
         public override string Name => "Succeeder";
 

@@ -79,7 +79,7 @@ namespace RR.AI.BehaviorTree
 
             foreach (var serializedAttacher in serializedAttachers)
             {   
-                bool isDecorator = typeof(BTDecoratorBase).IsAssignableFrom(serializedAttacher.task.GetType());
+                bool isDecorator = typeof(BTDecoratorSimpleBase).IsAssignableFrom(serializedAttacher.task.GetType());
                 BTGraphInitParamsAttacher initParams = ToGraphInitParams(serializedAttacher);
                 var graphAttacher = isDecorator ? AttachNewDecorator(initParams) : AttachNewService(initParams);
             }

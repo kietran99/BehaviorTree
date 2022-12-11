@@ -8,7 +8,7 @@ namespace RR.AI.BehaviorTree
     public class BTDecoratorSearchWindow : BTSearchWindowBase
     {
         protected override Func<Type, bool> ItemFilterPredicate => type => 
-                                                typeof(BTDecoratorBase).IsAssignableFrom(type)
+                                                typeof(BTDecoratorSimpleBase).IsAssignableFrom(type)
                                                 && !type.IsAbstract
                                                 && type != typeof(BTTaskBase)
                                                 && !type.IsGenericType

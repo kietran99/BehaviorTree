@@ -123,10 +123,15 @@ namespace RR.AI.BehaviorTree
                         continue;
                     }
 
-                    bool isLowestPriorityNode = HasLowerSibling(curNode, curIdx);
-                    return isLowestPriorityNode
-                        ? BTNodeState.Failure
-                        : InternalTick(curNode.FailIdx, choiceStack);
+                    bool isLowestPriorityNode = !HasLowerSibling(curNode, curIdx);
+
+                    if (isLowestPriorityNode)
+                    {
+                        return BTNodeState.Failure;
+                    }
+
+                    NodeReturn?.Invoke(curIdx);
+                    return InternalTick(curNode.FailIdx, choiceStack);
                 }
             }
 

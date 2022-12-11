@@ -29,8 +29,8 @@
             "icon": "Icons/BTNode/Task/BTTaskWait"
         },
         {
-            "taskname": "BTServiceFindTarget",
-            "icon": "Icons/BTNode/Task/BTServiceFindTarget"
+            "taskname": "BTDecoBBBasedCondition",
+            "icon": "Icons/BTNode/Task/BTDecoBBBasedCondition"
         }
     ]
 }

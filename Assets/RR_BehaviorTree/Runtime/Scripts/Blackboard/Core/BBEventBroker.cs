@@ -17,5 +17,10 @@ namespace RR.AI
                 return _instance;
             }
         }
+
+        public void Reset()
+        {
+            _instance = new BBEventBroker();
+        }
     }
 }

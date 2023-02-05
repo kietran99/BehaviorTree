@@ -36,14 +36,41 @@ namespace RR.AI.BehaviorTree
         [SerializeField]
         private BTGraphDesign _designContainer = null;
 
+        [SerializeField]
+        private bool _startOnPlay = false;
+
+        private bool _isInitialized;
+        private bool _isActive;
         private BTScheduler _scheduler;
         private RuntimeBlackboard _runtimeBlackboard;
 
         public BTGraphDesign DesignContainer => _designContainer;
         public BTScheduler Scheduler => _scheduler;
+        public RuntimeBlackboard Blackboard => _runtimeBlackboard;
 
         private void Start()
         {
+            _isInitialized = false;
+            _isActive = false;
+            if (_startOnPlay)
+            {
+                InitAndActivate();
+            }
+        }
+
+        public void InitAndActivate()
+        {
+            Init();
+            Activate();
+        }
+
+        public void Init()
+        {
+            if (_isInitialized)
+            {
+                return;
+            }
+
             if (_designContainer.NodeDataList.Count == 0 || _designContainer.TaskDataList.Count == 0)
             {
                 Debug.LogError("Invalid Behavior Tree");
@@ -164,10 +191,28 @@ namespace RR.AI.BehaviorTree
 
             _runtimeBlackboard = _designContainer.Blackboard.CreateRuntimeBlackboard();
             _scheduler = new BTScheduler(execList, _actor, _runtimeBlackboard);
+
+            _isInitialized = true;
+            BBEventBroker.Instance.Reset();
+        }
+
+        public void Activate()
+        {
+            _isActive = true;
+        }
+
+        public void Deactivate()
+        {
+            _isActive = false;
         }
 
         private void Update()
         {
+            if (!_isInitialized || !_isActive)
+            {
+                return;
+            }
+
             _scheduler.Tick();
         }
     }

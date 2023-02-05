@@ -2,6 +2,8 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
+using System.Collections.Generic;
+
 namespace RR.AI.BehaviorTree
 {
     public class BTSubWndGraphDetails : BaseSubWindow
@@ -94,7 +96,7 @@ namespace RR.AI.BehaviorTree
 
         public void ClearTaskPropsContent() => _taskPropsContentContainer.Clear();
 
-        public void DrawTaskProp(BTTaskBase task)
+        public void DrawTaskProp(BTTaskBase task, GraphBlackboard blackboard)
         {
             ClearTaskPropsContent();
             var serializedTask = new SerializedObject(task);
@@ -111,13 +113,43 @@ namespace RR.AI.BehaviorTree
                     continue;
                 }
 
-                var UIField = new PropertyField(taskIter, taskIter.displayName);
+                var taskType = taskIter.type;
+                bool isBBKeySelector = taskType == nameof(BBKeySelectorObject);
+                var UIField = isBBKeySelector ? CreateBBKeySelectorField(taskIter, blackboard) : new PropertyField(taskIter, taskIter.displayName);
                 UIField.Bind(serializedTask);
                 container.Add(UIField);
             }
 
             AddVerticalSpaceToFields(container);
             _taskPropsContentContainer.Add(container);
+        }
+
+        private VisualElement CreateBBKeySelectorField(SerializedProperty task, GraphBlackboard blackboard)
+        {
+            var container = new VisualElement();
+            SerializedPropertyType propType = task.FindPropertyRelative("typeVar").propertyType;
+            var typeConversionMap = new Dictionary<SerializedPropertyType, System.Type>()
+            {
+                { SerializedPropertyType.ObjectReference, typeof(UnityEngine.Object) }
+            };
+            
+            System.Type valType = typeConversionMap[propType];
+            List<string> BBKeys = blackboard.GetKeys(valType);
+
+            if (BBKeys.Count == 0)
+            {
+                var label = new Label($"No value of type {valType}");
+                label.style.whiteSpace = WhiteSpace.Normal;
+                return label;
+            }
+
+            SerializedProperty propKey = task.FindPropertyRelative("_key");
+            bool isInvalidFieldVal = string.IsNullOrEmpty(propKey.stringValue);
+            string fieldValToAssign = isInvalidFieldVal ? BBKeys[0] : propKey.stringValue;
+            var fieldKey = new PopupField<string>(propKey.displayName, BBKeys, fieldValToAssign);
+            fieldKey.BindProperty(propKey);
+            container.Add(fieldKey);
+            return container;
         }
     }
 }

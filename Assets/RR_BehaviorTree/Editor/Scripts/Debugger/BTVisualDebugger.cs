@@ -31,6 +31,7 @@ namespace RR.AI.BehaviorTree.Debugger
             _scheduler.TreeEval += OnTreeEval;
             _scheduler.NodeTick += OnNodeTick;
             _scheduler.NodeReturn += OnNodeReturn;
+            _scheduler.NodeAbort += OnNodeAbort;
         }
 
         private void UnregisterCallbacks()
@@ -38,6 +39,7 @@ namespace RR.AI.BehaviorTree.Debugger
             _scheduler.TreeEval -= OnTreeEval;
             _scheduler.NodeTick -= OnNodeTick;
             _scheduler.NodeReturn -= OnNodeReturn;
+            _scheduler.NodeAbort -= OnNodeAbort;
         }
 
         private void OnTreeEval()
@@ -69,8 +71,7 @@ namespace RR.AI.BehaviorTree.Debugger
 
         private void OnNodeTick(int nodeIdx)
         {
-            UnityEngine.Debug.Log($"OnNodeTick: {nodeIdx}");
-
+            // UnityEngine.Debug.Log($"OnNodeTick: {nodeIdx}");
             if (_isInitFrame || _isFirstCapturedTick)
             {
                 if (_isInitFrame)
@@ -116,7 +117,7 @@ namespace RR.AI.BehaviorTree.Debugger
             {
                 var curNode = _debugNodes[curIdx];
                 curNode.Reset();
-                int parentIdx = _debugNodes[curIdx].ParentIdx;
+                int parentIdx = curNode.ParentIdx;
 
                 if (parentIdx == 0)
                 {
@@ -134,6 +135,24 @@ namespace RR.AI.BehaviorTree.Debugger
             UnityEngine.Debug.Log($"OnNodeReturn: {nodeIdx}");
             
             _returnIdx = nodeIdx;
+        }
+
+        private void OnNodeAbort(int abortedIdx, int triggeredIdx)
+        {
+            // UnityEngine.Debug.Log($"OnNodeAbort: {nodeIdx}");
+            ResetAllNodes();
+            GenDebugVisualUpTo(triggeredIdx);
+        }
+
+        private void GenDebugVisualUpTo(int nodeIdx)
+        {
+            int nextIdx = nodeIdx;
+            while (nextIdx > 0)
+            {
+                BTGraphDebugNode curNode = _debugNodes[nextIdx];
+                curNode.Tick();
+                nextIdx = curNode.ParentIdx;
+            }
         }
     }
 }

@@ -1,32 +1,11 @@
 using UnityEngine;
 
-using System;
 using System.Collections.Generic;
 
 namespace RR.AI
 {
     public class RuntimeBlackboard
     {
-        private class BBRTValueGeneric<T> : IBBValueBase
-        {
-            private T _value;
-
-            public BBRTValueGeneric(T value)
-            {
-                _value = value;
-            }
-
-            public static implicit operator T(BBRTValueGeneric<T> val) => val.Value;
-            public static implicit operator BBRTValueGeneric<T>(T val) => new BBRTValueGeneric<T>(val);
-
-            public object ValueAsObject => _value as object;
-            public Type ValueType => typeof(T);
-
-            public T Value { get => _value; set => _value = value; }
-
-            public override string ToString() => _value.ToString();
-        }
-
         private Dictionary<string, IBBValueBase> _map;
 
         public RuntimeBlackboard(Dictionary<string, IBBValueBase> map = null)
@@ -102,7 +81,7 @@ namespace RR.AI
 		{
 			if (!_map.TryGetValue(key, out var val))
 			{	
-                Debug.LogWarning($"No key {key} was found, returning default value");			
+                Debug.LogWarning($"Key {key} was not found, returning default value instead");			
 			    return defaultValue;
 			}
 
@@ -112,7 +91,7 @@ namespace RR.AI
                 return defaultValue;
             }
      
-            return val as BBRTValueGeneric<T>;
+            return (BBValue<T>)val;
 		}
         
         public bool Remove(string key)

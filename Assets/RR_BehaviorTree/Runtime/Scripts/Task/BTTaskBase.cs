@@ -36,8 +36,14 @@ namespace RR.AI.BehaviorTree
             OnTreeEval();
         }
 
+        public void Abort()
+        {
+            OnAbort();
+        }
+
         protected virtual void OnStart() {}
         protected abstract BTNodeState OnUpdate();
         protected virtual void OnTreeEval() {}
+        protected virtual void OnAbort() {}
     }
 }

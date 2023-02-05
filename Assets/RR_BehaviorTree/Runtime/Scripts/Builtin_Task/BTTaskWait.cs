@@ -13,7 +13,7 @@ namespace RR.AI.BehaviorTree
 
         protected override void OnStart()
         {
-            _elapsed = 0f;
+            ResetTimer();
         }
 
         protected sealed override BTNodeState OnUpdate()
@@ -25,8 +25,15 @@ namespace RR.AI.BehaviorTree
                 return BTNodeState.Running;
             }
 
-            _elapsed = 0.0f;
+            ResetTimer();
             return BTNodeState.Success;
         }
+
+        protected sealed override void OnAbort()
+        {
+            ResetTimer();
+        }
+
+        private void ResetTimer() => _elapsed = 0.0f;
     }
 }

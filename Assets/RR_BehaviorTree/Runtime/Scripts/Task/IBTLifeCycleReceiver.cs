@@ -7,5 +7,6 @@ namespace RR.AI.BehaviorTree
         void Init(UnityEngine.GameObject actor, RuntimeBlackboard blackboard);
         BTNodeState Update();
         void TreeEval();
+        void Abort();
     }
 }

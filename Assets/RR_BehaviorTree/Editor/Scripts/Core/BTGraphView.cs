@@ -246,7 +246,7 @@ namespace RR.AI.BehaviorTree
             
             if (task != null)
             {
-                _nodeDetails.DrawTaskProp(task);
+                _nodeDetails.DrawTaskProp(task, _blackboard);
             }
             else
             {

@@ -20,6 +20,7 @@ namespace RR.AI.BehaviorTree
         public BTRuntimeAttacher[] Services { get; set; }
 
         public int ProgressIdx => SuccessIdx > FailIdx ? SuccessIdx : FailIdx;
+        public int ParentIdx => SuccessIdx > FailIdx ? FailIdx : SuccessIdx;
 
         public override string ToString()
         {

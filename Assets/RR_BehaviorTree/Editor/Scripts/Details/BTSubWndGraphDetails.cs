@@ -25,11 +25,11 @@ namespace RR.AI.BehaviorTree
             var titleContainer = Title("Details");
             Add(titleContainer);
 
-            var generalContainer = CreateGeneralContainer();
-            Add(generalContainer);
-
             var taskPropsContainer = CreateTaskPropsContainer();
             Add(taskPropsContainer);
+            
+            var generalContainer = CreateGeneralContainer();
+            Add(generalContainer);
         }
 
         private VisualElement CreateContainerBase(string labelText, VisualElement content)

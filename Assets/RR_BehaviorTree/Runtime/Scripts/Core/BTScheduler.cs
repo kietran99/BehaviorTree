@@ -361,7 +361,7 @@ namespace RR.AI.BehaviorTree
             AbortSelfServices();
             int failIdx = _orderedNodes[idx].FailIdx;
             RegenerateChoiceStackTo(failIdx);
-            NodeAbort(_runningIdx, failIdx);
+            NodeAbort?.Invoke(_runningIdx, failIdx);
             return InternalTick(failIdx, _choiceStack);
         }
 
@@ -376,7 +376,7 @@ namespace RR.AI.BehaviorTree
             AbortLowerPriorityServices();
             int parentIdx = _orderedNodes[idx].ParentIdx;
             RegenerateChoiceStackTo(parentIdx);
-            NodeAbort(_runningIdx, idx);
+            NodeAbort?.Invoke(_runningIdx, idx);
             return InternalTick(idx, _choiceStack);
         }
 

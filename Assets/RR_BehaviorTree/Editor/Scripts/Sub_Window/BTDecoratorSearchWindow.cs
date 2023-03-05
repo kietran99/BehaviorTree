@@ -11,8 +11,7 @@ namespace RR.AI.BehaviorTree
                                                 typeof(BTDecoratorSimpleBase).IsAssignableFrom(type)
                                                 && !type.IsAbstract
                                                 && type != typeof(BTTaskBase)
-                                                && !type.IsGenericType
-                                                && type != typeof(BTTaskNull);
+                                                && !type.IsGenericType;
 
         protected override string BuiltInItemNamePrefix => "BTDeco";
 

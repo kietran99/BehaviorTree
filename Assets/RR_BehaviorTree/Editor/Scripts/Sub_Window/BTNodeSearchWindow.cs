@@ -29,8 +29,7 @@ namespace RR.AI.BehaviorTree
                                                     && type != typeof(BTTaskBase)
                                                     && !typeof(BTDecoratorSimpleBase).IsAssignableFrom(type)
                                                     && !typeof(BTServiceBase).IsAssignableFrom(type)
-                                                    && !type.IsGenericType
-                                                    && type != typeof(BTTaskNull));
+                                                    && !type.IsGenericType);
 
                 _taskTypes.AddRange(types);
             }

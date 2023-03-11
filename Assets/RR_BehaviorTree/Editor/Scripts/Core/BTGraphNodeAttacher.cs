@@ -87,7 +87,13 @@ namespace RR.AI.BehaviorTree
             _curSelected = this;
             _selected = true;
             SwapBorderStyle(STYLE_HOVER_SELECTED_BORDER);
-            BTGraphView.OnNewNodeSelected?.Invoke(_guid, Name, string.Empty, _task);
+            BTGraphView.OnNewNodeSelected?.Invoke(new NodeSelectParams()
+                {
+                    Guid = _guid,
+                    Name = Name,
+                    Desc = string.Empty,
+                    Task = _task
+                });
             evt.StopPropagation();
         }
 

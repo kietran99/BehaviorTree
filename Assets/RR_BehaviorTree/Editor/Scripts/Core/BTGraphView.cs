@@ -25,7 +25,7 @@ namespace RR.AI.BehaviorTree
         private List<BTGraphNodeBase> _graphNodes;
 
         // public static Action<string> OnNodeSelected { get; set; }
-        public static Action<string, string, string, BTTaskBase> OnNewNodeSelected { get; set; }
+        public static Action<NodeSelectParams> OnNewNodeSelected { get; set; }
         // public Action OnNodeDeleted { get; set; }
 
         public BTGraphDesign GraphDesign => _serializedGraphDesign.targetObject as BTGraphDesign;
@@ -52,7 +52,7 @@ namespace RR.AI.BehaviorTree
 
                 foreach (var listener in OnNewNodeSelected.GetInvocationList())
                 {
-                    OnNewNodeSelected -= (Action<string, string, string, BTTaskBase>) listener;
+                    OnNewNodeSelected -= (Action<NodeSelectParams>)listener;
                 }
             };  
         }
@@ -240,13 +240,13 @@ namespace RR.AI.BehaviorTree
             _BBDebugger = new AI.Debugger.BBVisualDebugger(_blackboard);
         }
 
-        private void HandleNewNodeSelected(string guid, string name, string desc, BTTaskBase task)
+        private void HandleNewNodeSelected(NodeSelectParams nodeSelectParams)
         {
-            _nodeDetails.ShowNodeInfo(name, desc);
+            _nodeDetails.ShowNodeInfo(nodeSelectParams.Name, nodeSelectParams.Desc);
             
-            if (task != null)
+            if (nodeSelectParams.Task != null)
             {
-                _nodeDetails.DrawTaskProp(task, _blackboard);
+                _nodeDetails.DrawTaskProp(nodeSelectParams.Task, _blackboard);
             }
             else
             {

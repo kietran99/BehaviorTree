@@ -88,10 +88,10 @@ namespace RR.AI.BehaviorTree
             return CreateContainerBase("Properties", container);
         }
 
-        public void ShowNodeInfo(string name, string desc)
+        public void ShowNodeInfo(SerializedProperty propName, System.Action<string> nameChangeCallback)
         {
-            _nameField.value = name;
-            _descField.value = desc;
+            _nameField.BindProperty(propName);
+            _nameField.RegisterValueChangedCallback(evt => nameChangeCallback(evt.newValue));
         }
 
         public void ClearTaskPropsContent() => _taskPropsContentContainer.Clear();

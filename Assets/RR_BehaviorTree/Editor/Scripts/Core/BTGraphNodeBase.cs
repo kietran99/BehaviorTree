@@ -26,6 +26,8 @@ namespace RR.AI.BehaviorTree
         }
         private BTGraphNodeAttacher _hoveredAttacher;
 
+        protected Label _titleLabel;
+
         public string Guid => _guid;
         public abstract string Name { get; }
         public BTGraphOrderLabel OrderLabel { get; set; }
@@ -201,6 +203,20 @@ namespace RR.AI.BehaviorTree
             var evtPtrEnter = PointerEnterEvent.GetPooled();
             evtPtrEnter.target = this;
             this.SendEvent(evtPtrEnter);
+        }
+
+        public void Rename(string newName)
+        {
+            _titleLabel.text = newName;
+        }
+
+        protected Label CreateTitleLabel(string title)
+        {
+            var titleLabel = new Label(title);
+            titleLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
+            titleLabel.style.fontSize = 14;
+            titleLabel.style.color = Color.white;
+            return titleLabel;
         }
     }
 }

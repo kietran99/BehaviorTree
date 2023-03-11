@@ -242,7 +242,40 @@ namespace RR.AI.BehaviorTree
 
         private void HandleNewNodeSelected(NodeSelectParams nodeSelectParams)
         {
-            _nodeDetails.ShowNodeInfo(nodeSelectParams.Name, nodeSelectParams.Desc);
+            Func<string, string, SerializedObject, SerializedProperty> FindPropName = (guidToFind, dataListPropName, graphDesign) =>
+            {
+                SerializedProperty nodeDataList = graphDesign.FindProperty(dataListPropName);
+                foreach (SerializedProperty nodeData in nodeDataList)
+                {
+                    SerializedProperty nodeGraphData = nodeData.FindPropertyRelative("_graphData");
+                    SerializedProperty guid = nodeGraphData.FindPropertyRelative("_guid");
+                    if (guidToFind == guid.stringValue)
+                    {
+                        return nodeGraphData.FindPropertyRelative("_name");
+                    }
+                }
+
+                Debug.LogError($"Invalid Guid: " + guidToFind);
+                return null;
+            };
+
+            Action<string, string, List<BTGraphNodeBase>> RenameNode = (guid, newName, graphNodes) =>
+            {
+                foreach (var node in graphNodes)
+                {
+                    if (node.Guid == guid)
+                    {
+                        node.Rename(newName);
+                        return;
+                    }
+                }
+
+                Debug.LogError($"Invalid Guid: " + guid);
+            };
+
+            string dataListPropName = nodeSelectParams.Task == null ? "_nodeDataList" : "_taskDataList";
+            SerializedProperty propName = FindPropName(nodeSelectParams.Guid, dataListPropName, _serializedGraphDesign);
+            _nodeDetails.ShowNodeInfo(propName, newName => RenameNode(nodeSelectParams.Guid, newName, _graphNodes));
             
             if (nodeSelectParams.Task != null)
             {

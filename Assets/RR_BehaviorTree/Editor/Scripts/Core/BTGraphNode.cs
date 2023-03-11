@@ -35,7 +35,8 @@ namespace RR.AI.BehaviorTree
             StylizeTitleContainer(titleContainer);
             
             Texture2D titleIcon = initParams.icon;
-            var titleContent = CreateTitleContent(_name, titleIcon);
+            _titleLabel = CreateTitleLabel(_name);
+            var titleContent = CreateTitleContent(_titleLabel, titleIcon);
             titleContainer.Add(titleContent);
 
             var pos = initParams.pos;
@@ -94,7 +95,7 @@ namespace RR.AI.BehaviorTree
             container.style.paddingRight = 5;
         }
 
-        private VisualElement CreateTitleContent(string title, Texture2D nodeIcon)
+        private VisualElement CreateTitleContent(Label titleLabel, Texture2D nodeIcon)
         {
             var container = new VisualElement();
             container.style.flexDirection = FlexDirection.Row;
@@ -105,10 +106,6 @@ namespace RR.AI.BehaviorTree
             icon.style.marginRight = 5;
             container.Add(icon);
 
-            var titleLabel = new Label(title);
-            titleLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
-            titleLabel.style.fontSize = 14;
-            titleLabel.style.color = Color.white;
             container.Add(titleLabel);
 
             return container;

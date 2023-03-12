@@ -13,6 +13,8 @@ namespace RR.AI.BehaviorTree
         private VisualElement _taskPropsContentContainer;
         private float _height, _width;
 
+        private EventCallback<ChangeEvent<string>> _curNameValueChangeCallback;
+
         public BTSubWndGraphDetails(UnityEngine.Rect rect)
         {
             _propFieldFactory = new BTDetailsPropFieldFactory();
@@ -91,7 +93,9 @@ namespace RR.AI.BehaviorTree
         public void ShowNodeInfo(SerializedProperty propName, System.Action<string> nameChangeCallback)
         {
             _nameField.BindProperty(propName);
-            _nameField.RegisterValueChangedCallback(evt => nameChangeCallback(evt.newValue));
+            _nameField.UnregisterValueChangedCallback(_curNameValueChangeCallback);
+            _curNameValueChangeCallback = evt => nameChangeCallback(evt.newValue);
+            _nameField.RegisterValueChangedCallback(_curNameValueChangeCallback);
         }
 
         public void ClearTaskPropsContent() => _taskPropsContentContainer.Clear();

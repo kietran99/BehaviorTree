@@ -4,5 +4,6 @@ namespace RR.AI.BehaviorTree
     {
         public string Guid, Name, Desc;
         public BTTaskBase Task;
+        public bool IsAttacher = false;
     }
 }

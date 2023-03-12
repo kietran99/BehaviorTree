@@ -242,6 +242,17 @@ namespace RR.AI.BehaviorTree
 
         private void HandleNewNodeSelected(NodeSelectParams nodeSelectParams)
         {
+            if (nodeSelectParams.IsAttacher)
+            {
+                OnSelectedAttacher(nodeSelectParams);
+                return;
+            }
+
+            OnSelectedNode(nodeSelectParams);
+        }
+
+        private void OnSelectedNode(NodeSelectParams nodeSelectParams)
+        {
             bool isMultiSelect = selection.Count > 1;
             if (isMultiSelect || typeof(BTTaskBase).IsAssignableFrom(selection[0].GetType()))
             {
@@ -278,6 +289,36 @@ namespace RR.AI.BehaviorTree
             {
                 _nodeDetails.ClearTaskPropsContent();
             }
+        }
+
+        private void OnSelectedAttacher(NodeSelectParams nodeSelectParams)
+        {
+            Func<string, SerializedObject, (SerializedProperty, string)> FindPropNameAndDecorateeGuid = (guidToFind, graphDesign) =>
+            {
+                SerializedProperty attacherDictInternalList = graphDesign.FindProperty("_attacherDict").FindPropertyRelative("_entries");
+                foreach (SerializedProperty keyValuePair in attacherDictInternalList)
+                {
+                    SerializedProperty attacherList = keyValuePair.FindPropertyRelative("Value");
+                    foreach (SerializedProperty attacher in attacherList)
+                    {
+                        string guid = attacher.FindPropertyRelative("guid").stringValue;
+                        if (guidToFind == guid)
+                        {
+                            SerializedProperty propName = attacher.FindPropertyRelative("name");
+                            string decorateeGuid = keyValuePair.FindPropertyRelative("Key").stringValue;
+                            return (propName, decorateeGuid);
+                        }
+                    }
+                }
+
+                Debug.LogError($"Invalid Guid: {guidToFind}");
+                return (null, string.Empty);
+            };
+
+            (SerializedProperty propName, string decorateeGuid) = FindPropNameAndDecorateeGuid(nodeSelectParams.Guid, _serializedGraphDesign);
+            BTGraphNodeBase decorateeNode = _graphNodes.Find(node => node.Guid == decorateeGuid);
+            BTGraphNodeAttacher selectedAttacher = decorateeNode.FindAttacher(nodeSelectParams.Guid);
+            _nodeDetails.ShowNodeInfo(propName, newName => selectedAttacher.Rename(newName));
         }
 
         private GraphBlackboard CreateBlackboard(

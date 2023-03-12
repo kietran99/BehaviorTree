@@ -205,6 +205,11 @@ namespace RR.AI.BehaviorTree
             this.SendEvent(evtPtrEnter);
         }
 
+        public BTGraphNodeAttacher FindAttacher(string guidToFind)
+        {
+            return _attachers.Find(attacher => attacher.Guid == guidToFind);
+        }
+
         public void Rename(string newName)
         {
             _titleLabel.text = newName;

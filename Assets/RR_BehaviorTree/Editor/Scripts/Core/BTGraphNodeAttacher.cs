@@ -14,6 +14,7 @@ namespace RR.AI.BehaviorTree
 
         private string _guid, _nodeID;
         private BTTaskBase _task;
+        private Label _titleLabel;
 
         private VisualElement _contentContainer;
         private bool _selected;
@@ -39,7 +40,8 @@ namespace RR.AI.BehaviorTree
 
         public BTGraphNodeAttacher(BTGraphInitParamsAttacher initParams, string styleSheetName)
         {
-            _contentContainer = CreateTitleContent(initParams.name, initParams.icon);
+            _titleLabel = CreateTitleLabel(initParams.name);
+            _contentContainer = CreateTitleContent(_titleLabel, initParams.icon);
             Name = initParams.name;
             _contentContainer.styleSheets.Add(Resources.Load<StyleSheet>($"Stylesheets/{styleSheetName}"));
             _curBorderStyle = STYLE_IDLE_UNSELECTED_BORDER;
@@ -57,7 +59,7 @@ namespace RR.AI.BehaviorTree
             _task = initParams.task;
         }
 
-        private VisualElement CreateTitleContent(string title, Texture2D nodeIcon)
+        private VisualElement CreateTitleContent(Label titleLabel, Texture2D nodeIcon)
         {
             var container = new VisualElement();
             container.style.flexDirection = FlexDirection.Row;
@@ -68,13 +70,23 @@ namespace RR.AI.BehaviorTree
             icon.style.marginRight = 5;
             container.Add(icon);
 
-            var titleLabel = new Label(title);
-            titleLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
-            titleLabel.style.fontSize = 14;
-            titleLabel.style.color = Color.white;
             container.Add(titleLabel);
 
             return container;
+        }
+
+        private Label CreateTitleLabel(string title)
+        {
+            var label = new Label(title);
+            label.style.unityTextAlign = TextAnchor.MiddleCenter;
+            label.style.fontSize = 14;
+            label.style.color = Color.white;
+            return label;
+        }
+
+        public void Rename(string newName)
+        {
+            _titleLabel.text = newName;
         }
 
         private void OnSelected(MouseDownEvent evt)
@@ -92,7 +104,8 @@ namespace RR.AI.BehaviorTree
                     Guid = _guid,
                     Name = Name,
                     Desc = string.Empty,
-                    Task = _task
+                    Task = _task,
+                    IsAttacher = true
                 });
             evt.StopPropagation();
         }

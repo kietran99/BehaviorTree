@@ -242,6 +242,12 @@ namespace RR.AI.BehaviorTree
 
         private void HandleNewNodeSelected(NodeSelectParams nodeSelectParams)
         {
+            bool isMultiSelect = selection.Count > 1;
+            if (isMultiSelect || typeof(BTTaskBase).IsAssignableFrom(selection[0].GetType()))
+            {
+                return;
+            }
+
             Func<string, string, SerializedObject, SerializedProperty> FindPropName = (guidToFind, dataListPropName, graphDesign) =>
             {
                 SerializedProperty nodeDataList = graphDesign.FindProperty(dataListPropName);
@@ -255,27 +261,14 @@ namespace RR.AI.BehaviorTree
                     }
                 }
 
-                Debug.LogError($"Invalid Guid: " + guidToFind);
+                Debug.LogError($"Invalid Guid: {guidToFind}");
                 return null;
-            };
-
-            Action<string, string, List<BTGraphNodeBase>> RenameNode = (guid, newName, graphNodes) =>
-            {
-                foreach (var node in graphNodes)
-                {
-                    if (node.Guid == guid)
-                    {
-                        node.Rename(newName);
-                        return;
-                    }
-                }
-
-                Debug.LogError($"Invalid Guid: " + guid);
             };
 
             string dataListPropName = nodeSelectParams.Task == null ? "_nodeDataList" : "_taskDataList";
             SerializedProperty propName = FindPropName(nodeSelectParams.Guid, dataListPropName, _serializedGraphDesign);
-            _nodeDetails.ShowNodeInfo(propName, newName => RenameNode(nodeSelectParams.Guid, newName, _graphNodes));
+            BTGraphNodeBase selectedElement = selection[0] as BTGraphNodeBase;
+            _nodeDetails.ShowNodeInfo(propName, newName => selectedElement.Rename(newName));
             
             if (nodeSelectParams.Task != null)
             {

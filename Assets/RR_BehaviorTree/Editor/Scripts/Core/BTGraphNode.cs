@@ -71,7 +71,7 @@ namespace RR.AI.BehaviorTree
 
         public override void OnSelected()
         {
-            BTGraphView.OnNewElementSelected?.Invoke(new NodeSelectParams()
+            BTGraphView.OnNewElementSelected?.Invoke(new ElementSelectParams()
                 {
                     Guid = _guid,
                     Name = _name,

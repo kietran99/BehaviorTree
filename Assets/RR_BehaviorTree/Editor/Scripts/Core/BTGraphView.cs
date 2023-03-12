@@ -25,7 +25,7 @@ namespace RR.AI.BehaviorTree
         private List<BTGraphNodeBase> _graphNodes;
 
         // public static Action<string> OnNodeSelected { get; set; }
-        public static Action<NodeSelectParams> OnNewElementSelected { get; set; }
+        public static Action<ElementSelectParams> OnNewElementSelected { get; set; }
         // public Action OnNodeDeleted { get; set; }
 
         public BTGraphDesign GraphDesign => _serializedGraphDesign.targetObject as BTGraphDesign;
@@ -41,7 +41,7 @@ namespace RR.AI.BehaviorTree
             _serviceSearchWnd = CreateAttacherSearchWindow<BTServiceSearchWindow>();
 
             graphViewChanged += OnGraphViewChanged;
-            OnNewElementSelected += HandleNewNodeSelected;
+            OnNewElementSelected += HandleNewElementSelected;
 
             BTEditorWindow.OnClose += () =>
             {
@@ -52,7 +52,7 @@ namespace RR.AI.BehaviorTree
 
                 foreach (var listener in OnNewElementSelected.GetInvocationList())
                 {
-                    OnNewElementSelected -= (Action<NodeSelectParams>)listener;
+                    OnNewElementSelected -= (Action<ElementSelectParams>)listener;
                 }
             };  
         }
@@ -240,7 +240,7 @@ namespace RR.AI.BehaviorTree
             _BBDebugger = new AI.Debugger.BBVisualDebugger(_blackboard);
         }
 
-        private void HandleNewNodeSelected(NodeSelectParams nodeSelectParams)
+        private void HandleNewElementSelected(ElementSelectParams nodeSelectParams)
         {
             if (nodeSelectParams.IsAttacher)
             {
@@ -251,7 +251,7 @@ namespace RR.AI.BehaviorTree
             OnSelectedNode(nodeSelectParams);
         }
 
-        private void OnSelectedNode(NodeSelectParams nodeSelectParams)
+        private void OnSelectedNode(ElementSelectParams elementSelectParams)
         {
             bool isMultiSelect = selection.Count > 1;
             if (isMultiSelect || typeof(BTTaskBase).IsAssignableFrom(selection[0].GetType()))
@@ -276,14 +276,14 @@ namespace RR.AI.BehaviorTree
                 return null;
             };
 
-            string dataListPropName = nodeSelectParams.Task == null ? "_nodeDataList" : "_taskDataList";
-            SerializedProperty propName = FindPropName(nodeSelectParams.Guid, dataListPropName, _serializedGraphDesign);
+            string dataListPropName = elementSelectParams.Task == null ? "_nodeDataList" : "_taskDataList";
+            SerializedProperty propName = FindPropName(elementSelectParams.Guid, dataListPropName, _serializedGraphDesign);
             BTGraphNodeBase selectedElement = selection[0] as BTGraphNodeBase;
             _nodeDetails.ShowNodeInfo(propName, newName => selectedElement.Rename(newName));
             
-            if (nodeSelectParams.Task != null)
+            if (elementSelectParams.Task != null)
             {
-                _nodeDetails.DrawTaskProp(nodeSelectParams.Task, _blackboard);
+                _nodeDetails.DrawTaskProp(elementSelectParams.Task, _blackboard);
             }
             else
             {
@@ -291,7 +291,7 @@ namespace RR.AI.BehaviorTree
             }
         }
 
-        private void OnSelectedAttacher(NodeSelectParams nodeSelectParams)
+        private void OnSelectedAttacher(ElementSelectParams elementSelectParams)
         {
             Func<string, SerializedObject, (SerializedProperty, string)> FindPropNameAndDecorateeGuid = (guidToFind, graphDesign) =>
             {
@@ -315,9 +315,9 @@ namespace RR.AI.BehaviorTree
                 return (null, string.Empty);
             };
 
-            (SerializedProperty propName, string decorateeGuid) = FindPropNameAndDecorateeGuid(nodeSelectParams.Guid, _serializedGraphDesign);
+            (SerializedProperty propName, string decorateeGuid) = FindPropNameAndDecorateeGuid(elementSelectParams.Guid, _serializedGraphDesign);
             BTGraphNodeBase decorateeNode = _graphNodes.Find(node => node.Guid == decorateeGuid);
-            BTGraphNodeAttacher selectedAttacher = decorateeNode.FindAttacher(nodeSelectParams.Guid);
+            BTGraphNodeAttacher selectedAttacher = decorateeNode.FindAttacher(elementSelectParams.Guid);
             _nodeDetails.ShowNodeInfo(propName, newName => selectedAttacher.Rename(newName));
         }
 

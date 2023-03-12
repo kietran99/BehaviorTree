@@ -25,7 +25,7 @@ namespace RR.AI.BehaviorTree
         private List<BTGraphNodeBase> _graphNodes;
 
         // public static Action<string> OnNodeSelected { get; set; }
-        public static Action<NodeSelectParams> OnNewNodeSelected { get; set; }
+        public static Action<NodeSelectParams> OnNewElementSelected { get; set; }
         // public Action OnNodeDeleted { get; set; }
 
         public BTGraphDesign GraphDesign => _serializedGraphDesign.targetObject as BTGraphDesign;
@@ -41,18 +41,18 @@ namespace RR.AI.BehaviorTree
             _serviceSearchWnd = CreateAttacherSearchWindow<BTServiceSearchWindow>();
 
             graphViewChanged += OnGraphViewChanged;
-            OnNewNodeSelected += HandleNewNodeSelected;
+            OnNewElementSelected += HandleNewNodeSelected;
 
             BTEditorWindow.OnClose += () =>
             {
-                if (OnNewNodeSelected == null)
+                if (OnNewElementSelected == null)
                 {
                     return;
                 }
 
-                foreach (var listener in OnNewNodeSelected.GetInvocationList())
+                foreach (var listener in OnNewElementSelected.GetInvocationList())
                 {
-                    OnNewNodeSelected -= (Action<NodeSelectParams>)listener;
+                    OnNewElementSelected -= (Action<NodeSelectParams>)listener;
                 }
             };  
         }

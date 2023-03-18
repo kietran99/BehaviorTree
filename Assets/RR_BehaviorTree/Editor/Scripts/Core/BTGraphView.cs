@@ -319,6 +319,7 @@ namespace RR.AI.BehaviorTree
             BTGraphNodeBase decorateeNode = _graphNodes.Find(node => node.Guid == decorateeGuid);
             BTGraphNodeAttacher selectedAttacher = decorateeNode.FindAttacher(elementSelectParams.Guid);
             _nodeDetails.ShowNodeInfo(propName, newName => selectedAttacher.Rename(newName));
+            _nodeDetails.DrawTaskProp(elementSelectParams.Task, _blackboard);
         }
 
         private GraphBlackboard CreateBlackboard(

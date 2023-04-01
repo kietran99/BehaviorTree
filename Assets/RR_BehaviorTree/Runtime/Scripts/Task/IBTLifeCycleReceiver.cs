@@ -4,7 +4,7 @@ namespace RR.AI.BehaviorTree
     {
         string Name { get; }
 
-        void Init(UnityEngine.GameObject actor, RuntimeBlackboard blackboard);
+        void Init(BTRuntimeContext context);
         BTNodeState Update();
         void TreeEval();
         void Abort();

@@ -6,6 +6,7 @@ namespace RR.AI.BehaviorTree
     {
         protected GameObject _actor;
         protected RuntimeBlackboard _blackboard;
+        protected Events.IEventHub _eventHub;
 
         public virtual string Name
         {
@@ -18,10 +19,11 @@ namespace RR.AI.BehaviorTree
             }
         }
 
-        public void Init(GameObject actor, RuntimeBlackboard blackboard)
+        public void Init(BTRuntimeContext context)
         {
-            _actor = actor;
-            _blackboard = blackboard;
+            _actor = context.Actor;
+            _blackboard = context.Blackboard;
+            _eventHub = context.EventHub;
             OnStart();
         }
 

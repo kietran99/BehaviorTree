@@ -43,10 +43,12 @@ namespace RR.AI.BehaviorTree
         private bool _isActive;
         private BTScheduler _scheduler;
         private RuntimeBlackboard _runtimeBlackboard;
+        private Events.IEventHub _eventHub;
 
         public BTGraphDesign DesignContainer => _designContainer;
         public BTScheduler Scheduler => _scheduler;
         public RuntimeBlackboard Blackboard => _runtimeBlackboard;
+        public Events.IEventHub RuntimeEventHub => _eventHub;
 
         private void Start()
         {
@@ -190,7 +192,8 @@ namespace RR.AI.BehaviorTree
                 .ToArray();
 
             _runtimeBlackboard = _designContainer.Blackboard.CreateRuntimeBlackboard();
-            _scheduler = new BTScheduler(execList, _actor, _runtimeBlackboard);
+            _eventHub = new Events.EventHub();
+            _scheduler = new BTScheduler(execList, new BTRuntimeContext(_actor, _runtimeBlackboard, _eventHub));
 
             _isInitialized = true;
             BBEventBroker.Instance.Reset();

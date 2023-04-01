@@ -1,11 +1,18 @@
 {
   "dependencies": {
+    "com.coffee.upm-git-extension": {
+      "version": "https://github.com/mob-sakai/UpmGitExtension.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "d0c1cbb5415f5accf6a1d49d1dc91cf7d4fb11b9"
+    },
     "com.rraptor.events": {
       "version": "https://github.com/kietran99/RR_Events.git?path=Assets/RR_Events/#main",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "20dc70774aa2f84ebb3e479789b3b8d1ae31f4c4"
+      "hash": "0981f801d5177267d93a1d38d4a7c8264f84c999"
     },
     "com.rraptor.serialization": {
       "version": "https://github.com/kietran99/RR_Serialization.git#main",
@@ -22,7 +29,7 @@
       "hash": "cc9ae0075471d0e51800d1e0557539d0f3069072"
     },
     "com.unity.2d.animation": {
-      "version": "7.0.9",
+      "version": "7.0.10",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -77,12 +84,12 @@
       "dependencies": {}
     },
     "com.unity.2d.spriteshape": {
-      "version": "7.0.6",
+      "version": "7.0.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.mathematics": "1.1.0",
-        "com.unity.2d.common": "6.0.4",
+        "com.unity.2d.common": "6.0.6",
         "com.unity.2d.path": "5.0.2",
         "com.unity.modules.physics2d": "1.0.0"
       },

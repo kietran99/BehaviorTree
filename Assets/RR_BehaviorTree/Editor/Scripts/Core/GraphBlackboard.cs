@@ -21,6 +21,22 @@ namespace RR.AI
             }
         }
 
+		private class CustomBlackboardField : BlackboardField
+		{
+			private System.Action<BlackboardField> _deleteCallback;
+
+			public CustomBlackboardField(System.Action<BlackboardField> deleteCallback)
+			{
+				_deleteCallback = deleteCallback;
+			}
+
+			protected override void BuildFieldContextualMenu(ContextualMenuPopulateEvent evt)
+			{
+				base.BuildFieldContextualMenu(evt);
+				evt.menu.InsertAction(0, "Delete", action => _deleteCallback?.Invoke(this));
+			}
+		}
+
         private Blackboard _blackboard;
 		private ScriptableObject _BBcontainer;
 		private Dictionary<System.Type, List<string>> _typeToKeysMap;
@@ -40,7 +56,6 @@ namespace RR.AI
 			editTextRequested += OnKeyEdited;
 			
 			_keyToRowMap = InitBBFields(serializableBB);
-			graphView.OnElementDeleted += OnElementDeleted;
 
 			_BBValueTypeNameMap = new Dictionary<System.Type, string>()
 			{
@@ -145,16 +160,18 @@ namespace RR.AI
 
 		private BlackboardField CreateBBField(string typeText, string key = "")
 		{
-			return new BlackboardField() { text = string.IsNullOrEmpty(key) ? "Key" : key, typeText = typeText };
+			var field = new CustomBlackboardField(OnBBFieldDeleted) { text = string.IsNullOrEmpty(key) ? "Key" : key, typeText = typeText };
+			return field;
 		}
 
-		private void OnElementDeleted(GraphElement element)
-		{
-			RowContainer rowContainer = element.parent as RowContainer;
-			_keyToRowMap.Remove(rowContainer.key);
+        private void OnBBFieldDeleted(BlackboardField field)
+        {
+			string key = field.text;
+			RowContainer rowContainer = _keyToRowMap[key];
+			_keyToRowMap.Remove(key);
 			Remove(rowContainer);
-			RemoveEntryOnDisk((element as BlackboardField).text, _BBcontainer);
-		}
+			RemoveEntryOnDisk(key, _BBcontainer);
+        }
 
 		public void OnGOSelectionChanged(Blackboard serializableBB = null, ScriptableObject BBContainer = null)
 		{

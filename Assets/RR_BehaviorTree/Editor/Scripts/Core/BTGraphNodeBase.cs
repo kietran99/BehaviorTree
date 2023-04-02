@@ -3,7 +3,6 @@ using UnityEngine.UIElements;
 using UnityEditor.Experimental.GraphView;
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace RR.AI.BehaviorTree
@@ -49,31 +48,6 @@ namespace RR.AI.BehaviorTree
         public abstract void OnCreate(BTGraphDesign graphDesign, Vector2 position);
         public abstract void OnDelete(BTGraphDesign graphDesign);
         public abstract void OnMove(BTGraphDesign graphDesign, Vector2 moveDelta);
-
-        public int LabelPosX
-        {
-            get
-            {
-                const int maxCharForDefaultSize = 8;
-                int titleLen = TextContentLength;
-                var posX = 108 + (titleLen <= maxCharForDefaultSize ? 0 : (titleLen - maxCharForDefaultSize) * 17) - 14;
-                return posX;
-            }
-        }
-
-        private int TextContentLength
-        {
-            get
-            {
-                if (_attachers == null || _attachers.Count == 0)
-                {
-                    return Name.Length;
-                }
-
-                var longestDecorator = _attachers.Aggregate((longest, next) => next.Name.Length > longest.Name.Length ? next : longest);
-                return Mathf.Max(Name.Length, longestDecorator.Name.Length);
-            }
-        }
 
         public void InitAttachers(List<BTSerializableAttacher> serializedAttachers)
         {
@@ -177,11 +151,6 @@ namespace RR.AI.BehaviorTree
             extensionContainer.Add(attacher);
             Attachers.Add(attacher);
             RefreshExpandedState();
-
-            if (OrderLabel != null)
-            {
-                OrderLabel.SetRealPosition(new Vector2(x + LabelPosX, y));
-            }
 
             attacher.MouseEntered += OnAttacherMouseEnter;
             attacher.MouseExited += OnAttacherMouseExit;

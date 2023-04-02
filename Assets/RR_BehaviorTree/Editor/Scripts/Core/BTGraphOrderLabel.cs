@@ -14,12 +14,12 @@ namespace RR.AI.BehaviorTree
             set => _txtLb.text = value.ToString();
         }
 
-        public BTGraphOrderLabel(Vector2 pos, int order)
+        public BTGraphOrderLabel(int order)
         {
             capabilities |= UnityEditor.Experimental.GraphView.Capabilities.Droppable;
 
             var diameter = 16f;
-            Rect rect = new Rect(pos.x, pos.y, diameter, diameter);
+            Rect rect = new Rect(0.0f, 0.0f, diameter, diameter);
             SetPosition(rect);
 
             style.backgroundColor = Utils.ColorExtension.Create(145f);
@@ -46,17 +46,6 @@ namespace RR.AI.BehaviorTree
 
             _txtLb.style.unityFontStyleAndWeight = FontStyle.Bold;
             Add(_txtLb);
-        }
-    
-        public void Move(Vector2 moveDelta)
-        {
-            var oldPos = GetPosition();
-            SetPosition(new Rect(oldPos.x + moveDelta.x, oldPos.y + moveDelta.y, oldPos.width, oldPos.height));
-        }
-
-        public void SetRealPosition(Vector2 pos)
-        {
-            SetPosition(new Rect(pos, GetPosition().size));
         }
     }
 }

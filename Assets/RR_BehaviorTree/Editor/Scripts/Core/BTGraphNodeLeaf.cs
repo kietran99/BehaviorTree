@@ -208,7 +208,6 @@ namespace RR.AI.BehaviorTree
         public override void OnMove(BTGraphDesign designContainer, Vector2 moveDelta)
         {
             designContainer.TaskDataList.Find(node => node.Guid == _guid).Position = GetPosition().position;
-            SyncOrderLabelPosition(moveDelta);
         }
 
         public override void OnConnect(BTGraphDesign designContainer, string parentGuid)

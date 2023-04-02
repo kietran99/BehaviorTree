@@ -143,9 +143,11 @@ namespace RR.AI.BehaviorTree
                 })
                 .OnObjectOrder((node, idx, parentIdx) =>
                 {
-                    var pos = new Vector2(node.x + node.LabelPosX, node.y);
-                    var orderLb = new BTGraphOrderLabel(pos, idx);
+                    var orderLb = new BTGraphOrderLabel(idx);
                     AddElement(orderLb);
+                    var attacher = new Attacher(orderLb, node, SpriteAlignment.TopRight);
+                    attacher.distance = -13.0f;
+                    attacher.Reattach();
                     node.OrderLabel = orderLb;
                 })
                 .Execute(
@@ -398,11 +400,13 @@ namespace RR.AI.BehaviorTree
         {
             AddElement(node);
             var convertedNode = node as BTGraphNodeBase;
-            var labelPos = new Vector2(pos.x + convertedNode.LabelPosX, pos.y);
-            var orderLb = new BTGraphOrderLabel(pos, 0);
+            var orderLb = new BTGraphOrderLabel(0);
             AddElement(orderLb);
-            convertedNode.OrderLabel = orderLb;
+            var attacher = new Attacher(orderLb, node, SpriteAlignment.TopRight);
+            attacher.distance = -13.0f;
+            attacher.Reattach();
             convertedNode.OrderLabel.visible = false;
+            convertedNode.OrderLabel = orderLb;
             convertedNode.OnCreate(GraphDesign, pos);
         }
 

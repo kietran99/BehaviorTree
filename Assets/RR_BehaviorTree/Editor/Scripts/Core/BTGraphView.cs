@@ -402,6 +402,7 @@ namespace RR.AI.BehaviorTree
             var convertedNode = node as BTGraphNodeBase;
             var orderLb = new BTGraphOrderLabel(0);
             AddElement(orderLb);
+            convertedNode.OrderLabel = orderLb;
             var attacher = new Attacher(orderLb, node, SpriteAlignment.TopRight);
             attacher.distance = -13.0f;
             attacher.Reattach();

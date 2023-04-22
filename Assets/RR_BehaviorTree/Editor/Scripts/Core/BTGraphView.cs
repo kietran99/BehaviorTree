@@ -143,12 +143,12 @@ namespace RR.AI.BehaviorTree
                 })
                 .OnObjectOrder((node, idx, parentIdx) =>
                 {
-                    var orderLb = new BTGraphOrderLabel(idx);
+                    var orderLb = new BTGraphOrderLabel(node, idx);
                     AddElement(orderLb);
+                    node.OrderValue = idx;
                     var attacher = new Attacher(orderLb, node, SpriteAlignment.TopRight);
                     attacher.distance = -13.0f;
                     attacher.Reattach();
-                    node.OrderLabel = orderLb;
                 })
                 .Execute(
                     designContainer.AsNodeDataBaseList,
@@ -274,19 +274,19 @@ namespace RR.AI.BehaviorTree
                     }
                 }
 
-                Debug.LogError($"Invalid Guid: {guidToFind}");
+                Debug.LogWarning($"Invalid Guid: {guidToFind}");
                 return null;
             };
 
             string dataListPropName = elementSelectParams.Task == null ? "_nodeDataList" : "_taskDataList";
             SerializedProperty propName = FindPropName(elementSelectParams.Guid, dataListPropName, _serializedGraphDesign);
-            BTGraphNodeBase selectedElement = selection[0] as BTGraphNodeBase;
 
             if (propName == null)
             {
                 return;
             }
 
+            BTGraphNodeBase selectedElement = selection[0] as BTGraphNodeBase;
             _nodeDetails.ShowNodeInfo(propName, newName => selectedElement.Rename(newName));
             
             if (elementSelectParams.Task != null)
@@ -406,14 +406,12 @@ namespace RR.AI.BehaviorTree
         {
             AddElement(node);
             var convertedNode = node as BTGraphNodeBase;
-            var orderLb = new BTGraphOrderLabel(0);
-            AddElement(orderLb);
-            convertedNode.OrderLabel = orderLb;
-            var attacher = new Attacher(orderLb, node, SpriteAlignment.TopRight);
-            attacher.distance = -13.0f;
-            attacher.Reattach();
-            convertedNode.OrderLabel.visible = false;
-            convertedNode.OrderLabel = orderLb;
+            // var orderLb = new BTGraphOrderLabel(node as BTGraphNodeBase, 0);
+            // AddElement(orderLb);
+            // orderLb.visible = false;
+            // var attacher = new Attacher(orderLb, node, SpriteAlignment.TopRight);
+            // attacher.distance = -13.0f;
+            // attacher.Reattach();
             convertedNode.OnCreate(GraphDesign, pos);
         }
 

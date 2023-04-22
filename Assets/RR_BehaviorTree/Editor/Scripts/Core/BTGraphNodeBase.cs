@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace RR.AI.BehaviorTree
 {
-    public abstract class BTGraphNodeBase : Node, IBTSerializableNode
+    public abstract class BTGraphNodeBase : Node, IBTSerializableNode, IBTOrderable, IInteractable
     {
         protected string _guid;
         private List<BTGraphNodeAttacher> _attachers;
@@ -29,12 +29,7 @@ namespace RR.AI.BehaviorTree
 
         public string Guid => _guid;
         public abstract string Name { get; }
-        public BTGraphOrderLabel OrderLabel { get; set; }
-        public int OrderValue
-        {
-            get => OrderLabel.Value;
-            set => OrderLabel.Value = value;
-        }
+        public int OrderValue { get; set; }
 
         public int x { get; protected set; }
         public int y { get; protected set; }
@@ -43,6 +38,16 @@ namespace RR.AI.BehaviorTree
 
         protected Action<string, Vector2, Action<BTGraphInitParamsAttacher>> OpenDecoSearchWnd;
         protected Action<string, Vector2, Action<BTGraphInitParamsAttacher>> OpenServiceSearchWnd;
+
+        public Action MoveStarted { get; set; }
+        public Action MoveEnded { get; set; }
+        public Action Selected { get; set; }
+
+        protected BTGraphNodeBase()
+        {
+            RegisterCallback<PointerDownEvent>(OnMouseDown);
+            RegisterCallback<PointerMoveEvent>(OnMouseMove);
+        }
 
         public abstract void OnConnect(BTGraphDesign graphDesign, string parentGuid);
         public abstract void OnCreate(BTGraphDesign graphDesign, Vector2 position);
@@ -191,6 +196,22 @@ namespace RR.AI.BehaviorTree
             titleLabel.style.fontSize = 14;
             titleLabel.style.color = Color.white;
             return titleLabel;
+        }
+
+        private void OnMouseMove(PointerMoveEvent evt) // No idea why this callback is invoked on mouse up
+        {
+            MoveStarted?.Invoke();
+        }
+
+        private void OnMouseDown(PointerDownEvent evt)
+        {
+            MoveEnded?.Invoke();
+        }
+
+        public override void OnSelected()
+        {
+            base.OnSelected();
+            Selected?.Invoke();
         }
     }
 }

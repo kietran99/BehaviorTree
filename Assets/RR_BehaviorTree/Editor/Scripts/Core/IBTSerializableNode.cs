@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace RR.AI.BehaviorTree
 {
-    public interface IBTSerializableNode : IBTIdentifiable, IBTGraphOrderable
+    public interface IBTSerializableNode : IBTIdentifiable
     {
         void OnCreate(BTGraphDesign designContainer, Vector2 position);
         void OnMove(BTGraphDesign designContainer, Vector2 moveDelta);

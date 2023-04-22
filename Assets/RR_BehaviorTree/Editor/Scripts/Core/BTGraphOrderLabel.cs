@@ -14,7 +14,7 @@ namespace RR.AI.BehaviorTree
             set => _txtLb.text = value.ToString();
         }
 
-        public BTGraphOrderLabel(int order)
+        public BTGraphOrderLabel(IInteractable attachee, int order)
         {
             capabilities |= UnityEditor.Experimental.GraphView.Capabilities.Droppable;
 
@@ -46,6 +46,27 @@ namespace RR.AI.BehaviorTree
 
             _txtLb.style.unityFontStyleAndWeight = FontStyle.Bold;
             Add(_txtLb);
+
+            attachee.MoveStarted += OnAttacheeMoveStarted;
+            attachee.MoveEnded += OnAttacheeMoveEnded;
+            attachee.Selected += OnAttacheeSelected;
+        }
+
+        private void OnAttacheeMoveStarted()
+        {
+            SetEnabled(true);
+            visible = true;
+        }
+
+        private void OnAttacheeMoveEnded()
+        {
+            visible = false;
+            SetEnabled(false);
+        }
+
+        private void OnAttacheeSelected()
+        {
+            BringToFront();
         }
     }
 }

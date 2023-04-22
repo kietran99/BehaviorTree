@@ -19,7 +19,7 @@ namespace RR.AI.BehaviorTree
         public override string Name => _name;
         protected virtual BTTaskBase Task => null;
 
-        public BTGraphNode(BTGraphInitParamsNode initParams)
+        public BTGraphNode(BTGraphInitParamsNode initParams) : base()
         {
             styleSheets.Add(Resources.Load<StyleSheet>("Stylesheets/BTGraphNode"));
             AddToClassList("bold-text");
@@ -52,21 +52,6 @@ namespace RR.AI.BehaviorTree
                 capabilities &= ~Capabilities.Movable;
                 capabilities &= ~Capabilities.Deletable;
             }
-
-            RegisterCallback<PointerDownEvent>(OnMouseDown);
-            RegisterCallback<PointerMoveEvent>(OnMouseMove);
-        }
-
-        private void OnMouseMove(PointerMoveEvent evt) // No idea why this callback is invoked on mouse up
-        {
-            OrderLabel.SetEnabled(true);
-            OrderLabel.visible = true;
-        }
-
-        private void OnMouseDown(PointerDownEvent evt)
-        {
-            OrderLabel.visible = false;
-            OrderLabel.SetEnabled(false);
         }
 
         public override void OnSelected()
@@ -79,7 +64,6 @@ namespace RR.AI.BehaviorTree
                     Task = Task
                 });
             base.OnSelected();
-            OrderLabel.BringToFront();
         }
 
         public override void OnUnselected()

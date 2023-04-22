@@ -281,6 +281,12 @@ namespace RR.AI.BehaviorTree
             string dataListPropName = elementSelectParams.Task == null ? "_nodeDataList" : "_taskDataList";
             SerializedProperty propName = FindPropName(elementSelectParams.Guid, dataListPropName, _serializedGraphDesign);
             BTGraphNodeBase selectedElement = selection[0] as BTGraphNodeBase;
+
+            if (propName == null)
+            {
+                return;
+            }
+
             _nodeDetails.ShowNodeInfo(propName, newName => selectedElement.Rename(newName));
             
             if (elementSelectParams.Task != null)

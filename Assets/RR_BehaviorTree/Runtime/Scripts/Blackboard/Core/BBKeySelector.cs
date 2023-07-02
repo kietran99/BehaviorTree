@@ -36,4 +36,14 @@ namespace RR.AI
     public class BBKeySelectorObject : BBKeySelector<UnityEngine.Object>
     {      
     }
+
+    [Serializable]
+    public class BBKeySelectorVector2 : BBKeySelector<Vector2>
+    {      
+    }
+
+    [Serializable]
+    public class BBKeySelectorBool : BBKeySelector<bool>
+    {      
+    }
 }

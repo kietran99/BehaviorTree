@@ -118,7 +118,7 @@ namespace RR.AI.BehaviorTree
                 }
 
                 var taskType = taskIter.type;
-                bool isBBKeySelector = taskType == nameof(BBKeySelectorObject);
+                bool isBBKeySelector = taskType.StartsWith("BBKeySelector");
                 var UIField = isBBKeySelector ? CreateBBKeySelectorField(taskIter, blackboard) : new PropertyField(taskIter, taskIter.displayName);
                 UIField.Bind(serializedTask);
                 container.Add(UIField);
@@ -134,7 +134,9 @@ namespace RR.AI.BehaviorTree
             SerializedPropertyType propType = task.FindPropertyRelative("typeVar").propertyType;
             var typeConversionMap = new Dictionary<SerializedPropertyType, System.Type>()
             {
-                { SerializedPropertyType.ObjectReference, typeof(UnityEngine.Object) }
+                { SerializedPropertyType.ObjectReference, typeof(UnityEngine.Object) },
+                { SerializedPropertyType.Boolean, typeof(bool) },
+                { SerializedPropertyType.Vector2, typeof(UnityEngine.Vector2) }
             };
             
             System.Type valType = typeConversionMap[propType];
@@ -150,7 +152,7 @@ namespace RR.AI.BehaviorTree
             SerializedProperty propKey = task.FindPropertyRelative("_key");
             bool isInvalidFieldVal = string.IsNullOrEmpty(propKey.stringValue);
             string fieldValToAssign = isInvalidFieldVal ? BBKeys[0] : propKey.stringValue;
-            var fieldKey = new PopupField<string>(propKey.displayName, BBKeys, fieldValToAssign);
+            var fieldKey = new PopupField<string>(task.displayName, BBKeys, fieldValToAssign);
             fieldKey.BindProperty(propKey);
             container.Add(fieldKey);
             return container;

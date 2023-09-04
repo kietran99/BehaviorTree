@@ -13,7 +13,7 @@ namespace RR.AI.BehaviorTree
             this.pos = pos;
             this.blackboard = blackboard;
             this.name = task.Name;
-            this.icon = BTGlobalSettings.Instance.GetIcon(task.GetType().Name);
+            this.icon = BTGlobalSettings.Instance.GetIcon(task.GetType());
         }
     }
 }

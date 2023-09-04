@@ -15,11 +15,11 @@ namespace RR.AI.BehaviorTree
         private readonly Rect SETTINGS_RECT = new Rect(10f, 30f, 400f, 400f);
 
         private SerializedObject _serializedGraphDesign;
-        private GraphBlackboard _blackboard;
-        private BTSubWndGraphDetails _nodeDetails;
+        private readonly GraphBlackboard _blackboard;
+        private readonly BTSubWndGraphDetails _nodeDetails;
         private BTSubWndGraphSettings _graphSettingsWnd;
-        private BTDecoratorSearchWindow _decoSearchWnd;
-        private BTServiceSearchWindow _serviceSearchWnd;
+        private readonly BTDecoratorSearchWindow _decoSearchWnd;
+        private readonly BTServiceSearchWindow _serviceSearchWnd;
         private Debugger.BTVisualDebugger _debugger;
         private AI.Debugger.BBVisualDebugger _BBDebugger;
         private List<BTGraphNodeBase> _graphNodes;
@@ -72,18 +72,19 @@ namespace RR.AI.BehaviorTree
             var linkDataList = new List<BTLinkData>(designContainer.NodeDataList.Count);
             var nodeDict = new Dictionary<string, Node>(designContainer.NodeDataList.Count);
 
-            System.Func<BTNodeType, string> GetGraphNodeTypeName = nodeType =>
+            System.Func<BTNodeType, Type> GetGraphNodeType = nodeType =>
             {
                 switch (nodeType)
                 {
                     case BTNodeType.Root:
-                        return nameof(BTGraphRoot);
+                        return typeof(BTGraphRoot);
                     case BTNodeType.Selector:
-                        return nameof(BTGraphSelector);
+                        return typeof(BTGraphSelector);
                     case BTNodeType.Sequencer:
-                        return nameof(BTGraphSequencer);
+                        return typeof(BTGraphSequencer);
+                    case BTNodeType.Leaf:
                     default:
-                        return nameof(BTGraphRoot);
+                        return typeof(BTGraphRoot);
                 }
             };
 
@@ -96,7 +97,7 @@ namespace RR.AI.BehaviorTree
                     name = nodeData.Name, 
                     desc = nodeData.Description, 
                     guid = nodeData.Guid,
-                    icon = BTGlobalSettings.Instance.GetIcon(GetGraphNodeTypeName(nodeData.NodeType)),
+                    icon = BTGlobalSettings.Instance.GetIcon(GetGraphNodeType(nodeData.NodeType)),
                     OpenDecoSearchWindow = OpenDecoSearchWnd,
                     OpenServiceSearchWindow = OpenServiceSearchWnd
                 };
@@ -115,7 +116,7 @@ namespace RR.AI.BehaviorTree
                     name = taskData.Name,
                     desc = taskData.Description,
                     guid = taskData.Guid,
-                    icon = BTGlobalSettings.Instance.GetIcon(taskData.Task.GetType().Name),
+                    icon = BTGlobalSettings.Instance.GetIcon(taskData.Task.GetType()),
                     OpenDecoSearchWindow = OpenDecoSearchWnd,
                     OpenServiceSearchWindow = OpenServiceSearchWnd
                 };
@@ -146,8 +147,10 @@ namespace RR.AI.BehaviorTree
                     var orderLb = new BTGraphOrderLabel(node, idx);
                     AddElement(orderLb);
                     node.OrderValue = idx;
-                    var attacher = new Attacher(orderLb, node, SpriteAlignment.TopRight);
-                    attacher.distance = -13.0f;
+                    var attacher = new Attacher(orderLb, node, SpriteAlignment.TopRight)
+                    {
+                        distance = -13.0f
+                    };
                     attacher.Reattach();
                 })
                 .Execute(
@@ -374,7 +377,6 @@ namespace RR.AI.BehaviorTree
                     if (element is Node)
                     {
                         var node = (element as IBTSerializableNode);
-                        var newPos = element.GetPosition();
                         node.OnMove(GraphDesign, graphViewChange.moveDelta);
                     }
                 }

@@ -51,7 +51,7 @@ namespace RR.AI.BehaviorTree
             this.Add(_titleLabel);
             Name = initParams.name;
             _curBorderStyle = STYLE_IDLE_UNSELECTED_BORDER;
-            this.styleSheets.Add(Resources.Load<StyleSheet>($"Stylesheets/{styleSheetName}"));
+            this.styleSheets.Add(StylesheetUtils.Load(styleSheetName));
             this.AddToClassList(_curBorderStyle);
 
             _selected = false;

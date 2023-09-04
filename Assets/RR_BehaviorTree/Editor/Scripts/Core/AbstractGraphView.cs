@@ -5,7 +5,7 @@ public abstract class AbstractGraphView : GraphView
 { 
     protected AbstractGraphView()
     {
-        var styleSheet = UnityEngine.Resources.Load<StyleSheet>("Stylesheets/DefaultEditorWindowGrid");
+        var styleSheet = StylesheetUtils.Load("DefaultEditorWindowGrid");
         styleSheets.Add(styleSheet);
 
         SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);

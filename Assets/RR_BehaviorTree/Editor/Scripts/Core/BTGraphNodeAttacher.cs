@@ -12,11 +12,11 @@ namespace RR.AI.BehaviorTree
         private const string STYLE_HOVER_UNSELECTED_BORDER = "hover-unselected-border";
         private const string STYLE_HOVER_SELECTED_BORDER = "hover-selected-border";
 
-        private string _guid, _nodeID;
-        private BTTaskBase _task;
-        private Label _titleLabel;
+        private readonly string _guid;
+        private readonly string _nodeID;
+        private readonly BTTaskBase _task;
+        private readonly Label _titleLabel;
 
-        private VisualElement _contentContainer;
         private bool _selected;
         private string _curBorderStyle;
 
@@ -40,14 +40,19 @@ namespace RR.AI.BehaviorTree
 
         public BTGraphNodeAttacher(BTGraphInitParamsAttacher initParams, string styleSheetName)
         {
+            var icon = new Image
+            {
+                image = initParams.icon,
+                scaleMode = ScaleMode.ScaleToFit
+            };
+            icon.style.marginRight = 5;
             _titleLabel = CreateTitleLabel(initParams.name);
-            _contentContainer = CreateTitleContent(_titleLabel, initParams.icon);
+            this.Add(icon);
+            this.Add(_titleLabel);
             Name = initParams.name;
-            _contentContainer.styleSheets.Add(Resources.Load<StyleSheet>($"Stylesheets/{styleSheetName}"));
             _curBorderStyle = STYLE_IDLE_UNSELECTED_BORDER;
-            _contentContainer.AddToClassList(_curBorderStyle);
-            
-            Add(_contentContainer);
+            this.styleSheets.Add(Resources.Load<StyleSheet>($"Stylesheets/{styleSheetName}"));
+            this.AddToClassList(_curBorderStyle);
 
             _selected = false;
             RegisterCallback<MouseDownEvent>(OnSelected);
@@ -57,22 +62,6 @@ namespace RR.AI.BehaviorTree
             _nodeID = initParams.nodeID;
             _guid = initParams.guid;
             _task = initParams.task;
-        }
-
-        private VisualElement CreateTitleContent(Label titleLabel, Texture2D nodeIcon)
-        {
-            var container = new VisualElement();
-            container.style.flexDirection = FlexDirection.Row;
-            
-            var icon = new Image();
-            icon.image = nodeIcon;
-            icon.scaleMode = ScaleMode.ScaleToFit;
-            icon.style.marginRight = 5;
-            container.Add(icon);
-
-            container.Add(titleLabel);
-
-            return container;
         }
 
         private Label CreateTitleLabel(string title)
@@ -141,8 +130,8 @@ namespace RR.AI.BehaviorTree
 
         private void SwapBorderStyle(string newStyle)
         {
-            _contentContainer.RemoveFromClassList(_curBorderStyle);
-            _contentContainer.AddToClassList(newStyle);
+            this.RemoveFromClassList(_curBorderStyle);
+            this.AddToClassList(newStyle);
             _curBorderStyle = newStyle;
         }
 

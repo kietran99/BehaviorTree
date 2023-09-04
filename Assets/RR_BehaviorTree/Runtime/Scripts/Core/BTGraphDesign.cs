@@ -8,7 +8,7 @@ using RR.Serialization;
 
 namespace RR.AI.BehaviorTree
 {
-    [CreateAssetMenu(fileName = "BT_Graph", menuName = "Generator/AI/BT Graph")]
+    [CreateAssetMenu(fileName = "BT_Graph", menuName = "Generator/AI/Behavior Tree Graph")]
     public class BTGraphDesign : ScriptableObject
     {
         [SerializeField]

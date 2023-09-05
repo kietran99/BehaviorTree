@@ -27,10 +27,20 @@ namespace RR.AI.BehaviorTree
             OnStart();
         }
 
+        public void Enter()
+        {
+            OnEnter();
+        }
+
         public BTNodeState Update()
         {
             BTNodeState updateRes = OnUpdate();
             return updateRes;
+        }
+
+        public void Exit()
+        {
+            OnExit();
         }
 
         public void TreeEval()
@@ -44,7 +54,9 @@ namespace RR.AI.BehaviorTree
         }
 
         protected virtual void OnStart() {}
+        protected virtual void OnEnter() {}
         protected abstract BTNodeState OnUpdate();
+        protected virtual void OnExit() {}
         protected virtual void OnTreeEval() {}
         protected virtual void OnAbort() {}
     }

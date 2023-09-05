@@ -203,6 +203,11 @@ namespace RR.AI.BehaviorTree
 
         private BTNodeState OnTickTask(BTRuntimeNodeBase curNode, int curIdx, ChoiceStack choiceStack)
         {
+            if (!HasRunningNode)
+            {
+                curNode.Task.Enter();
+            }
+
             BTNodeState taskState = curNode.Task.Update();
             if (!_abortHandler.IsResolved)
             {
@@ -233,6 +238,7 @@ namespace RR.AI.BehaviorTree
                 return BTNodeState.Running;
             }
             
+            curNode.Task.Exit();
             ResetRunningIdx();
             NodeReturn?.Invoke(curIdx);
 

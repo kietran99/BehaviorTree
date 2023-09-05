@@ -1,0 +1,23 @@
+BTGraphNodeContent {
+    flex-direction: row;
+    justify-content: flex-start;
+    border-color: #303030;
+    border-width: 1px;
+    padding: 3px;
+}
+
+.composite {
+    background-color: #404040;
+}
+
+.task {
+    background-color: #38689b;
+}
+
+.decorator {
+    background-color: #b95d1c;
+}
+
+.service {
+    background-color: #597e42;
+}

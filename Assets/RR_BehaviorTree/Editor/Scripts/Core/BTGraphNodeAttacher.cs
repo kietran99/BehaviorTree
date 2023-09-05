@@ -15,7 +15,7 @@ namespace RR.AI.BehaviorTree
         private readonly string _guid;
         private readonly string _nodeID;
         private readonly BTTaskBase _task;
-        private readonly Label _titleLabel;
+        private readonly BTGraphNodeContent _content;
 
         private bool _selected;
         private string _curBorderStyle;
@@ -30,52 +30,36 @@ namespace RR.AI.BehaviorTree
 
         public static BTGraphNodeAttacher CreateDecorator(BTGraphInitParamsAttacher initParams)
         {
-            return new BTGraphNodeAttacher(initParams, "BTNodeDecorator");
+            return new BTGraphNodeAttacher(initParams, "decorator");
         }
 
         public static BTGraphNodeAttacher CreateService(BTGraphInitParamsAttacher initParams)
         {
-            return new BTGraphNodeAttacher(initParams, "BTNodeService");
+            return new BTGraphNodeAttacher(initParams, "service");
         }
 
-        public BTGraphNodeAttacher(BTGraphInitParamsAttacher initParams, string styleSheetName)
+        public BTGraphNodeAttacher(BTGraphInitParamsAttacher initParams, string styleClassName)
         {
-            var icon = new Image
-            {
-                image = initParams.icon,
-                scaleMode = ScaleMode.ScaleToFit
-            };
-            icon.style.marginRight = 5;
-            _titleLabel = CreateTitleLabel(initParams.name);
-            this.Add(icon);
-            this.Add(_titleLabel);
+            _content = new BTGraphNodeContent(initParams.name, initParams.icon, styleClassName);
+            Add(_content);
             Name = initParams.name;
             _curBorderStyle = STYLE_IDLE_UNSELECTED_BORDER;
-            this.styleSheets.Add(StylesheetUtils.Load(styleSheetName));
-            this.AddToClassList(_curBorderStyle);
+            _content.styleSheets.Add(StylesheetUtils.Load(nameof(BTGraphNodeAttacher)));
+            _content.AddToClassList(_curBorderStyle);
 
             _selected = false;
-            RegisterCallback<MouseDownEvent>(OnSelected);
-            RegisterCallback<MouseEnterEvent>(OnMouseEnter);
-            RegisterCallback<MouseLeaveEvent>(OnMouseExit);
+            _content.RegisterCallback<MouseDownEvent>(OnSelected);
+            _content.RegisterCallback<MouseEnterEvent>(OnMouseEnter);
+            _content.RegisterCallback<MouseLeaveEvent>(OnMouseExit);
 
             _nodeID = initParams.nodeID;
             _guid = initParams.guid;
             _task = initParams.task;
         }
 
-        private Label CreateTitleLabel(string title)
+        public void Rename(string name)
         {
-            var label = new Label(title);
-            label.style.unityTextAlign = TextAnchor.MiddleCenter;
-            label.style.fontSize = 14;
-            label.style.color = Color.white;
-            return label;
-        }
-
-        public void Rename(string newName)
-        {
-            _titleLabel.text = newName;
+            _content.Rename(name);
         }
 
         private void OnSelected(MouseDownEvent evt)
@@ -130,8 +114,8 @@ namespace RR.AI.BehaviorTree
 
         private void SwapBorderStyle(string newStyle)
         {
-            this.RemoveFromClassList(_curBorderStyle);
-            this.AddToClassList(newStyle);
+            _content.RemoveFromClassList(_curBorderStyle);
+            _content.AddToClassList(newStyle);
             _curBorderStyle = newStyle;
         }
 

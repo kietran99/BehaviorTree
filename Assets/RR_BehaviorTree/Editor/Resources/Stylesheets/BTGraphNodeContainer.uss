@@ -1,0 +1,5 @@
+VisualElement {
+    justify-content: center;
+    padding: 6px;
+    background-color: #494949;
+}

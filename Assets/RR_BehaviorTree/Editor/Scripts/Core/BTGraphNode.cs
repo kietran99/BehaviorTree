@@ -10,34 +10,33 @@ namespace RR.AI.BehaviorTree
     {
         private static Vector2 DEFAULT_NODE_SIZE = new Vector2(800f, 400f);
 
-        // public static OnEdgeDrag
-
-        protected T _nodeAction;
-        protected string _name;
+        private readonly BTGraphNodeContent _mainContent;
+        protected T _nodeAction;        
         protected string _description;
+        
+        protected override bool AreAttachersAllowed => _nodeAction.NodeType != BTNodeType.Root;
 
-        public override string Name => _name;
+        protected override string MainContentStyleClassName => "composite";
+
         protected virtual BTTaskBase Task => null;
+
+        public override string NodeName => _mainContent.Title;
 
         public BTGraphNode(BTGraphInitParamsNode initParams) : base()
         {
-            styleSheets.Add(Resources.Load<StyleSheet>("Stylesheets/BTGraphNode"));
+            styleSheets.Add(StylesheetUtils.Load("BTGraphNode"));
             AddToClassList("bold-text");
             mainContainer.style.minWidth = 100;
             
             _nodeAction = new T();
-            CreatePorts(inputContainer, outputContainer, _nodeAction.Capacity.In, _nodeAction.Capacity.Out);
-            _name = string.IsNullOrEmpty(initParams.name) ? _nodeAction.Name : initParams.name;
             _description = initParams.desc;
             _guid = string.IsNullOrEmpty(initParams.guid) ? System.Guid.NewGuid().ToString() : initParams.guid;
+            CreatePorts(inputContainer, outputContainer, _nodeAction.Capacity.In, _nodeAction.Capacity.Out);
             
             titleContainer.Clear();
-            StylizeTitleContainer(titleContainer);
-            
-            Texture2D titleIcon = initParams.icon;
-            _titleLabel = CreateTitleLabel(_name);
-            var titleContent = CreateTitleContent(_titleLabel, titleIcon);
-            titleContainer.Add(titleContent);
+            titleContainer.styleSheets.Add(StylesheetUtils.Load("BTGraphNodeContainer"));
+            _mainContent = new BTGraphNodeContent(string.IsNullOrEmpty(initParams.name) ? _nodeAction.Name : initParams.name, initParams.icon, MainContentStyleClassName);
+            titleContainer.Add(_mainContent);
 
             var pos = initParams.pos;
             SetPosition(new Rect(pos, DEFAULT_NODE_SIZE));
@@ -59,7 +58,7 @@ namespace RR.AI.BehaviorTree
             BTGraphView.OnNewElementSelected?.Invoke(new ElementSelectParams()
                 {
                     Guid = _guid,
-                    Name = _name,
+                    Name = NodeName,
                     Desc = _description,
                     Task = Task
                 });
@@ -70,29 +69,6 @@ namespace RR.AI.BehaviorTree
         {
             BTGraphNodeAttacher.OnNodeUnselected(_guid);
             base.OnUnselected();
-        }
-
-        private void StylizeTitleContainer(VisualElement container)
-        {
-            container.style.justifyContent = Justify.Center;
-            container.style.paddingLeft = 5;
-            container.style.paddingRight = 5;
-        }
-
-        private VisualElement CreateTitleContent(Label titleLabel, Texture2D nodeIcon)
-        {
-            var container = new VisualElement();
-            container.style.flexDirection = FlexDirection.Row;
-
-            var icon = new Image();
-            icon.image = nodeIcon;
-            icon.scaleMode = ScaleMode.ScaleToFit;
-            icon.style.marginRight = 5;
-            container.Add(icon);
-
-            container.Add(titleLabel);
-
-            return container;
         }
 
         private void CreatePorts(
@@ -144,7 +120,7 @@ namespace RR.AI.BehaviorTree
         {
             graphDesign.NodeDataList.Add(
                 new BTSerializableNodeData(
-                    position, _name, _description, _guid, GetParentGuid(inputContainer), _nodeAction.NodeType));
+                    position, NodeName, _description, _guid, GetParentGuid(inputContainer), _nodeAction.NodeType));
         }
 
         protected string GetParentGuid(VisualElement inputContainer)
@@ -181,6 +157,9 @@ namespace RR.AI.BehaviorTree
             designContainer.NodeDataList.Find(node => node.Guid == _guid).ParentGuid = parentGuid;
         }
 
-        protected override bool AreAttachersAllowed => _nodeAction.NodeType != BTNodeType.Root;
+        public override void Rename(string name)
+        {
+            _mainContent.Rename(name);
+        }
     }
 }

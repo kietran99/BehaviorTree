@@ -25,10 +25,10 @@ namespace RR.AI.BehaviorTree
         }
         private BTGraphNodeAttacher _hoveredAttacher;
 
-        protected Label _titleLabel;
+        protected abstract string MainContentStyleClassName { get; }
 
         public string Guid => _guid;
-        public abstract string Name { get; }
+        public abstract string NodeName { get; }
         public int OrderValue { get; set; }
 
         public int x { get; protected set; }
@@ -151,8 +151,7 @@ namespace RR.AI.BehaviorTree
         private BTGraphNodeAttacher AddNewAttacher(BTGraphInitParamsAttacher initParams, Func<BTGraphInitParamsAttacher, BTGraphNodeAttacher> ctor)
         {
             BTGraphNodeAttacher attacher = ctor(initParams);
-            extensionContainer.style.backgroundColor = Utils.ColorExtension.Create(62f);
-            extensionContainer.style.paddingTop = 3f;
+            extensionContainer.styleSheets.Add(StylesheetUtils.Load("BTGraphNodeContainer"));
             extensionContainer.Add(attacher);
             Attachers.Add(attacher);
             RefreshExpandedState();
@@ -184,10 +183,7 @@ namespace RR.AI.BehaviorTree
             return _attachers.Find(attacher => attacher.Guid == guidToFind);
         }
 
-        public void Rename(string newName)
-        {
-            _titleLabel.text = newName;
-        }
+        public abstract void Rename(string name);
 
         protected Label CreateTitleLabel(string title)
         {

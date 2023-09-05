@@ -8,21 +8,15 @@ namespace RR.AI.BehaviorTree
 {
     public class BTSubWndGraphDetails : BaseSubWindow
     {
-        private BTDetailsPropFieldFactory _propFieldFactory;
         private TextField _nameField, _descField;
         private VisualElement _taskPropsContentContainer;
-        private float _height, _width;
 
         private EventCallback<ChangeEvent<string>> _curNameValueChangeCallback;
 
         public BTSubWndGraphDetails(UnityEngine.Rect rect)
         {
-            _propFieldFactory = new BTDetailsPropFieldFactory();
-
             style.backgroundColor = RR.Utils.ColorExtension.Create(96f);
             SetPosition(rect);
-            _height = rect.height;
-            _width = rect.width;
             
             var titleContainer = Title("Details");
             Add(titleContainer);

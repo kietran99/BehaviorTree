@@ -19,7 +19,7 @@ namespace RR.AI.BehaviorTree
             capabilities |= UnityEditor.Experimental.GraphView.Capabilities.Droppable;
 
             var diameter = 16f;
-            Rect rect = new Rect(0.0f, 0.0f, diameter, diameter);
+            var rect = new Rect(0.0f, 0.0f, diameter, diameter);
             SetPosition(rect);
 
             style.backgroundColor = Utils.ColorExtension.Create(145f);

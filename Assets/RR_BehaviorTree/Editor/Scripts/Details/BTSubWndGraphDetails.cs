@@ -99,18 +99,18 @@ namespace RR.AI.BehaviorTree
             ClearTaskPropsContent();
             var serializedTask = new SerializedObject(task);
             var container = new VisualElement();
+
+
+            SerializedProperty scriptProp = serializedTask.FindProperty("m_Script");
+            var scriptField = new PropertyField(scriptProp, scriptProp.displayName);
+            scriptField.SetEnabled(false);
+            scriptField.Bind(serializedTask);
+            container.Add(scriptField);
+            
             var taskIter = serializedTask.GetIterator();
             taskIter.NextVisible(true);
-
             while (taskIter.NextVisible(false))
             {
-                string displayName = taskIter.displayName;
-
-                if (displayName == "Script" || displayName == "Base")
-                {
-                    continue;
-                }
-
                 var taskType = taskIter.type;
                 bool isBBKeySelector = taskType.StartsWith("BBKeySelector");
                 var UIField = isBBKeySelector ? CreateBBKeySelectorField(taskIter, blackboard) : new PropertyField(taskIter, taskIter.displayName);

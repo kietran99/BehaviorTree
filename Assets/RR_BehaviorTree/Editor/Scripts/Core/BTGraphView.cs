@@ -455,5 +455,7 @@ namespace RR.AI.BehaviorTree
         {
             BTGraphNodeBase.AttacherDeleted -= OnAttacherDelete;
         }
+
+        public void SetDetailsSubWndVisible(bool value) => _nodeDetails.visible = value;
     }
 }

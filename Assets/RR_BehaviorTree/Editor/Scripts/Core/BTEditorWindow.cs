@@ -39,7 +39,7 @@ namespace RR.AI.BehaviorTree
 
             _graphView = CreateGraphView(_inspectedBT.DesignContainer, _inspectedBT.Scheduler);
             _searchWindow = CreateNodeSearchWindow(_graphView);
-            _toolbar = CreateToolbar();
+            _toolbar = CreateToolbar(_graphView);
 
             rootVisualElement.Add(_graphView);
             rootVisualElement.Add(_toolbar);
@@ -58,7 +58,7 @@ namespace RR.AI.BehaviorTree
             return graphView;
         }
 
-        private Toolbar CreateToolbar()
+        private Toolbar CreateToolbar(BTGraphView graphView)
         {
             var toolbar = new Toolbar();          
 
@@ -77,12 +77,20 @@ namespace RR.AI.BehaviorTree
                 _graphView.OpenGraphSettingsWnd();
             }) { text = "Settings" };
 
+            var detailsToggle = new Toggle() { text = "Details", value = true };
+            detailsToggle.RegisterValueChangedCallback(evt => graphView.SetDetailsSubWndVisible(evt.newValue));
+
+            var blackboardToggle = new Toggle() { text = "Blackboard", value = true };
+            blackboardToggle.RegisterValueChangedCallback(evt => graphView.GetBlackboard().visible = evt.newValue);
+
             var playgroundModeToggle = new Toggle() { text = "Playground Mode", value = BTGlobalSettings.Instance.PlaygroundMode };
             playgroundModeToggle.RegisterValueChangedCallback(evt => BTGlobalSettings.Instance.PlaygroundMode = evt.newValue);
 
             toolbar.Add(saveBtn);
             toolbar.Add(cleanupBtn);
             toolbar.Add(settingsBtn);
+            toolbar.Add(detailsToggle);
+            toolbar.Add(blackboardToggle);
             toolbar.Add(playgroundModeToggle);
 
             return toolbar;

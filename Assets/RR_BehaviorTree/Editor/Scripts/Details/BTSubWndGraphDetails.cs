@@ -144,8 +144,9 @@ namespace RR.AI.BehaviorTree
             }
 
             SerializedProperty propKey = task.FindPropertyRelative("_key");
-            bool isInvalidFieldVal = string.IsNullOrEmpty(propKey.stringValue);
-            string fieldValToAssign = isInvalidFieldVal ? BBKeys[0] : propKey.stringValue;
+            string savedValue = propKey.stringValue;
+            bool isInvalidFieldVal = string.IsNullOrEmpty(savedValue) || BBKeys.Find(key => key == savedValue) == null;
+            string fieldValToAssign = isInvalidFieldVal ? BBKeys[0] : savedValue;
             var fieldKey = new PopupField<string>(task.displayName, BBKeys, fieldValToAssign);
             fieldKey.BindProperty(propKey);
             container.Add(fieldKey);

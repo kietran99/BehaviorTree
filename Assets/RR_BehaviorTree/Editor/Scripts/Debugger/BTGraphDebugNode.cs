@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor.Experimental.GraphView;
 
 using RR.Utils;
+using UnityEngine.UIElements;
 
 namespace RR.AI.BehaviorTree.Debugger
 {
@@ -10,6 +11,7 @@ namespace RR.AI.BehaviorTree.Debugger
         private static Color DEFAULT_EDGE_COLOR = ColorExtension.Create(146f);
         private static Color DEBUG_ACTIVE_EDGE_COLOR = new Color(222f / 255f, 240f/ 255f, 61f / 255f);
         private static Color DEBUG_INACTIVE_EDGE_COLOR = new Color(158f / 255f, 202f/ 255f, 255f / 255f, .2f);
+        private const string CLASS_ACTIVE_BORDER = "active-border";
 
         private BTGraphNodeBase _decoratee;
         private Port _inPort;
@@ -23,6 +25,7 @@ namespace RR.AI.BehaviorTree.Debugger
         public BTGraphDebugNode(BTGraphNodeBase decoratee)
         {
             _decoratee = decoratee;
+            _decoratee.styleSheets.Add(StylesheetUtils.Load(nameof(BTGraphDebugNode)));
 
             if (_decoratee.inputContainer.childCount != 0)
             {
@@ -39,6 +42,7 @@ namespace RR.AI.BehaviorTree.Debugger
 
         public void Reset()
         {
+            _decoratee.RemoveFromClassList(CLASS_ACTIVE_BORDER);
             _inPort.portColor = DEFAULT_EDGE_COLOR;           
             var edgeColor = DEBUG_INACTIVE_EDGE_COLOR;
             _inEdge.edgeControl.edgeWidth = 3;
@@ -50,6 +54,7 @@ namespace RR.AI.BehaviorTree.Debugger
 
         public void Tick()
         {
+            _decoratee.AddToClassList(CLASS_ACTIVE_BORDER);
             _inPort.portColor = DEFAULT_EDGE_COLOR;
             var edgeColor = DEBUG_ACTIVE_EDGE_COLOR;
             _inEdge.edgeControl.edgeWidth = 6;

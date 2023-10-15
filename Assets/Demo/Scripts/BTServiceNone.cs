@@ -7,7 +7,7 @@ namespace RR.Demo.AI.BehaviorTree
     public class BTServiceNone : BTServiceBase
     {
         [SerializeField]
-        private string _message = string.Empty;
+        private string _message = "None";
 
         public override string Name => "Service None";
 

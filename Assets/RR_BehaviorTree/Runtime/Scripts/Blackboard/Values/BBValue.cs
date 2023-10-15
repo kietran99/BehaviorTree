@@ -2,7 +2,7 @@ using System;
 
 namespace RR.AI
 {  
-    public struct BBValue<T> : IBBValueBase
+    public readonly struct BBValue<T> : IBBValueBase
     {
         public readonly T value;
 
@@ -11,10 +11,10 @@ namespace RR.AI
             this.value = value;
         }
 
-        public static implicit operator BBValue<T>(T val) => new BBValue<T>(val);
+        public static implicit operator BBValue<T>(T val) => new(val);
         public static implicit operator T(BBValue<T> val) => val.value;
 
-        public object ValueAsObject => value as object;
+        public object ValueAsObject => value;
         public Type ValueType => typeof(T);
     }
 }

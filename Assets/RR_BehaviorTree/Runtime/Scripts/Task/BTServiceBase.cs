@@ -38,7 +38,7 @@ namespace RR.AI.BehaviorTree
                 return false;
             }
 
-            float curInterval = UnityEngine.Random.Range(0, 2) == 0 ? _minInterval : _maxInterval;
+            float curInterval = Random.Range(0, 2) == 0 ? _minInterval : _maxInterval;
             if (_counter >= curInterval)
             {
                 _counter = 0.0f;

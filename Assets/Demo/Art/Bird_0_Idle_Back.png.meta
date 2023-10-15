@@ -1,19 +1,7 @@
 fileFormatVersion: 2
-guid: ec66b25fc12e7d740aab9346228a4bcc
+guid: d4052286b341526439e8ce8c1ddc0a3b
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 6757765107934986104
-    second: Env_0_0
-  - first:
-      213: 5793748066242365528
-    second: Env_0_1
-  - first:
-      213: -8115790076492342962
-    second: Env_0_2
-  - first:
-      213: 9059735712358494965
-    second: Env_0_3
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -59,7 +47,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 16
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -75,11 +63,11 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
-  cookieLightType: 1
+  cookieLightType: 0
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -91,10 +79,10 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Standalone
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -103,10 +91,10 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Server
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -117,13 +105,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Env_0_0
+      name: Bird_0_Idle_Back_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 144
-        width: 16
-        height: 16
+        y: 0
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,41 +119,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 87f7efdbf8768cd50800000000000000
-      internalID: 6757765107934986104
+      spriteID: 49a035cce3cab1f42a6a25a461bfd753
+      internalID: 417238150
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Env_0_1
-      rect:
-        serializedVersion: 2
-        x: 16
-        y: 144
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8588b7e6b27876050800000000000000
-      internalID: 5793748066242365528
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Env_0_2
+      name: Bird_0_Idle_Back_1
       rect:
         serializedVersion: 2
         x: 32
-        y: 144
-        width: 16
-        height: 16
+        y: 0
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -173,20 +140,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e49980bbcebee5f80800000000000000
-      internalID: -8115790076492342962
+      spriteID: 8ebd6f1c29969a64b83fd15021d6efec
+      internalID: 2064200407
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Env_0_3
+      name: Bird_0_Idle_Back_2
       rect:
         serializedVersion: 2
-        x: 48
-        y: 144
-        width: 16
-        height: 16
+        x: 64
+        y: 0
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -194,8 +161,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5f27c0e31a5aabd70800000000000000
-      internalID: 9059735712358494965
+      spriteID: cacb6519640c0794984fc75767b16696
+      internalID: 1874523913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bird_0_Idle_Back_3
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5f4caee1fa02a604f8b17091b69695bf
+      internalID: -187966114
       vertices: []
       indices: 
       edges: []
@@ -211,10 +199,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Env_0_0: 6757765107934986104
-      Env_0_1: 5793748066242365528
-      Env_0_2: -8115790076492342962
-      Env_0_3: 9059735712358494965
+      Bird_0_Idle_Back_0: 417238150
+      Bird_0_Idle_Back_1: 2064200407
+      Bird_0_Idle_Back_2: 1874523913
+      Bird_0_Idle_Back_3: -187966114
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

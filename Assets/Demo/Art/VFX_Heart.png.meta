@@ -1,19 +1,7 @@
 fileFormatVersion: 2
-guid: ec66b25fc12e7d740aab9346228a4bcc
+guid: 1502d12d84c305c498e7c7823f53f44b
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 6757765107934986104
-    second: Env_0_0
-  - first:
-      213: 5793748066242365528
-    second: Env_0_1
-  - first:
-      213: -8115790076492342962
-    second: Env_0_2
-  - first:
-      213: 9059735712358494965
-    second: Env_0_3
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -32,11 +20,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -59,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 16
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -75,11 +64,12 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
-  cookieLightType: 1
+  swizzle: 50462976
+  cookieLightType: 0
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -87,41 +77,44 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Standalone
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Server
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Env_0_0
+      name: VFX_Heart_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 144
+        y: 0
         width: 16
         height: 16
       alignment: 0
@@ -131,18 +124,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 87f7efdbf8768cd50800000000000000
-      internalID: 6757765107934986104
+      spriteID: c9611c3d8a4da7c49971e43fa5d6b7ae
+      internalID: 378728403
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Env_0_1
+      name: VFX_Heart_1
       rect:
         serializedVersion: 2
         x: 16
-        y: 144
+        y: 0
         width: 16
         height: 16
       alignment: 0
@@ -152,18 +145,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8588b7e6b27876050800000000000000
-      internalID: 5793748066242365528
+      spriteID: 67a88bf5ee90ffb4ea51c3f9713305b9
+      internalID: 1030647921
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Env_0_2
+      name: VFX_Heart_2
       rect:
         serializedVersion: 2
         x: 32
-        y: 144
+        y: 0
         width: 16
         height: 16
       alignment: 0
@@ -173,18 +166,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e49980bbcebee5f80800000000000000
-      internalID: -8115790076492342962
+      spriteID: 13ed745bb8fd8cf459bf55287fe4641b
+      internalID: 1343675928
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Env_0_3
+      name: VFX_Heart_3
       rect:
         serializedVersion: 2
         x: 48
-        y: 144
+        y: 0
         width: 16
         height: 16
       alignment: 0
@@ -194,8 +187,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5f27c0e31a5aabd70800000000000000
-      internalID: 9059735712358494965
+      spriteID: 9727c8fa906924249a84b1d113fae37b
+      internalID: -36210016
       vertices: []
       indices: 
       edges: []
@@ -211,13 +204,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Env_0_0: 6757765107934986104
-      Env_0_1: 5793748066242365528
-      Env_0_2: -8115790076492342962
-      Env_0_3: 9059735712358494965
-  spritePackingTag: 
+      VFX_Heart_0: 378728403
+      VFX_Heart_1: 1030647921
+      VFX_Heart_2: 1343675928
+      VFX_Heart_3: -36210016
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

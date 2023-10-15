@@ -1,0 +1,476 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8447244743875917086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9920b0f0e21b0e84d942fd2a2a4d8062, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetKey:
+    _key: Target_Location
+    typeVar: {x: 0, y: 0}
+  _speed: 1
+  _acceptableDist: 0.14
+  _isGroundedKey:
+    _key: Is_Grounded
+    typeVar: 0
+--- !u!114 &-8155672719269614150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02236d84bc3233244b4fc03c587c9d85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _expression: 1
+--- !u!114 &-7210948950701961128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02236d84bc3233244b4fc03c587c9d85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _expression: 0
+--- !u!114 &-6747731397325398121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15eda60262591694ebf81541cd0b0cca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _observerAborts: 0
+  _blackboardKey:
+    _key: Is_Grounded
+    typeVar: 0
+  _keyQuery: 0
+--- !u!114 &-4494013789863189666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 283ff77a6b5fc9c48a02a3f2e37944b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TickInterval: 1
+  RandomDeviation: 0.2
+  _range: 3
+  _targetTag: Hazard
+  _targetKey:
+    _key: Target_Enemy
+    typeVar: {fileID: 0}
+--- !u!114 &-4399409980751702352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e613760862f2bc49bf04148892a6917, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _duration: 3
+--- !u!114 &-3455617139314765938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b069d34d9385fa4487b3bf63ad83d22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animationStatePicker:
+    _stateName: A_Bird_0_Eat
+    _layer: 0
+  _nonBlocking: 0
+  _startTime: 0
+--- !u!114 &-1202879938563760403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0414c7c0d860cf44b0eeffe71ef9fa6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetKey:
+    _key: Found_Food
+    typeVar: {fileID: 0}
+  _speed: 1
+  _acceptableDist: 0.55
+  _isGroundedKey:
+    _key: Is_Grounded
+    typeVar: 0
+  _flyToGround: 1
+--- !u!114 &-323476663175654652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf47b7f4ab6048542b9a99e59966b339, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _observerAborts: 2
+  _keyQuery: 0
+  _blackboardKey:
+    _key: Target_Enemy
+    typeVar: {fileID: 0}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adb2fcda21bd9354f89af8d932c3b491, type: 3}
+  m_Name: BT_Bird_0
+  m_EditorClassIdentifier: 
+  _nodeDataList:
+  - _graphData:
+      _guid: 77f2d666-00bc-493e-b381-50df5c08edc4
+      _parentGuid: 
+      _name: Root
+      _position: {x: 400, y: 480}
+      _description: 
+    _nodeType: 0
+  - _graphData:
+      _guid: e23599b6-d13a-48b8-8a5c-f49ce9cce429
+      _parentGuid: 77f2d666-00bc-493e-b381-50df5c08edc4
+      _name: Selector
+      _position: {x: 550, y: 479}
+      _description: 
+    _nodeType: 2
+  - _graphData:
+      _guid: c1d03e8f-2978-45dc-a5b9-9d35f2fc32be
+      _parentGuid: e23599b6-d13a-48b8-8a5c-f49ce9cce429
+      _name: Wander
+      _position: {x: 766, y: 816}
+      _description: 
+    _nodeType: 1
+  - _graphData:
+      _guid: d3359ac1-55ac-458a-b39a-1e31f0024f67
+      _parentGuid: e23599b6-d13a-48b8-8a5c-f49ce9cce429
+      _name: Consume Food
+      _position: {x: 766, y: 479}
+      _description: 
+    _nodeType: 1
+  - _graphData:
+      _guid: 9a409f60-ea97-408f-af92-9c4b2b954218
+      _parentGuid: e23599b6-d13a-48b8-8a5c-f49ce9cce429
+      _name: Hide from Enemy
+      _position: {x: 766, y: 157}
+      _description: 
+    _nodeType: 1
+  - _graphData:
+      _guid: fffa1e83-a584-4a2a-9a12-febc1ec49e56
+      _parentGuid: c1d03e8f-2978-45dc-a5b9-9d35f2fc32be
+      _name: Move
+      _position: {x: 1000, y: 816}
+      _description: 
+    _nodeType: 2
+  _taskDataList:
+  - _graphData:
+      _guid: 8dab3ea9-a791-4852-8ee0-01c7b083e497
+      _parentGuid: c1d03e8f-2978-45dc-a5b9-9d35f2fc32be
+      _name: Pick Random Location
+      _position: {x: 1000, y: 731}
+      _description: 
+    _task: {fileID: 4613471550724093050}
+  - _graphData:
+      _guid: cba42aae-834a-4a16-883d-cba01aeb2b1f
+      _parentGuid: c1d03e8f-2978-45dc-a5b9-9d35f2fc32be
+      _name: Wait
+      _position: {x: 1000, y: 901}
+      _description: 
+    _task: {fileID: 1218592267530699669}
+  - _graphData:
+      _guid: fe576ef8-278b-4241-b10d-8aa4e25a62fa
+      _parentGuid: d3359ac1-55ac-458a-b39a-1e31f0024f67
+      _name: Fly to Target
+      _position: {x: 1000, y: 439}
+      _description: 
+    _task: {fileID: -1202879938563760403}
+  - _graphData:
+      _guid: 25592471-da07-4610-a861-276860ec9764
+      _parentGuid: d3359ac1-55ac-458a-b39a-1e31f0024f67
+      _name: Play Eat Animation
+      _position: {x: 1000, y: 524}
+      _description: 
+    _task: {fileID: -3455617139314765938}
+  - _graphData:
+      _guid: 828c4c29-7aa0-4de8-9663-dbbc0b6ad0f9
+      _parentGuid: d3359ac1-55ac-458a-b39a-1e31f0024f67
+      _name: Finish Food
+      _position: {x: 1000, y: 609}
+      _description: 
+    _task: {fileID: 6079345895091259675}
+  - _graphData:
+      _guid: ddf34a2a-9b0d-40fc-95c5-038d64df84ad
+      _parentGuid: 9a409f60-ea97-408f-af92-9c4b2b954218
+      _name: Fly to Target
+      _position: {x: 1012, y: 157}
+      _description: 
+    _task: {fileID: 8510247824312740373}
+  - _graphData:
+      _guid: cdc5abd1-09c0-48ae-a223-1a5138a2b53e
+      _parentGuid: fffa1e83-a584-4a2a-9a12-febc1ec49e56
+      _name: Hop to Target
+      _position: {x: 1233, y: 751}
+      _description: 
+    _task: {fileID: 4314218537089138547}
+  - _graphData:
+      _guid: b532b299-5073-499b-8faf-c7cdbc77fcfa
+      _parentGuid: 9a409f60-ea97-408f-af92-9c4b2b954218
+      _name: Find Random Platform
+      _position: {x: 1012, y: 72}
+      _description: 
+    _task: {fileID: 8180993628843395045}
+  - _graphData:
+      _guid: cb8825df-51cc-4f04-a413-72015b05c13d
+      _parentGuid: 9a409f60-ea97-408f-af92-9c4b2b954218
+      _name: Wait
+      _position: {x: 1012, y: 242}
+      _description: 
+    _task: {fileID: -4399409980751702352}
+  - _graphData:
+      _guid: a7425d32-241f-4ec3-8c2f-8c879e1d7dec
+      _parentGuid: fffa1e83-a584-4a2a-9a12-febc1ec49e56
+      _name: Fly to Location
+      _position: {x: 1233, y: 881}
+      _description: 
+    _task: {fileID: -8447244743875917086}
+  - _graphData:
+      _guid: 64c465d9-f213-4388-804e-69ac21d0dabe
+      _parentGuid: d3359ac1-55ac-458a-b39a-1e31f0024f67
+      _name: Show Expression
+      _position: {x: 1000, y: 354}
+      _description: 
+    _task: {fileID: -7210948950701961128}
+  - _graphData:
+      _guid: cbc54939-ee83-4d8c-8269-40bde1ad0662
+      _parentGuid: 9a409f60-ea97-408f-af92-9c4b2b954218
+      _name: Show Expression
+      _position: {x: 1012, y: -13}
+      _description: 
+    _task: {fileID: -8155672719269614150}
+  _attacherDict:
+    _entries:
+    - Key: e23599b6-d13a-48b8-8a5c-f49ce9cce429
+      Value:
+      - guid: 9141b809-bb00-42b6-92cc-8b6a710e6033
+        name: Find Food
+        task: {fileID: 3925109116302871020}
+      - guid: adbb54b9-0ca5-4395-8de9-de2f900ddb1a
+        name: Find Enemy
+        task: {fileID: -4494013789863189666}
+    - Key: 9afd86ed-ddd1-4839-a496-e3fd1cf94618
+      Value:
+      - guid: 60463251-cb57-46c1-b2e9-ef0ad434186d
+        name: Food Found?
+        task: {fileID: 4000576355722084186}
+    - Key: d3359ac1-55ac-458a-b39a-1e31f0024f67
+      Value:
+      - guid: c7dabfeb-33fd-4dd0-932e-99ca2c40f294
+        name: Food Found?
+        task: {fileID: 6938882236968146107}
+    - Key: 9a409f60-ea97-408f-af92-9c4b2b954218
+      Value:
+      - guid: 6811825c-cd37-456f-bafc-f974170d4110
+        name: Enemy Found?
+        task: {fileID: -323476663175654652}
+    - Key: a7425d32-241f-4ec3-8c2f-8c879e1d7dec
+      Value: []
+    - Key: cdc5abd1-09c0-48ae-a223-1a5138a2b53e
+      Value:
+      - guid: 4af9edfd-4da6-475d-85d9-aa5f0ebeae61
+        name: Is Grounded?
+        task: {fileID: -6747731397325398121}
+  _blackboard: {fileID: 11400000, guid: f55cbceab53cddc4685d37b8d7d0c5c2, type: 2}
+--- !u!114 &1218592267530699669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e613760862f2bc49bf04148892a6917, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _duration: 3
+--- !u!114 &3925109116302871020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 283ff77a6b5fc9c48a02a3f2e37944b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TickInterval: 1
+  RandomDeviation: 0.2
+  _range: 3
+  _targetTag: Food
+  _targetKey:
+    _key: Found_Food
+    typeVar: {fileID: 0}
+--- !u!114 &4000576355722084186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf47b7f4ab6048542b9a99e59966b339, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _observerAborts: 2
+  _keyQuery: 0
+  _blackboardKey:
+    _key: Found_Food
+    typeVar: {fileID: 0}
+--- !u!114 &4314218537089138547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fcb8635246097643a7a6d7f517d98a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetKey:
+    _key: Target_Location
+    typeVar: {x: 0, y: 0}
+  _moveSpeed: 1
+  _acceptableDist: 0.14
+--- !u!114 &4613471550724093050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 490a571291219f74b947fbd0c0485685, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetKey:
+    _key: Target_Location
+    typeVar: {x: 0, y: 0}
+  _radius: 3
+--- !u!114 &6079345895091259675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71d5fee6d9246c84aa4cb9bbd46dd2ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetKey:
+    _key: Found_Food
+    typeVar: {fileID: 0}
+--- !u!114 &6938882236968146107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf47b7f4ab6048542b9a99e59966b339, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _observerAborts: 2
+  _keyQuery: 0
+  _blackboardKey:
+    _key: Found_Food
+    typeVar: {fileID: 0}
+--- !u!114 &8180993628843395045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5160e92577b4e0740a168cbc4a14a41d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _tag: Platform
+  _targetKey:
+    _key: Target_Platform
+    typeVar: {fileID: 0}
+--- !u!114 &8510247824312740373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0414c7c0d860cf44b0eeffe71ef9fa6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetKey:
+    _key: Target_Platform
+    typeVar: {fileID: 0}
+  _speed: 1
+  _acceptableDist: 0.14
+  _isGroundedKey:
+    _key: Is_Grounded
+    typeVar: 0
+  _flyToGround: 0

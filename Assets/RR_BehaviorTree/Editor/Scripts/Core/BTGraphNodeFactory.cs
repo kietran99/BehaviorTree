@@ -20,7 +20,7 @@ namespace RR.AI.BehaviorTree
 
             var ctorParams = isTaskNode
                 ? new object[] { new BTGraphInitParamsNodeLeaf(TaskCtor(graphInfoType), pos, blackboard) }
-                : new object[] { new BTGraphInitParamsNode() { pos = pos, blackboard = blackboard } };
+                : new object[] { new BTGraphInitParamsNode() { pos = pos, blackboard = blackboard, icon = BTGlobalSettings.Instance.GetIcon(graphInfoType) } };
             
             if (!_nodeInfoToGraphNodeMap.TryGetValue(graphInfoType, out var graphNodeType))
             {

@@ -35,6 +35,10 @@
         {
             "taskname": "BTDecoBBBasedCondition",
             "icon": "Icons/BTNode/Task/BTDecoBBBasedCondition"
+        },
+        {
+            "taskname": "BTDecoBlackboardConditonBool",
+            "icon": "Icons/BTNode/Task/BTDecoBlackboardConditon"
         }
     ]
 }

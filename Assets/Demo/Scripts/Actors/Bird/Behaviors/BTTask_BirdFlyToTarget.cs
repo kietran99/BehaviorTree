@@ -95,6 +95,10 @@ namespace RR.AI.BehaviorTree
             _shouldStartMoving = true;
             _isGroundedKey.UpdateValue(_blackboard, false);
             SetActorShadowActive(false);
+            if (_flyToGround)
+            {
+                _eventHub.Publisher<BirdFlyTargetExitEvent>()?.Invoke();
+            }
         }
 
         private void SetActorShadowActive(bool value)

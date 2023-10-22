@@ -11,7 +11,7 @@ namespace RR.AI.BehaviorTree
 
         protected override BTNodeState OnUpdate()
         {
-            GameObject.Destroy(_blackboard[_targetKey]);
+            Destroy(_blackboard[_targetKey]);
             return BTNodeState.Success;
         }
     }

@@ -2,22 +2,21 @@ using UnityEngine;
 using UnityEditor.Experimental.GraphView;
 
 using RR.Utils;
-using UnityEngine.UIElements;
 
 namespace RR.AI.BehaviorTree.Debugger
 {
     public class BTGraphDebugNode
     {
         private static Color DEFAULT_EDGE_COLOR = ColorExtension.Create(146f);
-        private static Color DEBUG_ACTIVE_EDGE_COLOR = new Color(222f / 255f, 240f/ 255f, 61f / 255f);
-        private static Color DEBUG_INACTIVE_EDGE_COLOR = new Color(158f / 255f, 202f/ 255f, 255f / 255f, .2f);
+        private static Color DEBUG_ACTIVE_EDGE_COLOR = new(222f / 255f, 240f/ 255f, 61f / 255f);
+        private static Color DEBUG_INACTIVE_EDGE_COLOR = new(158f / 255f, 202f/ 255f, 255f / 255f, .2f);
         private const string CLASS_ACTIVE_BORDER = "active-border";
 
-        private BTGraphNodeBase _decoratee;
+        private readonly BTGraphNodeBase _decoratee;
         private readonly Port _inPort, _outPort;
-        private Edge _inEdge;
-        private BTGraphNodeBase _parentNode;
-        private int _parentIdx;
+        private readonly Edge _inEdge;
+        private readonly BTGraphNodeBase _parentNode;
+        private readonly int _parentIdx;
 
         public BTGraphNodeBase ParentNode => _parentNode;
         public int ParentIdx => _parentIdx;
@@ -41,7 +40,6 @@ namespace RR.AI.BehaviorTree.Debugger
                         .SetValue;
                     _parentNode = edge.output.node as BTGraphNodeBase;
                     _parentIdx = _parentNode.OrderValue;
-                    // edge.capabilities &= ~Capabilities.Selectable;
                 }
             }
         }

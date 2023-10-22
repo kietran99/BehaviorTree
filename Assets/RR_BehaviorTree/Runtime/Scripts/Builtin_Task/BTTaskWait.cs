@@ -2,34 +2,38 @@ using UnityEngine;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTTaskWait : BTBaseTask<BTTaskWaitData>
+    public class BTTaskWait : BTTaskBase
     {
+        [SerializeField]
+        public float _duration = 0.0f;
+
+        private float _elapsed;
+
         public override string Name => "Wait";
 
-        public override void Init(GameObject actor, RuntimeBlackboard blackboard, BTTaskWaitData prop)
+        protected override void OnStart()
         {
-            prop.Elapsed = 0f;
+            ResetTimer();
         }
 
-        public override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, BTTaskWaitData prop)
-        {   
-            prop.Elapsed += Time.deltaTime;
+        protected sealed override BTNodeState OnUpdate()
+        {
+            _elapsed += Time.deltaTime;
 
-            if (prop.Elapsed < prop.Duration)
+            if (_elapsed < _duration)
             {
                 return BTNodeState.Running;
             }
 
-            prop.Elapsed = 0f;
+            ResetTimer();
             return BTNodeState.Success;
         }
+
+        protected sealed override void OnAbort()
+        {
+            ResetTimer();
+        }
+
+        private void ResetTimer() => _elapsed = 0.0f;
     }
-
-	[System.Serializable]
-	public class BTTaskWaitData
-	{
-		public float Duration;
-
-        public float Elapsed { get; set; }
-	}
 }

@@ -89,16 +89,25 @@ namespace RR.AI.BehaviorTree
             }
         }
 
-        public Texture2D GetIcon(System.Type type) => GetIcon(type.Name);
-
-        public Texture2D GetIcon(string nodeTypeName)
+        public Texture2D GetIcon(System.Type nodeType)
         {
             if (_nodeIconSettingsManager == null)
             {
                 _nodeIconSettingsManager = new NodeIconSettingsManager(NodeIconSettingsAsset);
             }
 
-            return _nodeIconSettingsManager.GetIcon(nodeTypeName);
+            Texture2D iconTex = _nodeIconSettingsManager.GetIcon(nodeType.Name);
+            if (iconTex)
+            {
+                return iconTex;
+            }
+
+            if (typeof(BTTaskBase).IsAssignableFrom(nodeType))
+            {
+                return Resources.Load<Texture2D>("Icons/BTNode/Task/BTTask_Default");
+            }
+
+            return null;
         }
 
         private static T FindOrCreateAsset<T>(System.Func<string, T> createAssetFn, string path, string name="") where T : Object

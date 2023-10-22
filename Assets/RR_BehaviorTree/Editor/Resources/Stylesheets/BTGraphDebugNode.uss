@@ -1,0 +1,12 @@
+.active-border {
+    border-width: 2px;
+    border-radius: 6px;
+    border-color: #def03d;
+}
+
+.active-edge {
+    --edge-color: #929292;
+    --edge-width: 4px;
+    --layer: -10;
+    transform-origin: 0 0;
+}

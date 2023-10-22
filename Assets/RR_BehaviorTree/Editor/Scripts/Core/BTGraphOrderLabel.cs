@@ -14,12 +14,12 @@ namespace RR.AI.BehaviorTree
             set => _txtLb.text = value.ToString();
         }
 
-        public BTGraphOrderLabel(Vector2 pos, int order)
+        public BTGraphOrderLabel(IInteractable attachee, int order)
         {
             capabilities |= UnityEditor.Experimental.GraphView.Capabilities.Droppable;
 
             var diameter = 16f;
-            Rect rect = new Rect(pos.x, pos.y, diameter, diameter);
+            var rect = new Rect(0.0f, 0.0f, diameter, diameter);
             SetPosition(rect);
 
             style.backgroundColor = Utils.ColorExtension.Create(145f);
@@ -46,17 +46,27 @@ namespace RR.AI.BehaviorTree
 
             _txtLb.style.unityFontStyleAndWeight = FontStyle.Bold;
             Add(_txtLb);
-        }
-    
-        public void Move(Vector2 moveDelta)
-        {
-            var oldPos = GetPosition();
-            SetPosition(new Rect(oldPos.x + moveDelta.x, oldPos.y + moveDelta.y, oldPos.width, oldPos.height));
+
+            attachee.MoveStarted += OnAttacheeMoveStarted;
+            attachee.MoveEnded += OnAttacheeMoveEnded;
+            attachee.Selected += OnAttacheeSelected;
         }
 
-        public void SetRealPosition(Vector2 pos)
+        private void OnAttacheeMoveStarted()
         {
-            SetPosition(new Rect(pos, GetPosition().size));
+            SetEnabled(true);
+            visible = true;
+        }
+
+        private void OnAttacheeMoveEnded()
+        {
+            visible = false;
+            SetEnabled(false);
+        }
+
+        private void OnAttacheeSelected()
+        {
+            BringToFront();
         }
     }
 }

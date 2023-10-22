@@ -4,19 +4,19 @@ namespace RR.AI.BehaviorTree
 {
     public class BTRuntimeAttacher
     {
-        public BTRuntimeAttacher(string guid, BTBaseTask task)
+        public BTRuntimeAttacher(string guid, BTTaskBase task)
         {
             Guid = guid;
             Task = task;
         }
 
         public string Guid { get; }
-        public BTBaseTask Task { get; }
+        public BTTaskBase Task { get; }
 
-        public void Init(GameObject actor, RuntimeBlackboard blackboard)
-            => Task.Init(actor, blackboard, Guid);
+        public void Init(BTRuntimeContext context)
+            => Task.Init(context);
 
-        public BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard)
-            => Task.Tick(actor, blackboard, Guid);
+        public BTNodeState Update()
+            => Task.Update();
     }
 }

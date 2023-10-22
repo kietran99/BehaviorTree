@@ -3,9 +3,13 @@
 }
 
 BTGraphNode #title {
-    background-color: #3e3e3e ;
+    background-color: #494949;
+    height: 44px;
+    flex-direction: column;
 }
 
 BTGraphNodeLeaf #title {
-    background-color: #6330a7;
+    background-color: #494949;
+    height: 44px;
+    flex-direction: column;
 }

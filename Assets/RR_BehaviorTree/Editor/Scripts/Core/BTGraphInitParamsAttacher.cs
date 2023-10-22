@@ -6,6 +6,6 @@ namespace RR.AI.BehaviorTree
     {
         public string guid, nodeID, name;
         public Texture2D icon;
-        public BTBaseTask task;
+        public BTTaskBase task;
     }
 }

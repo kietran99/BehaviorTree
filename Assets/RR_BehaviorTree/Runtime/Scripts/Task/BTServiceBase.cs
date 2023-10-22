@@ -2,68 +2,76 @@ using UnityEngine;
 
 namespace RR.AI.BehaviorTree
 {
-    public interface IBTService {}
-
-    public abstract class BTPropServiceBase
+    public abstract class BTServiceBase : BTTaskBase
     {
-        public float TickInterval;
-        public float RandomDeviation = 0.0f;
+        [SerializeField]
+        private float TickInterval = 1.0f;
+        [SerializeField]
+        private float RandomDeviation = 0.2f;
 
-        private float counter = 0.0f;
-        private float minInterval, maxInterval;
-
+        private float _counter;
+        private float _minInterval, _maxInterval;
+        
         public float Elapsed { get; protected set; }
 
         public void Reset()
         {
             Elapsed = 0.0f;
-            counter = 0.0f;
-            minInterval = TickInterval - RandomDeviation;
-            maxInterval = TickInterval + RandomDeviation;
+            _counter = 0.0f;
+            _minInterval = TickInterval - RandomDeviation;
+            _maxInterval = TickInterval + RandomDeviation;
         }
 
         public bool Tick(float deltaTime)
         {
+            _counter += deltaTime;
             Elapsed += deltaTime;
-            counter += deltaTime;
 
-            if ((RandomDeviation == 0.0f && counter >= TickInterval)
-                || (counter >= minInterval && counter <= maxInterval))
+            if (RandomDeviation == 0.0f)
             {
-                counter = 0.0f;
+                if (_counter >= TickInterval)
+                {
+                    _counter = 0.0f;
+                    return true;
+                }
+
+                return false;
+            }
+
+            float curInterval = Random.Range(0, 2) == 0 ? _minInterval : _maxInterval;
+            if (_counter >= curInterval)
+            {
+                _counter = 0.0f;
                 return true;
             }
 
             return false;
         }
-    }
 
-    public abstract class BTServiceBase<T> : BTBaseTask<T>, IBTService where T : BTPropServiceBase, new()
-    {
-        protected abstract void OnStart(GameObject actor, RuntimeBlackboard blackboard, T prop);
-        protected abstract void OnUpdate(GameObject actor, RuntimeBlackboard blackboard, T prop);
-
-        public sealed override void Init(GameObject actor, RuntimeBlackboard blackboard, T prop)
+        protected sealed override void OnStart()
         {
-            prop.Reset();
-            OnStart(actor, blackboard, prop);
+            Reset();
+            OnSearchStart();
         }
 
-        public sealed override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, T prop)
+        protected sealed override BTNodeState OnUpdate()
         {
             float deltaTime = Time.deltaTime;
-            bool finishedInterval = prop.Tick(deltaTime);
+            bool finishedInterval = Tick(deltaTime);
             if (finishedInterval)
             {
-                OnUpdate(actor, blackboard, prop);
+                OnEvaluate();
             }
             
-            return BTNodeState.Success;
+            return BTNodeState.Success; // Return anything is ok as it won't be evaluated
         }
 
-        public override void OnTreeEval(GameObject actor, RuntimeBlackboard blackboard, T prop)
+        protected override void OnTreeEval()
         {
-            prop.Reset();
+            Reset();
         }
+
+        protected virtual void OnSearchStart() {}
+        protected abstract void OnEvaluate();
     }
 }

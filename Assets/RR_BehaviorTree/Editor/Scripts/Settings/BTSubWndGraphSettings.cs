@@ -203,10 +203,9 @@ namespace RR.AI.BehaviorTree
             {
 
                 var taskIconSettingList = assembly.GetTypes()
-                                .Where(type => typeof(BTBaseTask).IsAssignableFrom(type) 
-                                                && type != typeof(BTBaseTask)
-                                                && !type.IsGenericType
-                                                && type != typeof(BTTaskNull))
+                                .Where(type => typeof(BTTaskBase).IsAssignableFrom(type) 
+                                                && type != typeof(BTTaskBase)
+                                                && !type.IsGenericType)
                                                 .Select(taskType => CreateSettings(oldSettingsList, taskType.Name)); 
 
                 nodeIconSettingList.AddRange(taskIconSettingList); 

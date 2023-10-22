@@ -2,7 +2,7 @@ namespace RR.AI.BehaviorTree
 {
     public class BTRuntimeNodeBase
     {
-        public BTRuntimeNodeBase(string guid, int successIdx, int failIdx, BTNodeType type, BTBaseTask task)
+        public BTRuntimeNodeBase(string guid, int successIdx, int failIdx, BTNodeType type, BTTaskBase task)
         {
             Guid = guid;
             SuccessIdx = successIdx;
@@ -15,11 +15,12 @@ namespace RR.AI.BehaviorTree
         public int SuccessIdx { get; }
         public int FailIdx { get; }
         public BTNodeType Type { get; }
-        public BTBaseTask Task { get; }
+        public BTTaskBase Task { get; }
         public BTRuntimeAttacher[] Decorators { get; set; }
         public BTRuntimeAttacher[] Services { get; set; }
 
         public int ProgressIdx => SuccessIdx > FailIdx ? SuccessIdx : FailIdx;
+        public int ParentIdx => SuccessIdx > FailIdx ? FailIdx : SuccessIdx;
 
         public override string ToString()
         {

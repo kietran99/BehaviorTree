@@ -88,7 +88,7 @@ namespace RR.AI.Debugger
 
             protected override Delegate Subscribe<TVal>()
             {
-                Action<BBUpdateEntryEvent<TVal>> callback = evt => _blackboard.UpdateEntry<TVal>(evt.key, evt.value);
+                Action<BBUpdateEntryEvent<TVal>> callback = evt => _blackboard.UpdateEntry<TVal>(evt.key, evt.newValue);
                 _evtBroker.Subscribe<BBUpdateEntryEvent<TVal>>(callback);
                 return callback;
             }

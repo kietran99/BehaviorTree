@@ -2,24 +2,17 @@ using UnityEngine;
 
 namespace RR.AI.BehaviorTree
 {
-    public class BTTaskLog : BTBaseTask<BTTaskLogData>
+    public class BTTaskLog : BTTaskBase
     {
+        [SerializeField]
+        private string _message = string.Empty;
+
         public override string Name => "Log";
 
-        public override void Init(GameObject actor, RuntimeBlackboard blackboard, BTTaskLogData prop)
-        {   
-        }
-
-        public override BTNodeState Tick(GameObject actor, RuntimeBlackboard blackboard, BTTaskLogData prop)
+        protected override BTNodeState OnUpdate()
         {
-            Debug.Log(prop.Message);
+            Debug.Log(_message);
             return BTNodeState.Success;
         }
-    }
-
-    [System.Serializable]
-    public class BTTaskLogData
-    {
-        public string Message;
     }
 }

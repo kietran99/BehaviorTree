@@ -1,0 +1,14 @@
+.container-view-picker {
+    background-color: #1b1b1b;
+    padding: 2px 0px 2px 0px;
+    border-radius: 3px;
+}
+
+.base-field {
+    margin-right: 2px;
+}
+
+.button-container-picker {
+    flex-direction: row;
+    justify-content: center;
+}

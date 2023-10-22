@@ -1,74 +1,65 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
+using System;
+
 namespace RR.AI.BehaviorTree
 {
-    public class BTGraphNodeAttacher : VisualElement
+    public class BTGraphNodeAttacher : VisualElement, IBTIdentifiable
     {
         private const string STYLE_IDLE_UNSELECTED_BORDER = "idle-unselected-border";
         private const string STYLE_IDLE_SELECTED_BORDER = "idle-selected-border";
         private const string STYLE_HOVER_UNSELECTED_BORDER = "hover-unselected-border";
         private const string STYLE_HOVER_SELECTED_BORDER = "hover-selected-border";
 
-        private string _guid, _nodeID;
-        private BTBaseTask _task;
+        private readonly string _guid;
+        private readonly string _nodeID;
+        private readonly BTTaskBase _task;
+        private readonly BTGraphNodeContent _content;
 
-        private VisualElement _contentContainer;
         private bool _selected;
         private string _curBorderStyle;
 
         public string Name { get; private set; }
+        public string Guid => _guid;
 
         private static BTGraphNodeAttacher _curSelected = null;
 
+        public Action<BTGraphNodeAttacher> MouseEntered { get; set; }
+        public Action<BTGraphNodeAttacher> MouseExited { get; set; }
+
         public static BTGraphNodeAttacher CreateDecorator(BTGraphInitParamsAttacher initParams)
         {
-            return new BTGraphNodeAttacher(initParams, "BTNodeDecorator");
+            return new BTGraphNodeAttacher(initParams, "decorator");
         }
 
         public static BTGraphNodeAttacher CreateService(BTGraphInitParamsAttacher initParams)
         {
-            return new BTGraphNodeAttacher(initParams, "BTNodeService");
+            return new BTGraphNodeAttacher(initParams, "service");
         }
 
-        public BTGraphNodeAttacher(BTGraphInitParamsAttacher initParams, string styleSheetName)
+        public BTGraphNodeAttacher(BTGraphInitParamsAttacher initParams, string styleClassName)
         {
-            _contentContainer = CreateTitleContent(initParams.name, initParams.icon);
+            _content = new BTGraphNodeContent(initParams.name, initParams.icon, styleClassName);
+            Add(_content);
             Name = initParams.name;
-            _contentContainer.styleSheets.Add(Resources.Load<StyleSheet>($"Stylesheets/{styleSheetName}"));
             _curBorderStyle = STYLE_IDLE_UNSELECTED_BORDER;
-            _contentContainer.AddToClassList(_curBorderStyle);
-            
-            Add(_contentContainer);
+            _content.styleSheets.Add(StylesheetUtils.Load(nameof(BTGraphNodeAttacher)));
+            _content.AddToClassList(_curBorderStyle);
 
             _selected = false;
-            RegisterCallback<MouseDownEvent>(OnSelected);
-            RegisterCallback<MouseEnterEvent>(OnMouseEnter);
-            RegisterCallback<MouseLeaveEvent>(OnMouseExit);
+            _content.RegisterCallback<MouseDownEvent>(OnSelected);
+            _content.RegisterCallback<MouseEnterEvent>(OnMouseEnter);
+            _content.RegisterCallback<MouseLeaveEvent>(OnMouseExit);
 
             _nodeID = initParams.nodeID;
             _guid = initParams.guid;
             _task = initParams.task;
         }
 
-        private VisualElement CreateTitleContent(string title, Texture2D nodeIcon)
+        public void Rename(string name)
         {
-            var container = new VisualElement();
-            container.style.flexDirection = FlexDirection.Row;
-            
-            var icon = new Image();
-            icon.image = nodeIcon;
-            icon.scaleMode = ScaleMode.ScaleToFit;
-            icon.style.marginRight = 5;
-            container.Add(icon);
-
-            var titleLabel = new Label(title);
-            titleLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
-            titleLabel.style.fontSize = 14;
-            titleLabel.style.color = Color.white;
-            container.Add(titleLabel);
-
-            return container;
+            _content.Rename(name);
         }
 
         private void OnSelected(MouseDownEvent evt)
@@ -81,7 +72,14 @@ namespace RR.AI.BehaviorTree
             _curSelected = this;
             _selected = true;
             SwapBorderStyle(STYLE_HOVER_SELECTED_BORDER);
-            BTGraphView.OnNewNodeSelected?.Invoke(_guid, Name, string.Empty, _task);
+            BTGraphView.OnNewElementSelected?.Invoke(new ElementSelectParams()
+                {
+                    Guid = _guid,
+                    Name = Name,
+                    Desc = string.Empty,
+                    Task = _task,
+                    IsAttacher = true
+                });
             evt.StopPropagation();
         }
 
@@ -94,11 +92,13 @@ namespace RR.AI.BehaviorTree
         private void OnMouseEnter(MouseEnterEvent evt)
         {
             SwapBorderStyle(_selected ? STYLE_HOVER_SELECTED_BORDER : STYLE_HOVER_UNSELECTED_BORDER);
+            MouseEntered?.Invoke(this);
         }
     
         private void OnMouseExit(MouseLeaveEvent evt)
         {
             SwapBorderStyle(_selected ? STYLE_IDLE_SELECTED_BORDER : STYLE_IDLE_UNSELECTED_BORDER);
+            MouseExited?.Invoke(this);
         }
 
         public static void OnNodeUnselected(string nodeID)
@@ -114,9 +114,14 @@ namespace RR.AI.BehaviorTree
 
         private void SwapBorderStyle(string newStyle)
         {
-            _contentContainer.RemoveFromClassList(_curBorderStyle);
-            _contentContainer.AddToClassList(newStyle);
+            _content.RemoveFromClassList(_curBorderStyle);
+            _content.AddToClassList(newStyle);
             _curBorderStyle = newStyle;
+        }
+
+        public void OnRemove()
+        {
+            UnityEditor.AssetDatabase.RemoveObjectFromAsset(_task);
         }
     }
 }

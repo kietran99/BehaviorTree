@@ -13,13 +13,13 @@ namespace RR.AI.BehaviorTree
             public string Guid { get; }
             public string ParentGuid { get; set; }
             public string NextSiblingGuid { get; set; }
-            public BTBaseTask Task { get; }
+            public BTTaskBase Task { get; }
             public BTNodeType Type { get; }
             public BTNodeType ParentType { get; }
             public int x { get; set; }
             public int y { get; set; }
 
-            public RuntimeNodeSortWrapper(string guid, BTNodeType nodeType, BTNodeType parentType, int x, int y, BTBaseTask task = null)
+            public RuntimeNodeSortWrapper(string guid, BTNodeType nodeType, BTNodeType parentType, int x, int y, BTTaskBase task = null)
             {
                 Guid = guid;
                 Type = nodeType;
@@ -34,16 +34,45 @@ namespace RR.AI.BehaviorTree
         private GameObject _actor = null;
 
         [SerializeField]
-        private BTDesignContainer _designContainer = null;
+        private BTGraphDesign _designContainer = null;
 
+        [SerializeField]
+        private bool _startOnPlay = false;
+
+        private bool _isInitialized;
+        private bool _isActive;
         private BTScheduler _scheduler;
         private RuntimeBlackboard _runtimeBlackboard;
+        private Events.IEventHub _eventHub;
 
-        public BTDesignContainer DesignContainer => _designContainer;
+        public BTGraphDesign DesignContainer => _designContainer;
         public BTScheduler Scheduler => _scheduler;
+        public RuntimeBlackboard Blackboard => _runtimeBlackboard;
+        public Events.IEventHub RuntimeEventHub => _eventHub;
 
         private void Start()
         {
+            _isInitialized = false;
+            _isActive = false;
+            if (_startOnPlay)
+            {
+                InitAndActivate();
+            }
+        }
+
+        public void InitAndActivate()
+        {
+            Init();
+            Activate();
+        }
+
+        public void Init()
+        {
+            if (_isInitialized)
+            {
+                return;
+            }
+
             if (_designContainer.NodeDataList.Count == 0 || _designContainer.TaskDataList.Count == 0)
             {
                 Debug.LogError("Invalid Behavior Tree");
@@ -110,7 +139,7 @@ namespace RR.AI.BehaviorTree
                     {
                         bool isTaskNode = data.GetType().Equals(typeof(BTSerializableTaskData));
                         BTNodeType nodeType = isTaskNode ? BTNodeType.Leaf : (data as BTSerializableNodeData).NodeType;
-                        BTBaseTask task = isTaskNode ? (data as BTSerializableTaskData).Task : null;
+                        BTTaskBase task = isTaskNode ? (data as BTSerializableTaskData).Task : null;
                         return new RuntimeNodeSortWrapper(
                             data.Guid, 
                             nodeType, nodeType == BTNodeType.Root ? BTNodeType.Root : _designContainer.FindParentType(data.ParentGuid), 
@@ -163,11 +192,30 @@ namespace RR.AI.BehaviorTree
                 .ToArray();
 
             _runtimeBlackboard = _designContainer.Blackboard.CreateRuntimeBlackboard();
-            _scheduler = new BTScheduler(execList, _actor, _runtimeBlackboard);
+            _eventHub = new Events.EventHub();
+            _scheduler = new BTScheduler(execList, new BTRuntimeContext(_actor, _runtimeBlackboard, _eventHub));
+
+            _isInitialized = true;
+            BBEventBroker.Instance.Reset();
+        }
+
+        public void Activate()
+        {
+            _isActive = true;
+        }
+
+        public void Deactivate()
+        {
+            _isActive = false;
         }
 
         private void Update()
         {
+            if (!_isInitialized || !_isActive)
+            {
+                return;
+            }
+
             _scheduler.Tick();
         }
     }

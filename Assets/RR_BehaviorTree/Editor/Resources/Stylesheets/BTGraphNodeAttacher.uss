@@ -1,0 +1,16 @@
+.idle-unselected-border {
+    border-color: #303030;
+}
+
+.idle-selected-border {
+    border-color: #d7b758;
+}
+
+.hover-unselected-border {
+    border-color: #c08b5a;
+}
+
+.hover-selected-border {
+    border-width: 2px;
+    border-color: #e5e74e;
+}

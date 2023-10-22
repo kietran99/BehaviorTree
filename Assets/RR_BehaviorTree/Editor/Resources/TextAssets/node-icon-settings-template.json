@@ -29,8 +29,16 @@
             "icon": "Icons/BTNode/Task/BTTaskWait"
         },
         {
-            "taskname": "BTServiceFindTarget",
-            "icon": "Icons/BTNode/Task/BTServiceFindTarget"
+            "taskname": "BTTask_PlayAnimation",
+            "icon": "Icons/BTNode/Task/BTTask_PlayAnimation"
+        },
+        {
+            "taskname": "BTDecoBBBasedCondition",
+            "icon": "Icons/BTNode/Task/BTDecoBBBasedCondition"
+        },
+        {
+            "taskname": "BTDecoBlackboardConditonBool",
+            "icon": "Icons/BTNode/Task/BTDecoBlackboardConditon"
         }
     ]
 }

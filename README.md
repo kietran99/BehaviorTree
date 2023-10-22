@@ -5,7 +5,7 @@ Open-source Unity framework for implementing modular AI behavior for a wide arra
 ![BT_debug](https://github.com/kietran99/BehaviorTree/assets/55981748/52e5962d-5172-4b5b-b0e5-3052c3a1d545)
 
 ## Features
-### 1. Drag-and-drop visual editor
+### 1. Intuitive visual editor
 
 Allows designing AI behavior without any code, suitable for both programmers and designers.
 

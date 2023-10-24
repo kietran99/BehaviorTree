@@ -4,6 +4,7 @@ using System;
 
 namespace RR.AI
 {
+    [Serializable]
     public class BBKeySelector<T>
     {
         [SerializeField]
@@ -18,17 +19,12 @@ namespace RR.AI
 
         public T Value(RuntimeBlackboard blackboard)
         {
-            if (string.IsNullOrEmpty(_key))
-            {
-                Debug.LogWarning("Empty key, return a default instead");
-            }
-
-            return string.IsNullOrEmpty(_key) ? default(T) : blackboard.GetValue<T>(_key);
+            return blackboard.GetValue<T>(_key);
         }
 
         public bool UpdateValue(RuntimeBlackboard blackboard, T newValue)
         {
-            return string.IsNullOrEmpty(_key) ? false : blackboard.UpdateEntry<T>(_key, newValue);
+            return blackboard.UpdateEntry<T>(_key, newValue);
         }
     }
 

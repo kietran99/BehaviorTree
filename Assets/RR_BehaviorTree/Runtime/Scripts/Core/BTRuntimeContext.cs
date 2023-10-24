@@ -14,6 +14,6 @@ namespace RR.AI.BehaviorTree
 
         public GameObject Actor { get; private set; }
         public RuntimeBlackboard Blackboard { get; private set; }
-        public Events.IEventHub EventHub { get; private set; }
+        public IEventHub EventHub { get; private set; }
     }
 }

@@ -39,6 +39,7 @@ namespace RR.AI.BehaviorTree
         private ChoiceStack _choiceStack;
         private int _runningIdx;
         private Stack<int> _activeServicesStack;
+        private Events.IEventHub _eventHub;
 
         public Action TreeEval;
         public Action<int> NodeTick;
@@ -51,22 +52,22 @@ namespace RR.AI.BehaviorTree
         private bool shouldTickOnce;
         private bool hasTicked;
 
-        public BTScheduler(BTRuntimeNodeBase[] orderedNodes, GameObject actor, RuntimeBlackboard blackboard)
+        public BTScheduler(BTRuntimeNodeBase[] orderedNodes, BTRuntimeContext context)
         {
             _orderedNodes = orderedNodes;
             _choiceStack = new ChoiceStack(_orderedNodes.Length);
             _activeServicesStack = new Stack<int>();
             ResetRunningIdx();
             _abortHandler = new AbortHandler();
-            Init(actor, blackboard);
+            Init(context);
 
-            LogSetupStats(blackboard);
+            // LogSetupStats(context.Blackboard);
 
             shouldTickOnce = false;
             hasTicked = false;
         }
 
-        private void Init(GameObject actor, RuntimeBlackboard blackboard)
+        private void Init(BTRuntimeContext context)
         {
             for (int i = 0; i < _orderedNodes.Length; i++)
             {
@@ -75,7 +76,7 @@ namespace RR.AI.BehaviorTree
                 {
                     foreach (var deco in node.Decorators)
                     {
-                        deco.Init(actor, blackboard);
+                        deco.Init(context);
 
                         var decoTask = deco.Task as BTDecoratorBase;
 
@@ -91,19 +92,22 @@ namespace RR.AI.BehaviorTree
                 {
                     foreach (var service in node.Services)
                     {
-                        service.Init(actor, blackboard);
+                        service.Init(context);
                     }
                 }
 
                 if (node.Type == BTNodeType.Leaf)
                 {
-                    node.Task.Init(actor, blackboard);
+                    node.Task.Init(context);
                 }
             }
+
+            _eventHub = context.EventHub;
         }
 
         public void Tick()
         {
+            _eventHub.Publisher<SchedulerTickEvent>()?.Invoke(Time.deltaTime);
             bool hasNoRunningNode = !HasRunningNode;
 
             if (hasNoRunningNode)

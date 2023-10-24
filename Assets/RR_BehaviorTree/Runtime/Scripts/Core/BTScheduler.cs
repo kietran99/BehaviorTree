@@ -107,7 +107,7 @@ namespace RR.AI.BehaviorTree
 
         public void Tick()
         {
-            _eventHub.Publisher<SchedulerTickEvent>()?.Invoke(Time.deltaTime);
+            // _eventHub.Publisher<SchedulerTickEvent>()?.Invoke(Time.deltaTime);
             bool hasNoRunningNode = !HasRunningNode;
 
             if (hasNoRunningNode)

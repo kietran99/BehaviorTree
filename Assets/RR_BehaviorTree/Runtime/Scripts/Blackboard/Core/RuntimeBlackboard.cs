@@ -6,16 +6,16 @@ namespace RR.AI
 {
     public class RuntimeBlackboard
     {
-        private Dictionary<string, IBBValueBase> _map;
+        private readonly Dictionary<int, IBBValueBase> _map;
 
-        public RuntimeBlackboard(Dictionary<string, IBBValueBase> map = null)
+        public RuntimeBlackboard(Dictionary<int, IBBValueBase> map = null)
         {
-            _map = map == null ? new Dictionary<string, IBBValueBase>() : map;
+            _map = map == null ? new Dictionary<int, IBBValueBase>() : map;
         }
 
         public bool AddEntry<T>(string key, BBValue<T> val)
         {
-            if (_map.TryGetValue(key, out IBBValueBase _))
+            if (_map.TryGetValue(key.GetHashCode(), out IBBValueBase _))
             {
                 Debug.LogWarning($"Key {key} already exists");
                 return false;
@@ -29,20 +29,20 @@ namespace RR.AI
                 && valType != typeof(string)
                 && valType != typeof(Vector2)
                 && valType != typeof(Vector3)
-                && !typeof(UnityEngine.Object).IsAssignableFrom(valType))
+                && !typeof(Object).IsAssignableFrom(valType))
             {
                 Debug.LogError($"Unsupported type: {valType}");
                 return false;
             }
 
-            _map.Add(key, val);
+            _map.Add(key.GetHashCode(), val);
             BBEventBroker.Instance.Publish(new BBAddEntryEvent<T>(key, val.value));
             return true;
         }
 
         public bool UpdateEntry<T>(string key, BBValue<T> val)
         {
-            if (!_map.TryGetValue(key, out var oldVal))
+            if (!_map.TryGetValue(key.GetHashCode(), out var oldVal))
 			{
 				Debug.LogWarning($"Key {key} does not exist");
 				return false;
@@ -54,7 +54,7 @@ namespace RR.AI
                 return false;
             }
 
-			_map[key] = val;
+			_map[key.GetHashCode()] = val;
             BBEventBroker.Instance.Publish(new BBUpdateEntryEvent<T>(key, (BBValue<T>)oldVal, val.value));
 			return true;
         }
@@ -73,13 +73,17 @@ namespace RR.AI
         public bool UpdateEntry(string key, string val) => UpdateEntry<string>(key, val);
         public bool UpdateEntry(string key, Vector2 val) => UpdateEntry<Vector2>(key, val);
         public bool UpdateEntry(string key, Vector3 val) => UpdateEntry<Vector3>(key, val);
-        public bool UpdateEntry(string key, UnityEngine.Object val) => UpdateEntry<UnityEngine.Object>(key, val);
+        public bool UpdateEntry(string key, Object val) => UpdateEntry<Object>(key, val);
+
+        public Object this[BBKeySelectorObject keySelector] => (BBValue<Object>)_map[keySelector.Key.GetHashCode()];
+        public bool this[BBKeySelectorBool keySelector] => (BBValue<bool>)_map[keySelector.Key.GetHashCode()];
+        public Vector2 this[BBKeySelectorVector2 keySelector] => (BBValue<Vector2>)_map[keySelector.Key.GetHashCode()];
 
         public T GetValue<T>(string key) => ValueOr<T>(key, default);
 
         public T ValueOr<T>(string key, T defaultValue)
 		{
-			if (!_map.TryGetValue(key, out var val))
+			if (!_map.TryGetValue(key.GetHashCode(), out var val))
 			{	
                 Debug.LogWarning($"Key {key} was not found, returning default value instead");			
 			    return defaultValue;
@@ -97,12 +101,12 @@ namespace RR.AI
         public bool Remove(string key)
         {
             BBEventBroker.Instance.Publish(new BBDeleteEntryEvent(key));
-            return _map.Remove(key);
+            return _map.Remove(key.GetHashCode());
         }
     
         public void Log()
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            var sb = new System.Text.StringBuilder();
             sb.Append("{\n");
 
             foreach (var entry in _map)
